@@ -1,11 +1,30 @@
 import React, { Component } from 'react'
-import P5Wrapper from 'react-p5-wrapper'
-import sketch from './Sketch'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import Cube from './geometry/Cube'
+import Cardioid from './geometry/Cardioid'
+import NavBar from './nav/NavBar'
+import NotFoundPage from './nav/NotFoundPage'
 
 class App extends Component {
   render() {
     return (
-        <P5Wrapper sketch={sketch} />
+      <BrowserRouter>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            backgroundColor: 'black'
+          }}
+        >
+          <NavBar />
+          <Switch>
+            <Route exact path="/" component={Cardioid} />
+            <Route exact path="/4dcube" component={Cube} />
+            <Route exact path="/cardioid" component={Cardioid} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </div>
+      </BrowserRouter>
     )
   }
 }

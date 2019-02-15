@@ -1,1 +1,6 @@
-{}
+{
+  "projects": {
+    "production": "pataphysical-99efa",
+    "default": "pataphysical-99efa"
+  }
+}
