@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-import NavBarItem from "./NavBarItem";
-import styled from "styled-components";
+import React, { Component } from 'react'
+import NavBarItem from './NavBarItem'
+import styled from 'styled-components'
 
 export default class NavBar extends Component {
   render() {
@@ -11,21 +11,19 @@ export default class NavBar extends Component {
           <NavBarItem text="Cardioid" to="cardioid" />
         </Ul>
       </Container>
-    );
+    )
   }
 }
 
 const Container = styled.div`
-  width: 8rem;
-  background-color: palevioletred;
-`;
+  background-color: black;
+`
 
 const Ul = styled.ul`
-  display: "flex";
-  flex-direction: "column";
-  align-items: "left";
-  align-content: "center";
-  width: "100%";
-  padding: "1rem";
-  height: "100vh";
-`;
+  width: '100%';
+  padding: '1rem';
+  height: '100vh';
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`
