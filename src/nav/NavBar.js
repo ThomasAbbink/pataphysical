@@ -1,25 +1,31 @@
-import React, { Component } from 'react'
-import NavBarItem from './NavBarItem'
+import React, { Component } from "react";
+import NavBarItem from "./NavBarItem";
+import styled from "styled-components";
 
 export default class NavBar extends Component {
   render() {
     return (
-      <div style={{ width: '8rem', backgroundColor: 'black' }}>
-        <ul
-          style={{
-            display: 'flex',
-            alignItems: 'left',
-            alignContent: 'center',
-            width: '100%',
-            padding: '1rem',
-            flexDirection: 'column',
-            height: '100vh'
-          }}
-        >
+      <Container>
+        <Ul>
           <NavBarItem text="Cube" to="4dcube" />
           <NavBarItem text="Cardioid" to="cardioid" />
-        </ul>
-      </div>
-    )
+        </Ul>
+      </Container>
+    );
   }
 }
+
+const Container = styled.div`
+  width: 8rem;
+  background-color: palevioletred;
+`;
+
+const Ul = styled.ul`
+  display: "flex";
+  flex-direction: "column";
+  align-items: "left";
+  align-content: "center";
+  width: "100%";
+  padding: "1rem";
+  height: "100vh";
+`;
