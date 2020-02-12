@@ -9,10 +9,10 @@ const p = p => {
     return 0.001 * Math.floor(Math.random() * 10)
   }
 
-  let xSpeed = 0.0 //randomStartVal()
-  let ySpeed = 0.008 //randomStartVal()
-  let zSpeed = 0 //randomStartVal()
-  let wSpeed = 0.01 //randomStartVal()
+  let xSpeed = 0.001 //randomStartVal()
+  let ySpeed = 0.005 //randomStartVal()
+  let zSpeed = 0.0 //randomStartVal()
+  let wSpeed = 0.005 //randomStartVal()
   let xSlider
   let ySlider
   let zSlider
@@ -171,9 +171,9 @@ const p = p => {
       const d = 1 / (distance - rotated[3])
 
       const projection = [
+        [d, 0, 0, 0],
         [0, d, 0, 0],
         [0, 0, d, 0],
-        [0, 0, d, d],
       ]
 
       // projection
