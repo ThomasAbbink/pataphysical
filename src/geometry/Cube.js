@@ -5,9 +5,9 @@ import React from 'react'
 // import Iter from 'es-iter'
 
 const p = p => {
-  const randomStartVal = () => {
-    return 0.001 * Math.floor(Math.random() * 10)
-  }
+  // const randomStartVal = () => {
+  //   return 0.001 * Math.floor(Math.random() * 10)
+  // }
 
   let xSpeed = 0.001 //randomStartVal()
   let ySpeed = 0.005 //randomStartVal()
@@ -37,7 +37,7 @@ const p = p => {
     [[0.5], [0.5], [0.5], [0.5]],
   ]
 
-  let dimensions = 2
+  // let dimensions = 2
   // const points2 = new Iter('AB').combinations(2).toArray()
   // console.log(points2)
   // const points2 = []
