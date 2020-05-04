@@ -19,9 +19,6 @@ const sketch = (p) => {
   const randomShape = []
 
   const getNextShape = () => {
-    const next = state.to === shapes.length - 1 ? 0 : state.to + 1
-
-    // return next
     return getRandomInt(0, shapes.length)
   }
 
@@ -206,25 +203,20 @@ const sketch = (p) => {
       const y = vectors[0] ? vectors[0].y : 0
       vectors.push(p.createVector(x, y))
     }
-    let done = true
     for (let i = 0; i < vectors.length; i++) {
       const shapeIndex = i % shape.length
       const target = shape[shapeIndex]
       if (vectors[i].x < target.x) {
         vectors[i].x = vectors[i].x + 1
-        done = false
       }
       if (vectors[i].x > target.x) {
         vectors[i].x = vectors[i].x - 1
-        done = false
       }
       if (vectors[i].y < target.y) {
         vectors[i].y = vectors[i].y + 1
-        done = false
       }
       if (vectors[i].y > target.y) {
         vectors[i].y = vectors[i].y - 1
-        done = false
       }
     }
     return vectors.every((vector, index) => {

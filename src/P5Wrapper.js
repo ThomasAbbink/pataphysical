@@ -9,8 +9,6 @@ export class P5Wrapper extends React.Component {
   }
   componentDidMount() {
     this.myP5 = new p5(this.props.sketch, this.ref.current)
-    const amplitude = new p5.Amplitude()
-    const fft = new p5.FFT()
     this.mic = new p5.AudioIn()
   }
   render() {
