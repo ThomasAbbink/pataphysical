@@ -1,10 +1,9 @@
 import { matmul, scale } from './MatrixHelper'
-import 'p5/lib/addons/p5.dom'
-import P5Wrapper from 'react-p5-wrapper'
+import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
 // import Iter from 'es-iter'
 
-const p = p => {
+const p = (p) => {
   // const randomStartVal = () => {
   //   return 0.001 * Math.floor(Math.random() * 10)
   // }
@@ -50,28 +49,28 @@ const p = p => {
   //   points2.push(point)
   // }
 
-  const rotationZ = angle => [
+  const rotationZ = (angle) => [
     [p.cos(angle), p.sin(angle), 0, 0],
     [p.sin(angle), -p.cos(angle), 0, 0],
     [0, 0, 1, 0],
     [0, 0, 0, 1],
   ]
 
-  const rotationX = angle => [
+  const rotationX = (angle) => [
     [1, 0, 0, 0],
     [0, p.cos(angle), -p.sin(angle), 0],
     [0, p.sin(angle), p.cos(angle), 0],
     [0, 0, 0, 1],
   ]
 
-  const rotationY = angle => [
+  const rotationY = (angle) => [
     [p.cos(angle), 0, -p.sin(angle), 0],
     [0, 1, 0, 0],
     [p.sin(angle), 0, p.cos(angle), 0],
     [0, 0, 0, 1],
   ]
 
-  const rotationZW = angle => [
+  const rotationZW = (angle) => [
     [1, 0, 0, 0],
     [0, 1, 0, 0],
     [0, 0, p.cos(angle), -p.sin(angle)],
@@ -159,7 +158,7 @@ const p = p => {
     )
     p.translate(p.windowWidth / 2, p.windowHeight / 2 - sliderDividerHeight * 2)
 
-    const projected = points.map(point => {
+    const projected = points.map((point) => {
       // // rotation
       let rotated = matmul(rotationZW(wSpeed), point)
       rotated = matmul(rotationX(xSpeed), rotated)
@@ -188,7 +187,7 @@ const p = p => {
     zSpeed += zSlider.value()
   }
 
-  const drawRibs = points => {
+  const drawRibs = (points) => {
     // inner cube
     p.stroke(250, 100, 50)
     for (let i = 0; i < 4; i++) {
