@@ -59,6 +59,9 @@ const sketch = (p) => {
     drawLines(vectors)
   }
 
+  p.touchStarted = () => {
+    p.getAudioContext().resume()
+  }
   const drawLines = (vectors) => {
     for (let i = 0; i < vectors.length; i++) {
       const vector2 = i === vectors.length - 1 ? 0 : i + 1
