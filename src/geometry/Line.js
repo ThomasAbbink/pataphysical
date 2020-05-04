@@ -6,16 +6,23 @@ const mic = new p5.AudioIn()
 
 const sketch = (p) => {
   const vectors = []
-  let size = 100
+  const baseSize = 100
+  let size = baseSize
+  let beat = 1
+  let beatFactor = 2
   const state = {
     to: 0,
   }
+  let r = 0
+  let b = 0
+  let g = 0
   const randomShape = []
-  // const mic = new p.AudioIn()
+
   const getNextShape = () => {
     const next = state.to === shapes.length - 1 ? 0 : state.to + 1
 
-    return next
+    // return next
+    return getRandomInt(0, shapes.length)
   }
 
   p.setup = () => {
@@ -34,19 +41,24 @@ const sketch = (p) => {
     const { to } = state
     const level = mic.getLevel()
 
-    const beat = 1 + level
-    console.log(beat)
-    if (beat > 1.2) {
-      size = Math.round(beat)
-    } else {
-      size = 100
+    beat = 1 + level * beatFactor
+    r = r + getRandomInt(0, 5)
+    g = g + getRandomInt(0, 5)
+    b = b + getRandomInt(0, 5)
+    p.stroke((r % 255) + 50, (g % 255) + 50, (b % 255) + 50)
+    p.ellipse(0, 0, 20 * beat, 20 * beat)
+
+    for (let i = 0; i < 10; i++) {
+      if (level > 1 * (i / 200)) {
+        p.ellipse(0, 0, i * 20 * beat, i * 20 * beat)
+      }
     }
-    p.ellipse(0, 0, 100 * beat, 100 * beat)
+    size = Math.round(baseSize * beat)
+
     const done = shapes[to]()
     if (done) {
       state.to = getNextShape()
     }
-    drawLines(vectors)
     drawLines(vectors)
   }
 
@@ -111,22 +123,85 @@ const sketch = (p) => {
   }
 
   const random = () => {
-    const num = 100
+    const num = 30
     const factor = 2
     if (!randomShape[0]) {
       for (let i = 0; i < num; i++) {
-        const x = getRandomInt(-size * factor, size * factor)
-        const y = getRandomInt(-size * factor, size * factor)
+        const x = getRandomInt(-baseSize * factor, baseSize * factor)
+        const y = getRandomInt(-baseSize * factor, baseSize * factor)
         randomShape[i] = p.createVector(x, y)
       }
     }
     return toShape(randomShape)
   }
 
-  const shapes = [dot, triangle, square, star, octagon]
+  const complexOctagon = () => {
+    let shape = []
+    for (let i = 0; i < 8; i++) {
+      const f = 0.33 * i
+      shape = [
+        ...shape,
+        p.createVector(0, -size),
+        p.createVector(f * size, -(f * size)),
+        p.createVector(size, 0),
+        p.createVector(f * size, f * size),
+        p.createVector(0, size),
+        p.createVector(-(f * size), f * size),
+        p.createVector(-size, 0),
+        p.createVector(-(f * size), -(f * size)),
+      ]
+    }
+    return toShape(shape)
+  }
+
+  const squareWeb = () => {
+    let shape = []
+    for (let i = 1; i < 8; i++) {
+      const w = (size / 4) * i
+      const h = w
+      shape.push(p.createVector(0, -h))
+      shape.push(p.createVector(w, 0))
+      shape.push(p.createVector(0, h))
+      shape.push(p.createVector(-w, 0))
+      shape.push(p.createVector(w, 0))
+      shape.push(p.createVector(-w, 0))
+      shape.push(p.createVector(0, -h))
+      shape.push(p.createVector(0, h))
+    }
+
+    return toShape(shape)
+  }
+
+  const triangles = () => {
+    const shape = []
+    for (let i = 8; i > 0; i--) {
+      const s = (size / 4) * i
+      const s2 = s / 2
+      shape.push(p.createVector(s, -s))
+      shape.push(p.createVector(0, s))
+      shape.push(p.createVector(-s, -s))
+      shape.push(p.createVector(s2, -s2))
+      shape.push(p.createVector(0, s2))
+      shape.push(p.createVector(-s2, -s2))
+    }
+    return toShape(shape)
+  }
+
+  const shapes = [
+    dot,
+    triangle,
+    square,
+    star,
+    octagon,
+    random,
+    complexOctagon,
+    squareWeb,
+    triangles,
+  ]
+  // const shapes = [triangles]
 
   const toShape = (shape) => {
-    if (vectors.length < shape.length) {
+    if (vectors.length < shape.length || vectors.length % shape.length !== 0) {
       const x = vectors[0] ? vectors[0].x : 0
       const y = vectors[0] ? vectors[0].y : 0
       vectors.push(p.createVector(x, y))
@@ -152,7 +227,6 @@ const sketch = (p) => {
         done = false
       }
     }
-    return done
     return vectors.every((vector, index) => {
       return (
         vector.x === shape[index % shape.length].x &&
