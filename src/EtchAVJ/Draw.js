@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import { drawLines } from './Line'
 
@@ -6,9 +6,8 @@ const sketch = (initialVectors = [], onSave) => (p) => {
   let vectors = []
   let save, clear, undo
   p.setup = () => {
-    vectors = initialVectors.map((v) => {
-      return p.createVector(v.x, v.y)
-    })
+    vectors = []
+    console.log('setup')
     p.createCanvas(p.windowWidth, p.windowHeight)
     save = p.createButton('Save')
     save.mousePressed(onPressSave)
@@ -24,7 +23,8 @@ const sketch = (initialVectors = [], onSave) => (p) => {
     vectors = []
   }
   const onPressSave = () => {
-    onSave(vectors)
+    const genVectors = () => vectors
+    onSave(genVectors)
   }
   const positionButtons = () => {
     p.translate(p.width / 2, p.height / 2)
@@ -98,10 +98,6 @@ const sketch = (initialVectors = [], onSave) => (p) => {
   }
 }
 
-const hasVector = (p5Vectors, vector) => {
-  return p5Vectors.some((v) => v.x === vector.x && v.y === vector.y)
-}
-
 const isSameAsPrevVector = (p5Vectors, vector) => {
   if (!p5Vectors || !p5Vectors.length) {
     return false
@@ -117,12 +113,7 @@ const isHovered = ({ x, y, p }) => {
   return hovered
 }
 
-export default ({ initialVectors, onAddVector }) => {
-  const s = sketch(initialVectors, onAddVector)
+export default ({ initialShapes, onSaveShape }) => {
+  const s = sketch(initialShapes, onSaveShape)
   return <P5Wrapper sketch={s} />
-}
-
-function round_to_precision(x, precision) {
-  var y = +x + (precision === undefined ? 0.5 : precision / 2)
-  return y - (y % (precision === undefined ? 1 : +precision))
 }

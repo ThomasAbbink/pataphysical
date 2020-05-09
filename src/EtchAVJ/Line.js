@@ -1,14 +1,10 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import p5 from 'p5'
-import 'p5/lib/addons/p5.sound'
-import defaultDrawings from './default-drawings'
-const mic = new p5.AudioIn()
 
-const sketch = (p) => {
+const sketch = (shapes) => (p) => {
+  console.log(shapes)
   const vectors = []
-  const baseSize = 100
-  let size = baseSize
   let beat = 1
   let beatFactor = 2
   const state = {
@@ -17,17 +13,19 @@ const sketch = (p) => {
   let r = 0
   let b = 0
   let g = 0
-  const shapes = defaultDrawings
 
   const getNextShape = () => {
     return getRandomInt(0, shapes.length)
   }
+  let mic
 
   p.setup = () => {
+    mic = new p5.AudioIn()
     p.createCanvas(p.windowWidth, p.windowHeight)
     p.stroke(255)
     p.noFill()
     mic.start()
+    p.getAudioContext().resume()
   }
 
   p.windowResized = () => {
@@ -53,7 +51,7 @@ const sketch = (p) => {
       }
     }
 
-    const shape = defaultDrawings[to]
+    const shape = shapes[to]
     const done = toShape(shape, beat)
     if (done) {
       state.to = getNextShape()
@@ -114,7 +112,10 @@ export const drawLines = (p, vectors) => {
   }
 }
 
-export default () => <P5Wrapper sketch={sketch} />
+export default ({ shapes = [] }) => {
+  const s = sketch(shapes)
+  return <P5Wrapper sketch={s} />
+}
 
 function getRandomInt(min, max) {
   min = Math.ceil(min)

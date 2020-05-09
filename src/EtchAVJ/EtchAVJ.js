@@ -2,32 +2,30 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Line from './Line'
 import Draw from './Draw'
-import defaultDrawings from './default-drawings'
+import defaultShapes from './default-shapes'
 
 export const EtchAVJ = () => {
   const [isDrawing, setIsDrawing] = useState(true)
-  const [savedDrawings, setSavedDrawings] = useState(defaultDrawings)
+  const [savedShapes, setSavedShapes] = useState(defaultShapes)
   const onClickSwitch = () => {
     setIsDrawing((curr) => !curr)
   }
-  const [currentVectors, setCurrentVectors] = useState(
-    defaultDrawings[0].vectors,
-  )
-  const onAddVector = ({ x, y }) => {
-    setCurrentVectors((curr) => [...curr, { x, y }])
-  }
-  const onSave = () => {}
 
-  const onDeselect = () => {}
+  const onSaveShape = (vectors = () => []) => {
+    setSavedShapes((curr) => {
+      return [...curr, { name: '', vectors }]
+    })
+  }
+
   return (
     <Container>
       <button onClick={onClickSwitch}>
         {isDrawing ? 'Check it out' : 'back to the drawing board'}
       </button>
       {isDrawing ? (
-        <Draw onAddVector={onAddVector} initialVectors={currentVectors} />
+        <Draw onSaveShape={onSaveShape} initialShapes={savedShapes} />
       ) : (
-        <Line />
+        <Line shapes={savedShapes} />
       )}
     </Container>
   )
