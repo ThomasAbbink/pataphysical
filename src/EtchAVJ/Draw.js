@@ -1,14 +1,16 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
-import { drawLines } from './Line'
+import { drawLines } from './Show'
 
-const sketch = (initialVectors = [], onSave) => (p) => {
-  let vectors = []
+const sketch = (onSave, initialVectors = []) => (p) => {
+  let vectors = initialVectors
   let save, clear, undo
+  let wrapperWidth, wrapperHeight
+
   p.setup = () => {
-    vectors = []
-    console.log('setup')
-    p.createCanvas(p.windowWidth, p.windowHeight)
+    const { width, height } = getCanvasSize()
+
+    p.createCanvas(width, height)
     save = p.createButton('Save')
     save.mousePressed(onPressSave)
     clear = p.createButton('clear')
@@ -18,22 +20,34 @@ const sketch = (initialVectors = [], onSave) => (p) => {
     positionButtons()
   }
 
+  const getCanvasSize = () => {
+    const wrapper = document.getElementById('sketch-wrapper')
+    const { width, height } = wrapper.getBoundingClientRect()
+    wrapperWidth = width
+    wrapperHeight = height
+    return { width, height }
+  }
+
   const onPressUndo = () => vectors.pop()
+
   const onPressClear = () => {
     vectors = []
   }
+
   const onPressSave = () => {
     const genVectors = () => vectors
     onSave(genVectors)
   }
+
   const positionButtons = () => {
-    p.translate(p.width / 2, p.height / 2)
-    save.position(p.width - 50, 50)
-    undo.position(p.width - 50, 100)
-    clear.position(p.width - 50, 150)
+    save.position(p.width - 50, wrapperHeight + 50)
+    undo.position(p.width - 100, wrapperHeight + 50)
+    clear.position(p.width - 150, wrapperHeight + 50)
   }
+
   p.windowResized = () => {
-    p.resizeCanvas(p.windowWidth, p.windowHeight)
+    const { width, height } = getCanvasSize()
+    p.resizeCanvas(width, height)
     positionButtons()
   }
 
@@ -82,7 +96,13 @@ const sketch = (initialVectors = [], onSave) => (p) => {
           vectors.push(p.createVector(x, y))
         }
       }
-      if (hover) {
+      if (
+        hover &&
+        p.mouseX > 0 &&
+        p.mouseX < wrapperWidth &&
+        p.mouseY > 0 &&
+        p.mouseY < wrapperHeight
+      ) {
         if (p5Vectors.length) {
           p.line(
             p5Vectors[vectors.length - 1].x,
@@ -107,13 +127,13 @@ const isSameAsPrevVector = (p5Vectors, vector) => {
 }
 
 const isHovered = ({ x, y, p }) => {
-  const hovered =
+  return (
     p.mouseX > x - 8 && p.mouseX < x + 8 && p.mouseY > y - 8 && p.mouseY < y + 8
-
-  return hovered
+  )
 }
 
-export default ({ initialShapes, onSaveShape }) => {
-  const s = sketch(initialShapes, onSaveShape)
+export const Draw = ({ onSaveShape, initialVectors }) => {
+  const s = sketch(onSaveShape, initialVectors)
+  console.log(initialVectors)
   return <P5Wrapper sketch={s} />
 }

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "es-iter": "^1.1.1",
+    "faker": "^5.1.0",
     "p5": "0.10.2",
     "react": "^16.12.0",
     "react-art": "^16.12.0",

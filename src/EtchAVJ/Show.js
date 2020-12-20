@@ -3,7 +3,6 @@ import { P5Wrapper } from '../P5Wrapper'
 import p5 from 'p5'
 
 const sketch = (shapes) => (p) => {
-  console.log(shapes)
   const vectors = []
   let beat = 1
   let beatFactor = 2
@@ -21,16 +20,24 @@ const sketch = (shapes) => (p) => {
 
   p.setup = () => {
     mic = new p5.AudioIn()
-    p.createCanvas(p.windowWidth, p.windowHeight)
+    const { width, height } = getCanvasSize()
+    p.createCanvas(width, height)
     p.stroke(255)
     p.noFill()
     mic.start()
     p.getAudioContext().resume()
   }
 
+  const getCanvasSize = () => {
+    const wrapper = document.getElementById('sketch-wrapper')
+    const { width, height } = wrapper.getBoundingClientRect()
+    return { width, height }
+  }
+
   p.windowResized = () => {
     p.resizeCanvas(p.windowWidth, p.windowHeight)
   }
+
   p.draw = () => {
     p.translate(p.width / 2, p.height / 2)
     p.background(0)
@@ -64,6 +71,9 @@ const sketch = (shapes) => (p) => {
   }
 
   const toShape = (shape, beat = 1) => {
+    if (!shape) {
+      return
+    }
     const { vectors: shapeVectors } = shape
     const shapeP5Vectors = shapeVectors().map((v) => {
       const x = Math.round(v.x * beat)
@@ -104,16 +114,17 @@ const sketch = (shapes) => (p) => {
 }
 
 export const drawLines = (p, vectors) => {
+  p.strokeWeight(2)
   for (let i = 0; i < vectors.length - 1; i++) {
     const vector1 = vectors[i]
     const vector2 = vectors[i + 1]
     p.line(vector1.x, vector1.y, vector2.x, vector2.y)
-    // p.text(i, vector1.x, vector1.y)
   }
 }
 
-export default ({ shapes = [] }) => {
+export const Show = ({ shapes = [] }) => {
   const s = sketch(shapes)
+  console.log()
   return <P5Wrapper sketch={s} />
 }
 

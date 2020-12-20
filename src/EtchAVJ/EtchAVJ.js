@@ -1,39 +1,95 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import Line from './Line'
-import Draw from './Draw'
+import { Show } from './Show'
+import { Draw } from './Draw'
+import { ShapeList } from './shape-list/ShapeList'
 import defaultShapes from './default-shapes'
+import { generateShapeName } from './generateName'
 
 export const EtchAVJ = () => {
   const [isDrawing, setIsDrawing] = useState(true)
   const [savedShapes, setSavedShapes] = useState(defaultShapes)
+  const [currentShape, setCurrentShape] = useState(null)
+
   const onClickSwitch = () => {
     setIsDrawing((curr) => !curr)
   }
 
+  const onClickShape = (shapeName) => {
+    const shape = savedShapes.find((s) => s.name === shapeName)
+    setCurrentShape(shape)
+  }
+
   const onSaveShape = (vectors = () => []) => {
     setSavedShapes((curr) => {
-      return [...curr, { name: '', vectors }]
+      return [...curr, { name: generateShapeName(), vectors }]
     })
   }
 
+  const onRemoveShape = (name) => {
+    if (!name) return
+    setSavedShapes((current) => {
+      return current.filter((it) => it.name !== name)
+    })
+  }
+
+  const currentVectors = currentShape ? currentShape.vectors() : []
+
   return (
     <Container>
-      <button onClick={onClickSwitch}>
-        {isDrawing ? 'Check it out' : 'back to the drawing board'}
-      </button>
-      {isDrawing ? (
-        <Draw onSaveShape={onSaveShape} initialShapes={savedShapes} />
-      ) : (
-        <Line shapes={savedShapes} />
-      )}
+      <SketchWrapper id="sketch-wrapper">
+        {isDrawing ? (
+          <Draw onSaveShape={onSaveShape} initialVectors={currentVectors} />
+        ) : (
+          <Show shapes={savedShapes} />
+        )}
+      </SketchWrapper>
+      <Controls>
+        <ShapeList
+          shapes={savedShapes}
+          onRemoveShape={onRemoveShape}
+          onClickShape={onClickShape}
+        />
+
+        <SwitchButton onClick={onClickSwitch}>
+          {isDrawing ? 'Check it out' : 'back to the drawing board'}
+        </SwitchButton>
+      </Controls>
     </Container>
   )
 }
 
 const Container = styled.div`
-  display: grid;
   width: 100%;
   height: 100%;
-  grid: ;
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+`
+
+const Controls = styled.div`
+  height: 300px;
+  width: 100%;
+  display: flex;
+  background-color: black;
+`
+
+const SketchWrapper = styled.div`
+  display: flex;
+  flex-grow: 1;
+  background-color: black;
+  height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+  align-items: center;
+`
+const SwitchButton = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid white;
+  border-radius: 5px;
 `

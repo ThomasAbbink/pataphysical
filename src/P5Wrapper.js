@@ -10,8 +10,13 @@ export class P5Wrapper extends React.Component {
   componentDidMount() {
     this.myP5 = new p5(this.props.sketch, this.ref.current)
   }
+
+  componentDidUpdate() {
+    this.myP5.remove()
+
+    this.myP5 = new p5(this.props.sketch, this.ref.current)
+  }
   componentWillUnmount() {
-    console.log('unmounting')
     this.myP5.remove()
   }
   render() {

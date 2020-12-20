@@ -1,4 +1,5 @@
 export default [
+  { name: 'dot', vectors: () => [{ x: 0, y: 0 }] },
   {
     name: 'triangle',
     vectors: () => [
@@ -8,7 +9,6 @@ export default [
       { x: 100, y: -100 },
     ],
   },
-  { name: 'dot', vectors: () => [{ x: 0, y: 0 }] },
   {
     name: 'square',
     vectors: () => [
