@@ -1,6 +1,7 @@
 import { matmul, scale } from './MatrixHelper'
 import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
+import { getCanvasSize } from '../p5-utility/canvas'
 // import Iter from 'es-iter'
 
 const p = (p) => {
@@ -122,12 +123,14 @@ const p = (p) => {
   }
 
   p.setup = () => {
-    p.createCanvas(p.windowWidth, p.windowHeight)
+    const { width, height } = getCanvasSize()
+    p.createCanvas(width, height)
     createSliders()
   }
 
   p.windowResized = () => {
-    p.resizeCanvas(p.windowWidth, p.windowHeight)
+    const { width, height } = getCanvasSize()
+    p.resizeCanvas(width, height)
     updateSliderPosition()
   }
 

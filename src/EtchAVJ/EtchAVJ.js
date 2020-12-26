@@ -37,13 +37,12 @@ export const EtchAVJ = () => {
 
   return (
     <Container>
-      <SketchWrapper id="sketch-wrapper">
-        {isDrawing ? (
-          <Draw onSaveShape={onSaveShape} initialVectors={currentVectors} />
-        ) : (
-          <Show shapes={savedShapes} />
-        )}
-      </SketchWrapper>
+      {isDrawing ? (
+        <Draw onSaveShape={onSaveShape} initialVectors={currentVectors} />
+      ) : (
+        <Show shapes={savedShapes} />
+      )}
+
       <Controls>
         <ShapeList
           shapes={savedShapes}
@@ -74,16 +73,6 @@ const Controls = styled.div`
   background-color: black;
 `
 
-const SketchWrapper = styled.div`
-  display: flex;
-  flex-grow: 1;
-  background-color: black;
-  height: 100vh;
-  width: 100%;
-  max-width: 100%;
-  justify-content: center;
-  align-items: center;
-`
 const SwitchButton = styled.button`
   width: 10rem;
   height: 2rem;

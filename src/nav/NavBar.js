@@ -1,18 +1,18 @@
-import React, { Component } from 'react'
+import React from 'react'
 import NavBarItem from './NavBarItem'
 import styled from 'styled-components'
 
-export default class NavBar extends Component {
-  render() {
-    return (
-      <Container>
-        <Ul>
-          <NavBarItem text="Cube" to="4dcube" />
-          <NavBarItem text="Cardioid" to="cardioid" />
-        </Ul>
-      </Container>
-    )
-  }
+export default () => {
+  return (
+    <Container>
+      <Ul>
+        <NavBarItem text="Cube" to="4dcube" />
+        <NavBarItem text="Cardioid" to="cardioid" />
+        <NavBarItem text="Fourier" to="fourier" />
+        <NavBarItem text="Pizza Fourrier" to="pizza-fourrier" />
+      </Ul>
+    </Container>
+  )
 }
 
 const Container = styled.div`

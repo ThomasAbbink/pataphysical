@@ -5,7 +5,8 @@ import Cardioid from './geometry/Cardioid'
 import NavBar from './nav/NavBar'
 import NotFoundPage from './nav/NotFoundPage'
 import { EtchAVJ } from './EtchAVJ/EtchAVJ'
-
+import Fourier from './sound/Fourier'
+import PizzaFourrier from './sound/PizzaFourrier'
 class App extends Component {
   render() {
     return (
@@ -22,6 +23,8 @@ class App extends Component {
             <Route exact path="/" component={EtchAVJ} />
             <Route exact path="/4dcube" component={Cube} />
             <Route exact path="/cardioid" component={Cardioid} />
+            <Route exact path="/fourier" component={Fourier} />
+            <Route exact path="/pizza-fourrier" component={PizzaFourrier} />
             <Route component={NotFoundPage} />
           </Switch>
         </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import p5 from 'p5'
+import { getCanvasSize } from '../p5-utility/canvas'
 
 const sketch = (shapes) => (p) => {
   const vectors = []
@@ -26,12 +27,6 @@ const sketch = (shapes) => (p) => {
     p.noFill()
     mic.start()
     p.getAudioContext().resume()
-  }
-
-  const getCanvasSize = () => {
-    const wrapper = document.getElementById('sketch-wrapper')
-    const { width, height } = wrapper.getBoundingClientRect()
-    return { width, height }
   }
 
   p.windowResized = () => {
