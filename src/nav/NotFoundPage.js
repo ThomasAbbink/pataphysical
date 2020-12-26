@@ -1,29 +1,27 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-export default class NotFoundPage extends Component {
-  render() {
-    return (
-      <div
+export default () => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black',
+        width: '100%',
+        height: '100vh',
+      }}
+    >
+      <span
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'black',
-          width: '100%',
-          height: '100vh'
+          color: 'white',
+          fontFamily: 'HelveticaNeu',
+          fontSize: 40,
+          textAlign: 'center',
         }}
       >
-        <span
-          style={{
-            color: 'white',
-            fontFamily: 'HelveticaNeu',
-            fontSize: 40,
-            textAlign: 'center'
-          }}
-        >
-          Not yet invented
-        </span>
-      </div>
-    )
-  }
+        Not yet invented
+      </span>
+    </div>
+  )
 }

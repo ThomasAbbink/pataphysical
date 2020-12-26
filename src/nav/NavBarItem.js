@@ -1,16 +1,14 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-export default class NavBarItem extends Component {
-  isActive = () => {
-    const url = window.location.href
-    return url.substr(url.lastIndexOf('/') + 1) === this.props.to
-  }
+export default ({ to, text }) => {
+  // const isActive = () => {
+  //   const url = window.location.href
+  //   return url.substr(url.lastIndexOf('/') + 1) === to
+  // }
 
-  render() {
-    return <StyledLink to={this.props.to}>{this.props.text}</StyledLink>
-  }
+  return <StyledLink to={to}>{text}</StyledLink>
 }
 
 const StyledLink = styled(NavLink)`

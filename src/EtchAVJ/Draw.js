@@ -1,6 +1,7 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import { drawLines } from './Show'
+import { getCanvasSize } from '../p5-utility/canvas'
 
 const sketch = (onSave, initialVectors = []) => (p) => {
   let vectors = initialVectors
@@ -9,7 +10,8 @@ const sketch = (onSave, initialVectors = []) => (p) => {
 
   p.setup = () => {
     const { width, height } = getCanvasSize()
-
+    wrapperWidth = width
+    wrapperHeight = height
     p.createCanvas(width, height)
     save = p.createButton('Save')
     save.mousePressed(onPressSave)
@@ -18,14 +20,6 @@ const sketch = (onSave, initialVectors = []) => (p) => {
     undo = p.createButton('undo')
     undo.mousePressed(onPressUndo)
     positionButtons()
-  }
-
-  const getCanvasSize = () => {
-    const wrapper = document.getElementById('sketch-wrapper')
-    const { width, height } = wrapper.getBoundingClientRect()
-    wrapperWidth = width
-    wrapperHeight = height
-    return { width, height }
   }
 
   const onPressUndo = () => vectors.pop()
