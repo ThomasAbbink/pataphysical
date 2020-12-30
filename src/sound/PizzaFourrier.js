@@ -3,6 +3,13 @@ import React from 'react'
 import p5 from 'p5'
 import { getCanvasSize } from '../p5-utility/canvas'
 
+const average = (list) => list.reduce((prev, curr) => prev + curr) / list.length
+const median = (arr) => {
+  const mid = Math.floor(arr.length / 2),
+    nums = [...arr].sort((a, b) => a - b)
+  return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2
+}
+
 const sketch = (p) => {
   let mic
   let fft
@@ -22,7 +29,8 @@ const sketch = (p) => {
     const { width, height } = getCanvasSize()
     p.resizeCanvas(width, height)
   }
-
+  // lower = more slices
+  let rotate = 0
   p.draw = () => {
     const { width, height } = getCanvasSize()
     const spectrum = fft.analyze()
@@ -30,36 +38,38 @@ const sketch = (p) => {
     p.background(0)
     p.translate(width / 2, height / 2)
     p.stroke(255)
+    // const spectrumAverage = average(spectrum)
+    const spectrumAverage = 2
 
-    let factor = 20
-    const data = spectrum.reduce((acc, curr, index) => {
-      if (index % factor === 0) {
-        return [...acc, curr]
-      }
+    const factor = Math.round(p.map(spectrumAverage, 0, 50, 30, 25, true))
 
-      const next = [...acc]
-      const last = next[next.length - 1]
-      if (last) {
-        next[acc.length - 1] = last + curr
-      }
-      next[acc.length - 1] = 0
-      return next
-    }, [])
-    console.log(data)
-    const sliceDegree = 360 / spectrum.length
-    for (let i = 0; i < spectrum.length; i += factor) {
-      const sliceHeight = p.map(spectrum[i], 0, 255, 500, 1000)
-      const red = p.map(i, 0, spectrum.length % 255, 10, 255)
-      const green = p.map(i, 0, spectrum.length, 20, 255)
-      const blue = p.map(i, 0, spectrum.length, 40, 255)
+    const data = spectrum
+      //array of arrays with length factor
+      .reduce((acc, curr, index) => {
+        if (index === 0 || index % factor === 0) {
+          return [...acc, [curr]]
+        }
+        return [...acc.slice(0, acc.length - 1), [...acc[acc.length - 1], curr]]
+      }, [])
+      // .map(median)
+      .map(average)
 
-      const start = sliceDegree * i + -90
-      const end = start + sliceDegree * factor
+    const sliceDegree = 360 / data.length
+
+    for (let i = 0; i < data.length; i++) {
+      const sliceHeight = p.map(data[i], 0, 255, 300, 600, true)
+      const red = p.map(i, 0, data.length, 100, 255)
+      const green = p.map(i, 0, data.length, 20, 255)
+      const blue = p.map(i, 0, data.length, 40, 200)
+
+      const start = sliceDegree * i - 90
+      const end = start + sliceDegree
       p.stroke(red, green, blue)
       p.fill(red, green, blue)
-      p.rotate(factor)
-      p.arc(0, 0, sliceHeight, sliceHeight, start, end)
+      p.rotate(rotate)
+      p.arc(0, 0, sliceHeight, sliceHeight, start - 0.1, end)
     }
+    rotate += 0.1
   }
 }
 
