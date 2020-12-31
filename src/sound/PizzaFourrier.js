@@ -2,13 +2,7 @@ import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
 import p5 from 'p5'
 import { getCanvasSize } from '../p5-utility/canvas'
-
-const average = (list) => list.reduce((prev, curr) => prev + curr) / list.length
-// const median = (arr) => {
-//   const mid = Math.floor(arr.length / 2),
-//     nums = [...arr].sort((a, b) => a - b)
-//   return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2
-// }
+import { average } from '../util/array'
 
 const sketch = (p) => {
   let mic
@@ -38,7 +32,6 @@ const sketch = (p) => {
     p.background(0)
     p.translate(width / 2, height / 2)
     p.stroke(255)
-    // const spectrumAverage = average(spectrum)
     const spectrumAverage = 2
 
     const factor = Math.round(p.map(spectrumAverage, 0, 50, 30, 25, true))
@@ -51,7 +44,6 @@ const sketch = (p) => {
         }
         return [...acc.slice(0, acc.length - 1), [...acc[acc.length - 1], curr]]
       }, [])
-      // .map(median)
       .map(average)
 
     const sliceDegree = 360 / data.length

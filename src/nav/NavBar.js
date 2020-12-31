@@ -10,6 +10,7 @@ export default () => {
         <NavBarItem text="Cardioid" to="cardioid" />
         <NavBarItem text="Fourier" to="fourier" />
         <NavBarItem text="Pizza Fourrier" to="pizza-fourrier" />
+        <NavBarItem text="SoundSet" to="soundset" />
       </Ul>
     </Container>
   )
