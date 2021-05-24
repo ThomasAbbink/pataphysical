@@ -17,7 +17,7 @@ function App() {
         <Base>
           <NavBar hiddenPathNames={['/kiosk']} />
           <Switch>
-            <Route exact path="/" component={EtchAVJ} />
+            <Route exact path="/" component={KioskPage} />
             <Route exact path="/kiosk" component={KioskPage} />
             <Route exact path="/4dcube" component={Cube} />
             <Route exact path="/cardioid" component={Cardioid} />
