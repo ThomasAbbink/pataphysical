@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch, useLocation } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Cube from './geometry/Cube'
 import Cardioid from './geometry/Cardioid'
 import NavBar from './nav/NavBar'
@@ -9,7 +9,7 @@ import Fourier from './sound/Fourier'
 import PizzaFourrier from './sound/PizzaFourrier'
 import KioskPage from './kiosk/KioskPage'
 
-function App({}) {
+function App() {
   return (
     <BrowserRouter>
       <div
