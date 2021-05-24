@@ -21,9 +21,6 @@ const SketchWrapper = styled.div`
   display: flex;
   flex-grow: 1;
   background-color: black;
-  height: 100vh;
-  width: 100%;
-  max-width: 100%;
   justify-content: center;
   align-items: center;
 `

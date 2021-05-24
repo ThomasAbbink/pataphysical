@@ -6,8 +6,8 @@ import { ShapeList } from './shape-list/ShapeList'
 import defaultShapes from './default-shapes'
 import { generateShapeName } from './generateName'
 
-export const EtchAVJ = () => {
-  const [isDrawing, setIsDrawing] = useState(true)
+const EtchAVJ = () => {
+  const [isDrawing, setIsDrawing] = useState(false)
   const [savedShapes, setSavedShapes] = useState(defaultShapes)
   const [currentShape, setCurrentShape] = useState(null)
 
@@ -57,6 +57,8 @@ export const EtchAVJ = () => {
     </Container>
   )
 }
+
+export default EtchAVJ
 
 const Container = styled.div`
   width: 100%;
