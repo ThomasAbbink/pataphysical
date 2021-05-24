@@ -1,8 +1,12 @@
 import React from 'react'
 import NavBarItem from './NavBarItem'
 import styled from 'styled-components'
+import { useLocation } from 'react-router-dom'
 
-export default () => {
+export default ({ hiddenPathNames = [] }) => {
+  const location = useLocation()
+  const isHidden = hiddenPathNames.includes(location.pathname)
+  if (isHidden) return null
   return (
     <Container>
       <Ul>
