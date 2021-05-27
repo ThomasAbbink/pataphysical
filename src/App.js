@@ -4,18 +4,18 @@ import Cube from './geometry/Cube'
 import Cardioid from './geometry/Cardioid'
 import NavBar from './nav/NavBar'
 import NotFoundPage from './nav/NotFoundPage'
-import EtchAVJ from './EtchAVJ/EtchAVJ'
 import Fourier from './sound/Fourier'
 import PizzaFourrier from './sound/PizzaFourrier'
 import KioskPage from './kiosk/KioskPage'
 import styled, { createGlobalStyle } from 'styled-components'
+
 function App() {
   return (
     <>
       <GlobalStyle />
       <BrowserRouter>
         <Base>
-          <NavBar hiddenPathNames={['/kiosk']} />
+          <NavBar hiddenPathNames={['/kiosk', '/']} />
           <Switch>
             <Route exact path="/" component={KioskPage} />
             <Route exact path="/kiosk" component={KioskPage} />
