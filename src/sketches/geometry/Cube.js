@@ -1,7 +1,7 @@
 import { matmul, scale } from './MatrixHelper'
 import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
-import { getCanvasSize } from '../p5-utility/canvas'
+import { getCanvasSize } from '../../utility/canvas'
 // import Iter from 'es-iter'
 
 const p = (p) => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import p5 from 'p5'
-import { getCanvasSize } from '../p5-utility/canvas'
+import { getCanvasSize } from '../../utility/canvas'
 
 const sketch = (shapes) => (p) => {
   const vectors = []
@@ -119,7 +119,6 @@ export const drawLines = (p, vectors) => {
 
 export const Show = ({ shapes = [] }) => {
   const s = sketch(shapes)
-  console.log()
   return <P5Wrapper sketch={s} />
 }
 

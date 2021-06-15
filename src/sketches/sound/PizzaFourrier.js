@@ -1,8 +1,8 @@
 import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
 import p5 from 'p5'
-import { getCanvasSize } from '../p5-utility/canvas'
-import { average } from '../util/array'
+import { getCanvasSize } from '../../utility/canvas'
+import { average } from '../../utility/array'
 
 const sketch = (p) => {
   let mic

@@ -1,7 +1,7 @@
-import { P5Wrapper } from '../P5Wrapper'
+import { P5Wrapper } from '../../P5Wrapper'
 import React from 'react'
 import p5 from 'p5'
-import { getCanvasSize } from '../p5-utility/canvas'
+import { getCanvasSize } from '../../p5-utility/canvas'
 
 const sketch = (p) => {
   let mic

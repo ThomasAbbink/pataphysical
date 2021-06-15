@@ -1,7 +1,7 @@
 import React from 'react'
 import { P5Wrapper } from '../P5Wrapper'
 import { drawLines } from './Show'
-import { getCanvasSize } from '../p5-utility/canvas'
+import { getCanvasSize } from '../../utility/canvas'
 
 const sketch =
   (onSave, initialVectors = []) =>

@@ -1,6 +1,6 @@
 import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
-import { getCanvasSize } from '../p5-utility/canvas'
+import { getCanvasSize } from '../../utility/canvas'
 
 const sketch = (p5) => {
   const radius = 300
