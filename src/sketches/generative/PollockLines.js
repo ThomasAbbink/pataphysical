@@ -2,14 +2,16 @@ import React from 'react'
 import { getCanvasSize } from '../../utility/canvas'
 import { P5Wrapper } from '../P5Wrapper'
 import { Vector } from 'p5'
+import { getPalette } from './color-palettes'
 
-const flubs = new Set()
-
+let colors = []
 const sketch = (p5) => {
+  const flubs = new Set()
+
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
-
+    colors = getPalette(p5)
     p5.background(p5.color(255, 255, 255))
   }
 
@@ -28,28 +30,13 @@ const sketch = (p5) => {
       flub.update()
     })
   }
+  const addFlub = (p5) => {
+    flubs.add(flurble(p5))
+  }
 }
-
-const addFlub = (p5) => {
-  flubs.add(flurble(p5))
-}
-
-const alpha = 80
-const colors = (p5) => {
-  return colorsPaletteBlueGreen.map((color) => p5.color(...[color, alpha]))
-}
-
-const colorsPaletteBlueGreen = [
-  [111, 88, 201],
-  [126, 120, 210],
-  [182, 184, 214],
-  [187, 219, 209],
-  [189, 237, 224],
-  [20, 35, 55],
-]
 
 const flurble = (p5) => {
-  const color = p5.random(colors(p5))
+  const color = p5.random(colors)
 
   const thickness = p5.random(5, 12)
   const position = p5.createVector(0, 0)
