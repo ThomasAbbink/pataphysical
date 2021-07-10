@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import NotFoundPage from './nav/NotFoundPage'
 import KioskPage from './pages/kiosk/KioskPage'
 import styled, { createGlobalStyle } from 'styled-components'
+import Portraits from './sketches/generative/image-rendering/render-image'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Base>
           <Switch>
             <Route exact path="/" component={KioskPage} />
+            <Route exact path="/portraits" component={Image} />
             <Route component={NotFoundPage} />
           </Switch>
         </Base>
