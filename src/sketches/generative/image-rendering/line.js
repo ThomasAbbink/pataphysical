@@ -12,7 +12,7 @@ const line = (p5) => {
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
   let target = Vector.random2D()
-  let isMovingToCustomTarget = false
+
   let speed = 2
   let getPixelData = (position) => {}
 
@@ -24,7 +24,6 @@ const line = (p5) => {
   const minThickness = 0.01
 
   const moveRandomly = () => {
-    isMovingToCustomTarget = false
     if (target.x === 0 && target.y === 0) {
       target = Vector.random2D()
     }
@@ -92,7 +91,6 @@ const line = (p5) => {
   }
 
   const setTarget = (t) => {
-    isMovingToCustomTarget = true
     target = t
   }
 

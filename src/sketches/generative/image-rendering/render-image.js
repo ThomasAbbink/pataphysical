@@ -5,7 +5,6 @@ import { getPalette } from '../color-palettes'
 import line from './line'
 
 let image
-let pixels
 let lines = []
 let transitioning = false
 const images = [
@@ -29,7 +28,6 @@ const sketch = (p5) => {
       image = im
       image.resize(0, p5.height)
       im.loadPixels()
-      pixels = im.pixels
       callback && callback()
     })
   }
