@@ -1,11 +1,9 @@
 import React from 'react'
 import { getCanvasSize } from '../../../utility/canvas'
 import { P5Wrapper } from '../../P5Wrapper'
-import { getPalette } from '../color-palettes'
-import line from './line'
+import { createPattern } from './pattern'
 
 let image
-let lines = []
 let transitioning = false
 const images = [
   'dali',
@@ -13,12 +11,17 @@ const images = [
   'mick-keith',
   'iggy-body',
   'hendrix',
-  'joplin',
+  'lincoln',
+  'green_eyes',
+  'che',
+  'einstein',
+  'walken',
+  'ian_patrick',
 ]
 
-let palette
+const patterns = []
+let backgroundColor = 255
 const sketch = (p5) => {
-  palette = getPalette(p5)
   p5.preload = () => {
     transition()
   }
@@ -37,16 +40,9 @@ const sketch = (p5) => {
     p5.background(255)
   }
 
-  const addLine = () => {
-    const l = line(p5)
-    l.setColor(p5.random(palette))
-    l.setBounds({ width: p5.width, height: p5.height })
-    l.setGetPixelData(getPixelData)
-    lines.push(l)
-  }
-
   const getPixelData = (pos) => {
     if (
+      !image ||
       Math.abs(pos.x) > image.width / 2 ||
       Math.abs(pos.y) > image.height / 2
     ) {
@@ -61,34 +57,51 @@ const sketch = (p5) => {
   }
 
   p5.draw = () => {
-    if (p5.frameCount % 1000 === 0) {
+    const c = p5.color(backgroundColor)
+
+    if (p5.frameCount % 1500 === 0) {
       transition()
     }
+
     if (transitioning) {
-      p5.background(255, 255, 255, 80)
+      c.setAlpha(40)
     } else {
-      p5.background(255, 255, 255, 1)
+      c.setAlpha(1)
     }
+    p5.background(c)
+
     p5.translate(p5.width / 2, p5.height / 2)
-    if (lines.length < 400 && !transitioning) {
-      addLine()
-    }
-    lines.forEach((line, index) => {
-      line.update()
-      if (line.isOutOfBounds()) {
-        lines.splice(index, 1)
+
+    patterns.forEach((pattern, index) => {
+      pattern.update()
+      if (pattern.isDone()) {
+        patterns.splice(index, 1)
       }
     })
   }
 
+  let currentImage = ''
+  const getNextImageName = () => {
+    const next = p5.random(images)
+    if (next === currentImage) {
+      return getNextImageName()
+    }
+    currentImage = next
+    return next
+  }
+
   const transition = () => {
     transitioning = true
-    palette = getPalette(p5)
     setTimeout(() => {
-      loadImage(p5.random(images), () => {
+      loadImage(getNextImageName(), () => {
+        patterns.forEach((pattern) => {
+          pattern.stop()
+        })
+        patterns.push(createPattern(p5, { getPixelData }))
+        patterns.push(createPattern(p5, { getPixelData }))
         transitioning = false
       })
-    }, 2000)
+    }, 3000)
   }
 }
 
