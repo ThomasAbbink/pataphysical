@@ -48,8 +48,8 @@ const randomBottomEdge = (p5) => {
   )
 }
 
-const insideOut = { startPosition: center, targetPosition: randomEdge }
-const outsideIn = { startPosition: randomEdge, targetPosition: center }
+// const insideOut = { startPosition: center, targetPosition: randomEdge }
+// const outsideIn = { startPosition: randomEdge, targetPosition: center }
 const leftToRight = {
   startPosition: randomLeftEdge,
   targetPosition: randomRightEdge,
@@ -75,8 +75,8 @@ export const createPattern = (p5, { getPixelData }) => {
   const pattern = p5.random([
     leftToRight,
     rightToLeft,
-    insideOut,
-    outsideIn,
+    // insideOut,
+    // outsideIn,
     bottomToTop,
     topToBottom,
   ])

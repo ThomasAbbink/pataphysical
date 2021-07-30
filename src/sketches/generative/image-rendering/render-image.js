@@ -8,15 +8,14 @@ let transitioning = false
 const images = [
   'dali',
   'tom-waits',
-  'mick-keith',
-  'iggy-body',
   'hendrix',
-  'lincoln',
+  'bond',
   'green_eyes',
-  'che',
   'einstein',
   'walken',
-  'ian_patrick',
+  'afghan-girl',
+  'trinity-2',
+  'trinity',
 ]
 
 const patterns = []
@@ -29,7 +28,13 @@ const sketch = (p5) => {
   const loadImage = (imgName, callback) => {
     p5.loadImage(process.env.PUBLIC_URL + `/assets/${imgName}.jpeg`, (im) => {
       image = im
-      image.resize(0, p5.height)
+
+      if (image.width < image.height) {
+        image.resize(p5.width, 0)
+      } else {
+        image.resize(0, p5.height)
+      }
+
       im.loadPixels()
       callback && callback()
     })
@@ -97,6 +102,7 @@ const sketch = (p5) => {
         patterns.forEach((pattern) => {
           pattern.stop()
         })
+        p5.background(255)
         patterns.push(createPattern(p5, { getPixelData }))
         patterns.push(createPattern(p5, { getPixelData }))
         transitioning = false

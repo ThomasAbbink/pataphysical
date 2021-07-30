@@ -50,15 +50,16 @@ const Flipper = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 10rem;
+  width: 3rem;
   height: 100%;
   align-items: center;
+  transition: 0.3s;
+
   &:hover {
-    background-color: black;
-    opacity: 0.3;
+    background-color: rgba(0, 0, 0, 0.3);
   }
   &:active {
-    opacity: 0.5;
+    background-color: rgba(0, 0, 0, 0.4);
   }
 `
 const Next = styled(Flipper)`
