@@ -9,13 +9,13 @@ import { line } from './line'
  * and their movement
  */
 
-const center = (p5) => p5.createVector(0, 0)
+// const center = (p5) => p5.createVector(0, 0)
 
-const randomEdge = (p5) => {
-  const vec = Vector.random2D()
-  vec.setMag(p5.width / 2)
-  return vec
-}
+// const randomEdge = (p5) => {
+//   const vec = Vector.random2D()
+//   vec.setMag(p5.width / 2)
+//   return vec
+// }
 
 const randomLeftEdge = (p5) => {
   return p5.createVector(
