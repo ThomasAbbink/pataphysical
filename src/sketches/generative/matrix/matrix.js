@@ -9,7 +9,6 @@ let lines = new Map()
 
 const sketch = (p5) => {
   let isDone = false
-  const cli = matrixCli(p5)
   let isShowingCli = false
   const lineWidth = 15
   let backgroundColor = p5.color(5, 18, 10)
@@ -17,6 +16,7 @@ const sketch = (p5) => {
   const queue = []
   p5.setup = () => {
     const { width, height } = getCanvasSize()
+
     p5.createCanvas(width, height)
     p5.textAlign(p5.CENTER)
     p5.textFont('monospace')
@@ -69,6 +69,7 @@ const sketch = (p5) => {
   const addToQueue = (x, char) => {
     queue.push({ x, char })
   }
+  const cli = matrixCli(p5)
 
   const takeFromQueue = () => {
     if (!queue.length) return
@@ -99,15 +100,6 @@ const sketch = (p5) => {
   ]
 
   p5.draw = () => {
-    // const symbolCount = Array.from(lines.values()).reduce((acc, curr) => {
-    //   return acc + curr.getSymbolLength()
-    // }, 0)
-    // console.log(
-    //   `lines: ${
-    //     lines.size
-    //   }. symbols: ${symbolCount}. framerate: ${p5.frameRate()}`,
-    // )
-
     if (isShowingCli) {
       return cli.draw()
     }

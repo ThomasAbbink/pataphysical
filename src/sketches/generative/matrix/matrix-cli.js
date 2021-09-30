@@ -1,8 +1,8 @@
 let backgroundColor = [5, 18, 10]
 const textColor = [160, 220, 150]
-export const matrixCli = (p5) => {
+export const matrixCli = (p5, onDone) => {
   let cli = cliText(p5)
-
+  let isDone = false
   let isWriting = false
   const textLines = [
     'Wake up, little one...',
@@ -26,6 +26,11 @@ export const matrixCli = (p5) => {
         currentChar = 0
         currentTextLine++
         frameCount = 0
+      } else {
+        if (!isDone) {
+          isDone = true
+          onDone && onDone()
+        }
       }
     }
   }

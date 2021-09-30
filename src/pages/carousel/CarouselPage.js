@@ -9,7 +9,6 @@ import PollockAreas from '../../sketches/generative/PollockAreas/PollockAreas'
 import PollockClock from '../../sketches/generative/clock/clock'
 import Portraits from '../../sketches/generative/image-rendering/render-image'
 import Matrix from '../../sketches/generative/matrix/matrix'
-import MatrixCli from '../../sketches/generative/matrix/matrix-cli'
 
 export default function KioskPage() {
   return (
