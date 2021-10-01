@@ -3,25 +3,41 @@ import { getCanvasSize } from '../../../utility/canvas'
 import { P5Wrapper } from '../../P5Wrapper'
 import { matrixLine } from './matrix-line'
 import { v4 as uuid } from 'uuid'
-import { matrixCli } from './matrix-cli'
 
 let lines = new Map()
 
 const sketch = (p5) => {
-  let isDone = false
-  let isShowingCli = false
   const lineWidth = 15
   let backgroundColor = p5.color(5, 18, 10)
   let xIndexes = []
   const queue = []
+
+  let hasTyped = false
+  let hasGivenTypeHint = false
+  let hasPressedEnter = false
+  let hasGivenEnterHint = false
+  let input = ''
   p5.setup = () => {
     const { width, height } = getCanvasSize()
 
     p5.createCanvas(width, height)
     p5.textAlign(p5.CENTER)
     p5.textFont('monospace')
-
+    p5.frameRate(60)
     resetXIndexes()
+  }
+
+  p5.keyTyped = (event) => {
+    if (event.key === 'Enter') {
+      if (input) {
+        hasPressedEnter = true
+        texts.push(input.toUpperCase())
+        input = ''
+      }
+      return
+    }
+    hasTyped = true
+    input = input.concat(event.key)
   }
 
   const resetXIndexes = () => {
@@ -69,7 +85,6 @@ const sketch = (p5) => {
   const addToQueue = (x, char) => {
     queue.push({ x, char })
   }
-  const cli = matrixCli(p5)
 
   const takeFromQueue = () => {
     if (!queue.length) return
@@ -92,23 +107,15 @@ const sketch = (p5) => {
     )
   }
 
-  const texts = [
-    'COMING SOON',
-    'FROM A WOMB NEAR YOU',
-    'BABY JENN & THO',
-    'MARCH 2022',
-  ]
+  const texts = []
 
   p5.draw = () => {
-    if (isShowingCli) {
-      return cli.draw()
-    }
     p5.translate(p5.width / 2, p5.height / 2)
 
     p5.background(backgroundColor)
 
     // add random rain to queue
-    if (p5.frameCount % 8 === 0 && !isDone) {
+    if (p5.frameCount % 6 === 0) {
       addToQueue(p5.random(xIndexes))
     }
 
@@ -119,15 +126,21 @@ const sketch = (p5) => {
       lines.forEach((line) => {
         line.fade()
       })
+      if (!texts.length) {
+        resetXIndexes()
+      }
       if (texts.length) {
         addTextToQueue(texts.shift())
       }
-      if (!isDone && lines.size > 0 && texts.length === 0) {
-        isDone = true
+
+      if (!hasTyped && !hasGivenTypeHint) {
+        hasGivenTypeHint = true
+        texts.push('TYPE SOMETHING')
       }
-    }
-    if (isDone && lines.size === 0) {
-      isShowingCli = true
+      if (hasTyped && !hasPressedEnter && !hasGivenEnterHint) {
+        hasGivenEnterHint = true
+        texts.push('PRESS ENTER')
+      }
     }
 
     lines.forEach((line) => {
