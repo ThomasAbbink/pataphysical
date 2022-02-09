@@ -27,7 +27,7 @@ export default ({ children }) => {
       <Prev onClick={onPrev}>
         <LeftChevron />
       </Prev>
-      <Card>{children[currentSketch]}</Card>
+      <Card key={currentSketch}>{children[currentSketch]}</Card>
     </Container>
   )
 }

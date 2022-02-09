@@ -50,7 +50,7 @@ const circle = (p5, props) => {
     id,
     destroyCircle,
     createCircle,
-    translation = {},
+    translation = { x: 0, y: 0 },
     isStatic,
     stroke = 255,
     scale,
