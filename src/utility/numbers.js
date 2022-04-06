@@ -28,3 +28,10 @@ export const generateOscillatingNumber = ({
     heuristic,
   })
 }
+
+export const generateBeatNumber = ({ min, max, bpm, p5, frameRate }) => {
+  const frameCount = p5.frameCount
+  const framesPerBeat = Math.floor(frameRate / (bpm / 60))
+  const mod = frameCount % framesPerBeat
+  return p5.map(mod, 0, 5, max, min, true)
+}
