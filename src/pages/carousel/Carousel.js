@@ -35,14 +35,11 @@ export default ({ children }) => {
 const Container = styled.div`
   display: flex;
   flex-grow: 1;
-  margin: 3rem;
   background-color: white;
 `
 const Card = styled.div`
   display: flex;
   flex-grow: 1;
-  -webkit-box-shadow: 0px 0px 21px -7px rgba(0, 0, 0, 0.81);
-  box-shadow: 0px 0px 21px -7px rgba(0, 0, 0, 0.81);
 `
 
 const Flipper = styled.div`
