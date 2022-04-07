@@ -11,15 +11,15 @@ const sketch = (p5) => {
 
   p5.setup = () => {
     const { width, height } = getCanvasSize()
-    p5.colorMode(p5.HSLA)
+
     p5.createCanvas(width, height)
     p5.background(backgroundColor)
     p5.frameRate(30)
     gridPoints.push(dot(p5, { position: p5.createVector(0, 0) }))
     createMover()
 
-    for (let i = 0; i < p5.width; i += p5.width / 50) {
-      for (let j = 0; j < p5.height; j += p5.height / 50) {
+    for (let i = 0; i < p5.width; i += p5.width / 70) {
+      for (let j = 0; j < p5.height; j += p5.height / 70) {
         const position = p5.createVector(i, j)
         gridPoints.push(dot(p5, { position }))
       }
@@ -30,7 +30,7 @@ const sketch = (p5) => {
     movers.push(
       mover(p5, {
         initialPosition: p5.createVector(p5.width / 2, p5.height / 2),
-        isPusher,
+        isPusher: true,
       }),
     )
   }
@@ -43,13 +43,6 @@ const sketch = (p5) => {
     const { width, height } = getCanvasSize()
     p5.resizeCanvas(width, height)
   }
-
-  const getOsc = generateOscillatingNumber({
-    increment: 10,
-    min: 300,
-    max: 1000,
-    initialValue: 500,
-  })
 
   const getDotHue = generateOscillatingNumber({
     min: 0,
@@ -80,10 +73,10 @@ const sketch = (p5) => {
         removeMover()
       }
     }
-    const maxDistance = getOsc()
+    const maxDistance = p5.width / 7
     const str = `hsb(${Math.floor(
       getBackgroundHue(),
-    )}, ${getBackgroundSat()}%, 20%)`
+    )}, ${getBackgroundSat()}%,10%)`
 
     p5.background(str)
 
@@ -106,7 +99,7 @@ const dot = (p5, { position }) => {
   let velocity = p5.createVector(0, 0)
 
   const isAtTarget = (target) => {
-    return position.dist(target) === 0
+    return position.dist(target) < 10
   }
 
   const update = ({ movers = [], maxDistance, hue }) => {
@@ -116,9 +109,7 @@ const dot = (p5, { position }) => {
       p5.createVector(p5.width / 2, p5.height / 2),
     )
     const sat = p5.map(distanceFromCenter, 0, p5.width / 2, 1, 100, true)
-    if (closestMover.isPusher) {
-      maxDistance = maxDistance / 2
-    }
+
     const target =
       distanceFromMover <= maxDistance ? closestMover.position : initialPosition
 
@@ -126,13 +117,17 @@ const dot = (p5, { position }) => {
       let acceleration = Vector.sub(target, position)
       velocity.add(acceleration)
       if (closestMover.isPusher && !target.equals(initialPosition)) {
-        velocity.limit(p5.map(position.dist(target), 0, 1000, 5, 3, true))
+        velocity.limit(
+          p5.map(position.dist(target), 0, maxDistance, 6, 1, true),
+        )
         velocity.rotate(p5.PI)
       } else {
-        velocity.limit(p5.map(position.dist(target), 1, 100, 10, 3, true))
+        velocity.limit(
+          p5.map(position.dist(target), 0, maxDistance, 1, 0.1, true),
+        )
       }
       position.add(velocity)
-      const alpha = p5.map(distanceFromMover, 0, maxDistance, 1, 0, true)
+      const alpha = p5.map(distanceFromMover, 0, maxDistance, 1, 0.1, true)
       p5.stroke(p5.color(`hsba(${hue}, ${sat}%, 100%, ${alpha})`))
       p5.point(position.x, position.y)
     }
@@ -146,10 +141,10 @@ const mover = (p5, { initialPosition, isPusher }) => {
   let target = Vector.random2D()
 
   const getVelocityLimit = generateOscillatingNumber({
-    increment: 1,
-    min: 10,
-    max: 40,
-    initialValue: 10,
+    increment: 0.1,
+    min: 5,
+    max: 10,
+    initialValue: 5,
   })
 
   let maxVelocity = 4
