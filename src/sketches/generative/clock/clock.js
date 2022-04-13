@@ -4,6 +4,7 @@ import { P5Wrapper } from '../../P5Wrapper'
 import sevenSegment from './seven-segment'
 
 const sketch = (p5) => {
+  const backgroundColor = p5.color(33, 33, 40)
   const createDisplays = () => {
     const width = p5.width
 
@@ -31,14 +32,14 @@ const sketch = (p5) => {
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
-    p5.background(0)
+    p5.background(backgroundColor)
     displays = createDisplays()
   }
 
   p5.windowResized = () => {
     const { width, height } = getCanvasSize()
     p5.resizeCanvas(width, height)
-    p5.background(0)
+    p5.background(backgroundColor)
 
     displays = createDisplays()
   }

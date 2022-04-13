@@ -8,8 +8,7 @@ const segment = (p5) => {
   let bounds = { width: 300, height: 300 }
   let rotation = 0
   let isHidden = true
-  let backgroundOpacity = 100
-  let backgroundColor = 0
+  let backgroundColor = p5.color(33, 33, 40, 100)
 
   const update = () => {
     p5.push()
@@ -34,7 +33,7 @@ const segment = (p5) => {
     p5.noStroke()
     p5.translate(position)
     p5.rotate(rotation)
-    p5.fill(backgroundColor, backgroundOpacity)
+    p5.fill(backgroundColor)
     p5.rect(-width / 2, -height / 2, width, height)
 
     p5.pop()
@@ -72,13 +71,13 @@ const segment = (p5) => {
   const show = () => {
     if (!isHidden) return
     isHidden = false
-    backgroundOpacity = 0
+    backgroundColor = p5.color(33, 33, 40, 0)
   }
 
   const hide = () => {
     if (isHidden) return
     isHidden = true
-    backgroundOpacity = 80
+    backgroundColor = p5.color(33, 33, 40, 80)
   }
 
   fill()
