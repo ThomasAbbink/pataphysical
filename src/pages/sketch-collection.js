@@ -8,6 +8,7 @@ import Matrix from '../sketches/generative/matrix/matrix'
 import LotusCircles from '../sketches/generative/lotus-circles/LotusCircles'
 import ManyCircles from '../sketches/generative/many-circles/ManyCircles'
 import RepulsionAttraction from '../sketches/generative/grid-forces/repulsion-attraction'
+import Cube from '../sketches/geometry/Cube'
 
 export default function sketchCollection() {
   return [
@@ -20,5 +21,6 @@ export default function sketchCollection() {
     <PollockAreas key="areas" />,
     <PollockLines key="lines" />,
     <Cardioid key="cardioid" />,
+    <Cube key="cube" />,
   ]
 }

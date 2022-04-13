@@ -135,7 +135,7 @@ const p = (p) => {
   }
 
   p.draw = () => {
-    p.background(0)
+    p.background(p.color(33, 33, 40))
     p.fill(255)
     p.noStroke()
     p.textSize(30)
