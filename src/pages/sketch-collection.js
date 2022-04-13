@@ -20,7 +20,6 @@ export default function sketchCollection() {
     <PollockClock key="clock" />,
     <PollockAreas key="areas" />,
     <PollockLines key="lines" />,
-    <Cube key="cube" />,
     <Cardioid key="cardioid" />,
   ]
 }
