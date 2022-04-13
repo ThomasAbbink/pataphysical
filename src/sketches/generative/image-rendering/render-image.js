@@ -8,11 +8,11 @@ let transitioning = false
 const images = [
   'dali',
   'tom-waits',
-  'hendrix',
+  // 'hendrix',
   'bond',
   'green_eyes',
-  'einstein',
-  'walken',
+  // 'einstein',
+  // 'walken',
   'afghan-girl',
   'trinity-2',
   'trinity',
@@ -22,7 +22,7 @@ const patterns = []
 let backgroundColor = 255
 const sketch = (p5) => {
   p5.preload = () => {
-    transition()
+    transition(true)
   }
 
   const loadImage = (imgName, callback) => {
@@ -95,19 +95,22 @@ const sketch = (p5) => {
     return next
   }
 
-  const transition = () => {
+  const transition = (isFirst = false) => {
     transitioning = true
-    setTimeout(() => {
-      loadImage(getNextImageName(), () => {
-        patterns.forEach((pattern) => {
-          pattern.stop()
+    setTimeout(
+      () => {
+        loadImage(getNextImageName(), () => {
+          patterns.forEach((pattern) => {
+            pattern.stop()
+          })
+          p5.background(255)
+          patterns.push(createPattern(p5, { getPixelData }))
+          patterns.push(createPattern(p5, { getPixelData }))
+          transitioning = false
         })
-        p5.background(255)
-        patterns.push(createPattern(p5, { getPixelData }))
-        patterns.push(createPattern(p5, { getPixelData }))
-        transitioning = false
-      })
-    }, 3000)
+      },
+      isFirst ? 0 : 3000,
+    )
   }
 }
 
