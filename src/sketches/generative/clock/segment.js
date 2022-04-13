@@ -32,11 +32,10 @@ const segment = (p5) => {
 
     p5.push()
     p5.noStroke()
-
     p5.translate(position)
     p5.rotate(rotation)
     p5.fill(backgroundColor, backgroundOpacity)
-    p5.rect(-width / 2 - 2.5, -height / 2 - 10, width + 5, height + 20)
+    p5.rect(-width / 2, -height / 2, width, height)
 
     p5.pop()
   }

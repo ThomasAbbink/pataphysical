@@ -8,22 +8,19 @@ import { distanceSquared } from '../../../utility/vectors'
 const line = (p5) => {
   let color = p5.color(0)
   let border = { width: 100, height: 100 }
-  const thickness = p5.random(4, 10)
+  const thickness = p5.map(p5.width, 300, 1000, 3, 8, true)
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
   let target = Vector.random2D()
-  let isMovingToCustomTarget = false
-  let speed = 2
+
+  let speed = p5.map(thickness, 3, 8, 0.2, 2, true)
 
   const moveRandomly = () => {
-    isMovingToCustomTarget = false
-    if (target.x === 0 && target.y === 0) {
-      target = Vector.random2D()
-    }
-    target.rotate(p5.random(p5.PI / 3, p5.PI / 2))
+    target.rotate(p5.random(p5.PI - 0.2, p5.PI + 0.2))
     target.setMag(10000)
   }
+
   moveRandomly()
 
   const setColor = (c) => {
@@ -38,8 +35,8 @@ const line = (p5) => {
 
   const isOutOfBounds = () => {
     return (
-      Math.abs(position.x) > border.width / 2 - 10 ||
-      Math.abs(position.y) > border.height / 2 - 10
+      Math.abs(position.x) > border.width / 2 - thickness ||
+      Math.abs(position.y) > border.height / 2 - thickness
     )
   }
 
@@ -54,7 +51,7 @@ const line = (p5) => {
     p5.fill(color)
 
     p5.ellipse(position.x, position.y, thickness, thickness)
-    if (isOutOfBounds() && !isMovingToCustomTarget) {
+    if (isOutOfBounds()) {
       moveRandomly()
     }
 
@@ -67,14 +64,9 @@ const line = (p5) => {
     velocity.limit(speed)
     position.add(velocity)
     p5.pop()
-
-    if (p5.frameCount % 200 === 0) {
-      setTarget(p5.createVector(0, 0))
-    }
   }
 
   const setTarget = (t) => {
-    isMovingToCustomTarget = true
     target = t
   }
 
