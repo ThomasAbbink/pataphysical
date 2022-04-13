@@ -8,7 +8,7 @@ import { distanceSquared } from '../../../utility/vectors'
 const line = (p5) => {
   let color = p5.color(0)
   let border = { width: 100, height: 100 }
-  const thickness = p5.random(5, 12)
+  const thickness = p5.map(p5.width, 300, 1000, 2, 12, true)
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)

@@ -18,18 +18,23 @@ const sketch = (p5) => {
     p5.background(backgroundColor)
   }
 
-  const addArea = (position, bounds = { width: 200, height: 200 }) => {
+  const addArea = (position) => {
     const a = area(p5)
-    a.setBounds(bounds)
+    a.setBounds(getRandomBounds())
     a.setPosition(position)
     areas.push(a)
+  }
+
+  const getRandomBounds = () => {
+    const minSize = p5.map(p5.width, 300, 1920, 30, 100)
+    const size = p5.random(minSize, minSize * 2)
+    return { width: size, height: size }
   }
 
   const addRandomArea = () => {
     const v = Vector.random2D()
     v.setMag(p5.random(50, width / 2))
-    const size = p5.random(100, 200)
-    addArea(v, { width: size, height: size })
+    addArea(v)
   }
 
   p5.windowResized = () => {
@@ -49,7 +54,7 @@ const sketch = (p5) => {
     // move out: chaos everywhere
     if (start === 1000) {
       areas.forEach((area) => {
-        area.setBounds({ width: p5.width / 2, height: p5.height / 2 })
+        area.setBounds({ width: p5.width / 4, height: p5.height / 4 })
       })
     }
 
@@ -59,8 +64,8 @@ const sketch = (p5) => {
       areas.splice(0, areas.length / 2)
       areas.forEach((area) => {
         area.moveLinesBackHome()
-        const size = p5.random(100, 200)
-        area.setBounds({ width: size, height: size })
+
+        area.setBounds(getRandomBounds())
       })
     }
 
