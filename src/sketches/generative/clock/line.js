@@ -1,4 +1,5 @@
 import { Vector } from 'p5'
+import { distanceSquared } from '../../../utility/vectors'
 
 /**
  * @param {width: number, height: number} bounds
@@ -43,7 +44,7 @@ const line = (p5) => {
   }
 
   const isAtTarget = () => {
-    return position.dist(target) < 1
+    return distanceSquared(position, target) < 1
   }
 
   const update = () => {
