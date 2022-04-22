@@ -9,9 +9,11 @@ import LotusCircles from '../sketches/generative/lotus-circles/LotusCircles'
 import ManyCircles from '../sketches/generative/many-circles/ManyCircles'
 import RepulsionAttraction from '../sketches/generative/grid-forces/repulsion-attraction'
 import Cube from '../sketches/geometry/Cube'
+import TruchetTiles from '../sketches/generative/truchet-tiles/truchet-tiles'
 
 export default function sketchCollection() {
   return [
+    <TruchetTiles key="truchet-tiles" />,
     <RepulsionAttraction key="repulsion-attraction" />,
     <ManyCircles key="many-circles" />,
     <LotusCircles key="lotus" />,
