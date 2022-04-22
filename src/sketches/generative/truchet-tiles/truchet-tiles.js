@@ -45,7 +45,6 @@ const sketch = (p5) => {
     tiles.forEach((t) => {
       t.draw({ bezierOffset })
     })
-    p5.text(p5.frameRate(), 10, 20)
   }
 }
 
