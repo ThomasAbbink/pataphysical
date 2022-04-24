@@ -9,7 +9,7 @@ const sketch = (p5) => {
   const tiles = []
   let backgroundColor = p5.color(33, 33, 40)
   let getBezierOffset
-
+  let getSizeMultiplier
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
@@ -20,6 +20,11 @@ const sketch = (p5) => {
       min: -tileSize / 10,
       max: 0,
       increment: tileSize / 500,
+    })
+    getSizeMultiplier = generateOscillatingNumber({
+      min: 0,
+      max: 2.5,
+      increment: 0.01,
     })
     for (let x = 0; x < p5.width / tileSize; x++) {
       for (let y = 0; y < p5.height / tileSize; y++) {
@@ -41,9 +46,9 @@ const sketch = (p5) => {
     p5.background(backgroundColor)
 
     const bezierOffset = getBezierOffset()
-
+    const sizeMultiplier = getSizeMultiplier()
     tiles.forEach((t) => {
-      t.draw({ bezierOffset })
+      t.draw({ bezierOffset, sizeMultiplier })
     })
   }
 }
@@ -65,7 +70,7 @@ const flipTiles = (p5, tiles, matcher) => {
       clearInterval(interval)
       setTimeout(() => {
         isFlipping = false
-      }, 2000)
+      }, 2000 + tiles.length * 100)
       return
     }
     matches.forEach((tile) => {
@@ -118,7 +123,7 @@ const tile = (p5, { x, y, size }) => {
   let rotation = ((x + y) % 4) + 1
   let lineColor = p5.color(130, 150, 200)
 
-  const draw = ({ bezierOffset }) => {
+  const draw = ({ bezierOffset, sizeMultiplier }) => {
     if (isRotating) {
       rotate()
     }
@@ -134,10 +139,12 @@ const tile = (p5, { x, y, size }) => {
     p5.stroke(lineColor)
     p5.noFill()
 
-    const offsets = [-40, -20, 20, 40].map((o) => {
-      const mod = bezierOffset
-      return o > 0 ? o + mod : o - mod
-    })
+    const offsets = [-40, -20, 20, 40]
+      .map((o) => o * sizeMultiplier)
+      .map((o) => {
+        const mod = bezierOffset
+        return o > 0 ? o + mod : o - mod
+      })
 
     offsets.forEach((offset) => {
       p5.arc(-size / 2, -size / 2, size + offset, size + offset, 0, p5.PI / 2)
