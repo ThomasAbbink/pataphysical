@@ -23,7 +23,7 @@ const sketch = (p5) => {
     })
     getSizeMultiplier = generateOscillatingNumber({
       min: 0,
-      max: 2.5,
+      max: 2,
       increment: 0.01,
     })
     for (let x = 0; x < p5.width / tileSize; x++) {
