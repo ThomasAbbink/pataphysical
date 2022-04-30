@@ -21,6 +21,7 @@ const sketch = (p5) => {
     p5.frameRate(30)
     gridPoints.push(dot(p5, { position: p5.createVector(0, 0) }))
     createMover(maxDistance)
+    createMover(maxDistance)
 
     for (let i = 0; i < p5.width; i += p5.width / 50) {
       for (let j = 0; j < p5.height; j += p5.height / 50) {
@@ -75,7 +76,8 @@ const sketch = (p5) => {
     p5.strokeWeight(p5.map(maxDistance, 40, 120, 4, 6, true))
     if (p5.frameCount % 500 === 0) {
       createMover(maxDistance)
-      if (movers.length > 2) {
+      createMover(maxDistance)
+      if (movers.length > 3) {
         removeMover()
         removeMover()
       }
@@ -158,7 +160,7 @@ const dot = (p5, { position }) => {
         )
       }
       position.add(velocity)
-      const alpha = p5.map(distanceFromMoverSq, 0, maxDistanceSq, 1, 0.2, true)
+      const alpha = p5.map(distanceFromMoverSq, 0, maxDistanceSq, 1, 0.1, true)
       p5.stroke(p5.color(`hsba(${hue}, ${sat}%, 100%, ${alpha})`))
       p5.point(position.x, position.y)
     }
