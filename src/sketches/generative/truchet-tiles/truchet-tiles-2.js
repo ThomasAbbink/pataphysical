@@ -13,6 +13,7 @@ const sketch = (p5) => {
   let getStrokeWeight
   let getPieFillOpacity
   let getStroke
+
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
@@ -58,8 +59,8 @@ const sketch = (p5) => {
 
     xTiles = Math.floor(p5.width / maxTileSize)
 
-    for (let x = -xTiles / 2; x < xTiles + xTiles / 2; x++) {
-      for (let y = -xTiles / 2; y < xTiles + xTiles / 2; y++) {
+    for (let x = -xTiles; x < xTiles; x++) {
+      for (let y = -xTiles; y < xTiles; y++) {
         tiles.push(tile(p5, { x, y, size: maxTileSize }))
       }
     }
@@ -77,8 +78,7 @@ const sketch = (p5) => {
     const pieFillOpacity = getPieFillOpacity()
     const strokeWeight = getStrokeWeight()
     const stroke = getStroke()
-
-    p5.translate(p5.width / 2, p5.width / 2)
+    p5.translate(p5.width / 2, p5.height / 2)
     tiles.forEach((t) => {
       t.draw({ gapSize, tileSize, pieFillOpacity, strokeWeight, stroke })
     })
@@ -95,10 +95,14 @@ const tile = (p5, { x, y }) => {
     strokeWeight,
     stroke,
   }) => {
-    const xOff = x * tileSize + tileSize / 2 - gapSize * y
-    const yOff = y * tileSize + tileSize / 2 + gapSize * x
-    // dont draw stuff outside of the canvas
-    if (xOff > p5.width || yOff > p5.height) {
+    const xOff = x * tileSize - gapSize * y
+    const yOff = y * tileSize + gapSize * x
+    if (
+      xOff < -p5.width ||
+      xOff > p5.width ||
+      yOff < -p5.height ||
+      yOff > p5.height
+    ) {
       return
     }
     p5.push()
