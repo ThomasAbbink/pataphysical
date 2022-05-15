@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react'
 import p5 from 'p5'
-import 'p5/lib/addons/p5.sound' // eslint-disable-line
 import styled from 'styled-components' // eslint-disable-line
 
 export const P5Wrapper = ({ sketch }) => {
