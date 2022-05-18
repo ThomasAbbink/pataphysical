@@ -13,7 +13,7 @@ export const generateOscillatingNumber = ({
   min,
   max,
   easing = 0,
-  minSpeed = 0.1,
+  minSpeed = (max - min) / 1000,
   restFrames = 0,
 }) => {
   if (easing !== 0 && increment !== 0) {
@@ -24,21 +24,12 @@ export const generateOscillatingNumber = ({
   const heuristic = ({ value }) => {
     if (rest > 0) {
       rest -= 1
-      return value
-    }
-
-    if (value >= max) {
-      rest = restFrames
-      direction = false
-    }
-
-    if (value <= min) {
-      rest = restFrames
-      direction = true
+      return direction ? min : max
     }
 
     const target = direction ? max : min
 
+    let res
     if (easing !== 0) {
       let diff = Math.abs(target - value)
 
@@ -51,10 +42,22 @@ export const generateOscillatingNumber = ({
       }
       const val = direction ? value + diff * easing : value - diff * easing
 
-      return clamp(direction ? val + minSpeed : val - minSpeed, min, max)
+      res = clamp(direction ? val + minSpeed : val - minSpeed, min, max)
+    } else {
+      res = clamp(direction ? value + increment : value - increment, min, max)
     }
 
-    return clamp(direction ? value + increment : value - increment, min, max)
+    if (res >= max) {
+      rest = restFrames
+      direction = false
+    }
+
+    if (res <= min) {
+      rest = restFrames
+      direction = true
+    }
+
+    return res
   }
 
   return generateNumber({
