@@ -78,8 +78,7 @@ const sketch = (p5) => {
         i * faceSize + xOffset,
         y - yOffset - radius / 2,
       )
-      p5.stroke(255)
-      p5.strokeWeight(2)
+
       addTile({
         position,
         radius: squareRadius,
@@ -91,6 +90,59 @@ const sketch = (p5) => {
     }
   }
 
+  const hexagonRow = (y) => {
+    const hue = getHue()
+    const gradientHue = getGradientHue()
+    const diagonal = faceSize
+    const sx = p5.sin(p5.TWO_PI / 6) * diagonal
+
+    for (let i = 0; i < tileCount * 0.5; i++) {
+      const rotation = p5.PI / 6
+
+      const yOffset = diagonal - (diagonal - sx)
+      let xOffset = topRowHasOffset ? -faceSize / 2 : 0
+      xOffset += i * diagonal * 2
+      const position = p5.createVector(xOffset, y - yOffset)
+
+      // add hexagon
+      addTile({
+        position,
+        radius: diagonal,
+        points: 6,
+        rotation,
+        hue,
+        gradientHue,
+      })
+      const triangleXOffset = xOffset + diagonal
+
+      const topTrianglePos = p5.createVector(
+        triangleXOffset,
+        y - yOffset - radius,
+      )
+      // add triangles to the right
+      addTile({
+        position: topTrianglePos,
+        radius,
+        points: 3,
+        rotation: 0,
+        hue,
+        gradientHue,
+      })
+      const bottomTrianglePos = p5.createVector(
+        triangleXOffset,
+        y - yOffset + radius,
+      )
+
+      addTile({
+        position: bottomTrianglePos,
+        radius: radius,
+        points: 3,
+        rotation: p5.PI,
+        hue,
+        gradientHue,
+      })
+    }
+  }
   const onDestroyTile = (id) => {
     tiles.delete(id)
   }
@@ -102,29 +154,41 @@ const sketch = (p5) => {
       tile(p5, {
         ...tileProps,
         id,
+        faceSize,
+        isWild: wildFactor,
         onDestroy: onDestroyTile,
       }),
     )
   }
 
   p5.mousePressed = () => {
+    isRandomizingMode = false
     switchMode()
   }
 
   const rowTypes = {
     triangle: triangleRow,
     square: squareRow,
+    hexagon: hexagonRow,
   }
   let nextRow
-  const modes = ['alternating', 'squares_only', 'triangles_only', 'random']
+  const modes = [
+    'alternating',
+    'squares_only',
+    'triangles_only',
+    'random',
+    'hexagons_only',
+  ]
 
   let mode
-
+  let isRandomizingMode = true
+  let wildFactor = false
   const switchMode = (m = p5.random(modes)) => {
     console.log('switched to mode', mode)
     mode = m
   }
-  switchMode()
+
+  switchMode('alternating')
   // add a row on top of the top row
   const addRow = () => {
     if (tiles.size > tileCount * 1.5 * (rowCount + 2)) {
@@ -134,17 +198,19 @@ const sketch = (p5) => {
       return tile.getTopEdge() < acc ? tile.getTopEdge() : acc
     }, p5.height)
     if (topY < 0 - radius) return
-    console.log(mode)
     switch (mode) {
       case 'alternating':
         nextRow =
-          nextRow === rowTypes.triangle ? rowTypes.square : rowTypes.triangle
+          nextRow === rowTypes.triangle ? rowTypes.hexagon : rowTypes.triangle
         break
       case 'random':
         nextRow = p5.random(Object.values(rowTypes))
         break
       case 'squares_only':
         nextRow = rowTypes.square
+        break
+      case 'hexagons_only':
+        nextRow = rowTypes.hexagon
         break
       case 'triangles_only':
       default:
@@ -183,12 +249,26 @@ const sketch = (p5) => {
     increment: 3,
   })
 
+  const getSaturation = generateOscillatingNumber({
+    initialValue: p5.random(20, 100),
+    min: 20,
+    max: 100,
+    increment: p5.random(0.1, 0.3),
+  })
+
+  const getGradientSaturation = generateOscillatingNumber({
+    initialValue: p5.random(20, 100),
+    min: 20,
+    max: 100,
+    increment: 0.1,
+  })
+
   const getYVelocity = generateOscillatingNumber({
     initialValue: 1,
     min: 1,
     max: 2,
-    increment: 0.01,
-    restFrames: 200,
+    easing: 0.001,
+    restFrames: 500,
   })
 
   const getStrokeWeight = generateOscillatingNumber({
@@ -199,11 +279,17 @@ const sketch = (p5) => {
     restFrames: 300,
   })
 
-  p5.draw = () => {
-    p5.background(backgroundColor)
+  const getStrokeBrightness = generateOscillatingNumber({
+    initialValue: p5.random(0, 100),
+    min: 0,
+    max: 100,
+    increment: p5.random(0.1, 0.3),
+  })
 
-    if (p5.frameCount % 1000 === 0) {
+  p5.draw = () => {
+    if (isRandomizingMode && p5.frameCount % 1000 === 0) {
       switchMode()
+      wildFactor = !wildFactor
     }
 
     addRow()
@@ -211,12 +297,18 @@ const sketch = (p5) => {
     const gradientBrightness = getGradientBrightness()
     const gradientRadiusInterval = getGradientRadiusInterval() / 100
     const strokeWeight = getStrokeWeight()
+    const saturation = getSaturation()
+    const gradientSaturation = getGradientSaturation()
+    const strokeBrightness = getStrokeBrightness()
     tiles.forEach((tile) => {
       tile.draw({
         gradientRadiusInterval,
         yVelocity,
         gradientBrightness,
         strokeWeight,
+        saturation,
+        gradientSaturation,
+        strokeBrightness,
       })
     })
   }
@@ -233,10 +325,24 @@ const tile = (
     onDestroy,
     hue = 0,
     gradientHue,
+    faceSize,
+    isWild = false,
   },
 ) => {
   let corners = []
-  const excluded = p5.random([0, 1, 2])
+  const excludable = []
+  for (let i = 0; i < points; i++) {
+    excludable.push(i)
+  }
+  const excluded = p5.random(excludable)
+
+  const wildFactor = generateOscillatingNumber({
+    initialValue: p5.random(0, 100),
+    min: 0,
+    max: 100,
+    easing: 0.005 * p5.random(0.5, 2),
+    restFrames: p5.random(0, 100),
+  })
 
   const isOutOfBounds = () => {
     return position.y - radius > p5.height
@@ -254,6 +360,9 @@ const tile = (
     yVelocity = 1,
     gradientBrightness,
     strokeWeight,
+    saturation,
+    gradientSaturation,
+    strokeBrightness,
   }) => {
     if (isOutOfBounds()) {
       destroy()
@@ -274,29 +383,32 @@ const tile = (
       radius,
     )
 
-    let c1 = p5.color(hue, 100, gradientBrightness)
-    let c2 = p5.color(gradientHue, 100, 100)
+    let c1 = p5.color(hue, saturation, gradientBrightness)
+    let c2 = p5.color(gradientHue, gradientSaturation, 100)
     gradient.addColorStop(0, c1.toString())
 
-    gradient.addColorStop(gradientRadiusInterval, c2.toString())
+    gradient.addColorStop(
+      isWild ? wildFactor() / 100 : gradientRadiusInterval,
+      c2.toString(),
+    )
 
     gradient.addColorStop(1, c1.toString())
     p5.drawingContext.fillStyle = gradient
     corners = polygon(p5, { x: 0, y: 0, radius, points, rotation })
 
-    p5.stroke(255)
-
-    const dist = corners[0].dist(corners[1])
+    const dist = faceSize
     p5.noFill()
-    p5.stroke(p5.color(gradientHue, 40, 100))
+    p5.stroke(p5.color(gradientHue, 40, strokeBrightness))
     p5.strokeWeight(strokeWeight)
-    for (const [i, v] of corners.entries()) {
+    for (let i = 0; i < points; i++) {
       if (i === excluded) {
         continue
       }
-      const previous = corners[i - 1] || corners[corners.length - 1]
-      const next = corners[i + 1] || corners[0]
-      p5.push()
+      const v = corners[i]
+      const length = corners.length
+      const previous = corners[(i + length - 1) % length]
+      const next = corners[(i + 1) % length]
+      if (!previous || !next) continue
 
       p5.arc(
         v.x,
@@ -306,8 +418,6 @@ const tile = (
         previous.copy().sub(v).heading(),
         next.copy().sub(v).heading(),
       )
-
-      p5.pop()
     }
 
     p5.pop()
@@ -328,15 +438,16 @@ const polygon = (p5, { x, y, radius, points, rotation }) => {
   const corners = []
 
   p5.beginShape()
-  for (let i = 0; i < p5.TWO_PI; i += angle) {
-    const sx = x + p5.sin(i) * radius
-    const sy = y + p5.cos(i) * radius
+  for (let i = 0; i < points; i++) {
+    let a = i * angle
+    const sx = x + p5.sin(a) * radius
+    const sy = y + p5.cos(a) * radius
     let v = p5.createVector(sx, sy)
     v.rotate(rotation)
     corners.push(v)
     p5.vertex(v.x, v.y)
   }
-  p5.endShape(p5.CLOSE)
+  p5.endShape()
   return corners
 }
 
