@@ -11,13 +11,11 @@ import RepulsionAttraction from '../sketches/generative/grid-forces/repulsion-at
 import Cube from '../sketches/geometry/Cube'
 import TruchetTiles from '../sketches/generative/truchet-tiles/truchet-tiles'
 import TruchetTiles2 from '../sketches/generative/truchet-tiles/truchet-tiles-2'
-// import TruchetTiles3 from '../sketches/generative/truchet-tiles/truchet-tiles-3'
-import TruchetTiles4 from '../sketches/generative/truchet-tiles/truchet-tiles-4'
+import TruchetTiles3 from '../sketches/generative/truchet-tiles/truchet-tiles-3'
 
 export default function sketchCollection() {
   return [
-    <TruchetTiles4 key="truchet-tiles-4" />,
-    // <TruchetTiles3 key="truchet-tiles-3" />,
+    <TruchetTiles3 key="truchet-tiles-3" />,
     <TruchetTiles2 key="truchet-tiles-2" />,
     <TruchetTiles key="truchet-tiles" />,
     <RepulsionAttraction key="repulsion-attraction" />,
