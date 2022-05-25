@@ -71,13 +71,27 @@ export const generateBeatNumber = ({
   max,
   bpm,
   p5,
-  frameRate,
+  frameRate = 60,
   framesAtBeat = 5,
 }) => {
-  const frameCount = p5.frameCount
-  const framesPerBeat = Math.floor(frameRate / (bpm / 60))
-  const mod = frameCount % framesPerBeat
-  return p5.map(mod, 0, framesAtBeat, max, min, true)
+  const heuristic = () => {
+    const frameCount = p5.frameCount
+    const framesPerBeat = Math.floor(frameRate / (bpm / 60))
+    const mod = frameCount % framesPerBeat
+    return p5.map(mod, 0, framesAtBeat, max, min, true)
+  }
+  return generateNumber({ initialValue: min, heuristic })
+}
+
+export const generateLoopNumber = ({ initialValue, min, max, increment }) => {
+  const heuristic = ({ value }) => {
+    const next = value + increment
+    if (next > max) {
+      return min
+    }
+    return next
+  }
+  return generateNumber({ initialValue: initialValue || min, heuristic })
 }
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
