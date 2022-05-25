@@ -17,7 +17,7 @@ const sketch = (p5) => {
     p5.colorMode(p5.HSB)
     p5.createCanvas(width, height)
     p5.background(backgroundColor)
-    circleSize = p5.width / 2 - 20
+    circleSize = p5.width > p5.height ? p5.height / 2 - 20 : p5.width / 2 - 20
 
     c = circle({ p5, position: p5.createVector(0, 0), size: circleSize })
   }
