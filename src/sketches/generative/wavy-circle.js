@@ -67,7 +67,7 @@ const sketch = (p5) => {
     min: 20,
     max: 40,
     increment: 0.1,
-    initialValue: p5.random(20, 80),
+    initialValue: p5.random(20, 40),
   })
 
   const getGradientHue = generateLoopNumber({
@@ -86,9 +86,10 @@ const sketch = (p5) => {
 
   const getGradientBrightness = generateOscillatingNumber({
     min: 10,
-    max: 50,
-    increment: 0.1,
-    initialValue: p5.random(40, 80),
+    max: 70,
+    increment: 0.01,
+    initialValue: p5.random(10, 70),
+    restFrames: 1000,
   })
 
   p5.draw = () => {
@@ -129,7 +130,7 @@ const sketch = (p5) => {
 }
 
 const circle = ({ p5, position, size }) => {
-  const holeSize = p5.width / 20
+  const gapRadius = size / 10
   let maxRotationSpeed = 3
   const getStrokeWeight = generateOscillatingNumber({
     min: 0.5,
@@ -146,33 +147,44 @@ const circle = ({ p5, position, size }) => {
   })
 
   const getBounciness = generateOscillatingNumber({
-    min: 1,
+    min: 3,
     max: 10,
     easing: 0.01,
-    restFrames: 500,
+    restFrames: 300,
   })
 
   const getGapRadius = generateOscillatingNumber({
     min: 0,
-    max: p5.width / 20,
+    max: gapRadius,
     easing: 0.001,
-    restFrames: 1000,
+    restFrames: 400,
+    initialValue: gapRadius - 10,
   })
   let rotation = 0
 
-  const lineCount = 66
+  const getLineCount = generateOscillatingNumber({
+    min: 12,
+    max: 66,
+    easing: 0.1,
+    restFrames: 1000,
+  })
   const draw = () => {
+    const lineCount = getLineCount()
     const gapRadius = getGapRadius()
     p5.push()
     p5.translate(position.x, position.y)
-    p5.strokeWeight(getStrokeWeight())
     const speed = rotationSpeed()
     rotation += rotationSpeed() / 100
     p5.rotate(rotation)
-    p5.stroke(255)
+
     p5.noFill()
     const bounciness = getBounciness()
+
+    p5.strokeWeight(getStrokeWeight())
+
+    p5.stroke(255)
     p5.ellipse(0, 0, gapRadius * 2, gapRadius * 2)
+
     for (let i = 0; i < Math.floor(lineCount); i++) {
       // v1 is on the outer circle
       const v = p5.createVector(0, 1)
@@ -195,7 +207,7 @@ const circle = ({ p5, position, size }) => {
         (p5.TWO_PI / lineCount) * i +
           (p5.TWO_PI / 30) * speed * (bounciness * 0.5),
       )
-      pull1.setMag(size - holeSize)
+      pull1.setMag(size - gapRadius)
       pull2.setMag(size / 4)
 
       p5.bezier(v.x, v.y, pull1.x, pull1.y, pull2.x, pull2.y, v2.x, v2.y)
