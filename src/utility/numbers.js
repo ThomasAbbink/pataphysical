@@ -83,7 +83,7 @@ export const generateBeatNumber = ({
   return generateNumber({ initialValue: min, heuristic })
 }
 
-export const generateLoopNumber = ({ initialValue, min, max, increment }) => {
+export const generateLoopNumber = ({ min, max, initialValue, increment }) => {
   const heuristic = ({ value }) => {
     const next = value + increment
     if (next > max) {

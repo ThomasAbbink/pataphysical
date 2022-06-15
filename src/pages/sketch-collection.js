@@ -13,9 +13,11 @@ import TruchetTiles from '../sketches/generative/truchet-tiles/truchet-tiles'
 import TruchetTiles2 from '../sketches/generative/truchet-tiles/truchet-tiles-2'
 import TruchetTiles3 from '../sketches/generative/truchet-tiles/truchet-tiles-3'
 import WavyCircle from '../sketches/generative/wavy-circle'
+import Doodle from '../sketches/generative/doodle'
 
 export default function sketchCollection() {
   return [
+    <Doodle key="doodle" />,
     <WavyCircle key="wavy-circle" />,
     <TruchetTiles3 key="truchet-tiles-3" />,
     <TruchetTiles2 key="truchet-tiles-2" />,
