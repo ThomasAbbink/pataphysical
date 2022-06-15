@@ -13,7 +13,7 @@ let backgroundColor = 0
 
 const sketch = (p5) => {
   const { items: flurbs, create } = destroyableSet()
-  const flurbsPerRow = 25
+  const flurbsPerRow = 20
   let homeTarget
   let target
   p5.setup = () => {
@@ -25,14 +25,18 @@ const sketch = (p5) => {
     homeTarget.setMag(p5.width / 4)
     target.setMag(p5.height / 4)
     p5.colorMode(p5.HSL)
+    const widthPadding = p5.width / 3
+    const heightPadding = p5.height / 3
     for (let i = 0; i < flurbsPerRow; i++) {
       for (let j = 0; j < flurbsPerRow; j++) {
         create(
           flurb({
             p5,
             position: p5.createVector(
-              (p5.width / flurbsPerRow) * i - p5.width / 2,
-              (p5.height / flurbsPerRow) * j - p5.height / 2,
+              ((p5.width - widthPadding) / flurbsPerRow) * i -
+                (p5.width - widthPadding) / 2,
+              ((p5.height - heightPadding) / flurbsPerRow) * j -
+                (p5.height - heightPadding) / 2,
             ),
           }),
         )
@@ -87,17 +91,16 @@ const sketch = (p5) => {
 
   const getBackgroundSaturation = generateOscillatingNumber({
     min: 10,
-    max: 100,
+    max: 50,
     easing: 0.1,
-    restFrames: 400,
+    restFrames: 500,
     initialValue: 10,
   })
-  const getBackgroundBrightness = generateOscillatingNumber({
-    min: 5,
-    max: 5,
-    easing: 0.1,
-    restFrames: 400,
-    initialValue: 10,
+
+  const getBaseThickness = generateOscillatingNumber({
+    min: 1,
+    max: 8,
+    increment: 0.001,
   })
 
   p5.draw = () => {
@@ -105,14 +108,11 @@ const sketch = (p5) => {
 
     homeTarget.rotate(getHomeRotation())
     target.rotate(getTargetRotation())
-    p5.stroke(255)
-    p5.fill(255)
+
     const backgroundSat = getBackgroundSaturation()
-    const backgroundBrightness = getBackgroundBrightness()
-    // p5.ellipse(homeTarget.x, homeTarget.y, 10, 10)
-    // p5.ellipse(target.x, target.y, 10, 10)
+
     const baseAngle = getBaseAngle()
-    const baseAnglegOffset = getBaseAngleOffSet()
+    const baseAngleOffset = getBaseAngleOffSet()
     const backgroundHue = getBackgroundHue()
     const backgroundRadius = p5.drawingContext.createRadialGradient(
       0,
@@ -122,14 +122,14 @@ const sketch = (p5) => {
       0,
       p5.height,
     )
-    const bc1 = p5.color(backgroundHue, backgroundSat, backgroundBrightness)
-    const bc2 = p5.color(backgroundHue, backgroundSat, backgroundBrightness)
-    const bc3 = p5.color(backgroundHue, backgroundSat, backgroundBrightness)
+    const bc1 = p5.color(backgroundHue, backgroundSat, 5)
+    const bc2 = p5.color(backgroundHue, backgroundSat, 10)
+    const bc3 = p5.color(backgroundHue, backgroundSat, 100)
     backgroundRadius.addColorStop(0, bc1.toString())
 
-    backgroundRadius.addColorStop(0.5, bc2.toString())
+    backgroundRadius.addColorStop(0.3, bc2.toString())
 
-    backgroundRadius.addColorStop(0.8, bc3.toString())
+    backgroundRadius.addColorStop(0.9, bc3.toString())
     p5.drawingContext.fillStyle = backgroundRadius
     p5.noStroke()
     p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height)
@@ -137,9 +137,9 @@ const sketch = (p5) => {
     const hue = getHue()
     const gradient = p5.drawingContext.createRadialGradient(0, 0, 0, 0, 0, 200)
 
-    const c1 = p5.color(backgroundHue, backgroundSat, backgroundBrightness, 0)
+    const c1 = p5.color(backgroundHue, backgroundSat, 5, 0)
     let c2 = p5.color(hue, backgroundSat, 30, 0.2)
-    let c3 = p5.color(hue, 100, 75, 0.9)
+    let c3 = p5.color(hue, 80, 60, 0.9)
     gradient.addColorStop(0, c1.toString())
 
     gradient.addColorStop(0.2, c2.toString())
@@ -147,9 +147,15 @@ const sketch = (p5) => {
     gradient.addColorStop(0.8, c3.toString())
 
     p5.drawingContext.fillStyle = gradient
+    const baseThickness = getBaseThickness()
     p5.background(backgroundColor, 0, 0, 0.3)
     flurbs.forEach(({ draw }) =>
-      draw({ target, baseAngle: baseAngle + baseAnglegOffset, homeTarget }),
+      draw({
+        target,
+        baseAngle: baseAngle + baseAngleOffset,
+        homeTarget,
+        baseThickness,
+      }),
     )
   }
 }
@@ -176,7 +182,7 @@ const flurb =
     const minLength = 50
     const maxLength = 150
 
-    const draw = ({ target: mouse, baseAngle, homeTarget }) => {
+    const draw = ({ target: mouse, baseAngle, homeTarget, baseThickness }) => {
       const pOff = p5.createVector(position.x + xOff, position.y + yOff)
       const widthSquared = p5.width * p5.width
 
@@ -200,7 +206,6 @@ const flurb =
       p5.push()
       p5.translate(pOff.x, pOff.y)
       const thickness = 4
-      const baseThickness = 2
       const p = []
 
       function easeInSine(x) {
