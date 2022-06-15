@@ -22,11 +22,11 @@ const sketch = (p5) => {
     p5.background(backgroundColor)
     homeTarget = p5.createVector(0, 1)
     target = p5.createVector(1, 0)
-    homeTarget.setMag(p5.width / 4)
-    target.setMag(p5.height / 4)
+    homeTarget.setMag(p5.width / 5)
+    target.setMag(p5.height / 5)
     p5.colorMode(p5.HSL)
-    const widthPadding = p5.width / 3
-    const heightPadding = p5.height / 3
+    const widthPadding = p5.width / 2.5
+    const heightPadding = p5.height / 2.5
     for (let i = 0; i < flurbsPerRow; i++) {
       for (let j = 0; j < flurbsPerRow; j++) {
         create(
@@ -135,18 +135,7 @@ const sketch = (p5) => {
     p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height)
 
     const hue = getHue()
-    // const gradient = p5.drawingContext.createRadialGradient(0, 0, 0, 0, 0, 200)
 
-    // const c1 = p5.color(backgroundHue, backgroundSat, 5, 0)
-    // let c2 = p5.color(hue, 40, 40, 0.5)
-    // let c3 = p5.color(hue, 80, 90, 0.9)
-    // gradient.addColorStop(0, c1.toString())
-
-    // gradient.addColorStop(0.2, c2.toString())
-
-    // gradient.addColorStop(0.8, c3.toString())
-
-    // p5.drawingContext.fillStyle = gradient
     const baseThickness = getBaseThickness()
     p5.background(backgroundColor, 0, 0, 0.3)
     flurbs.forEach(({ draw }) =>
@@ -276,7 +265,7 @@ const flurb =
       if (!isHome && sat < maxSat) {
         sat += 1
       }
-      const c1 = p5.color(backgroundHue, 5, 5, 0)
+      const c1 = p5.color(backgroundHue, 5, 0, 0)
       let c2 = p5.color(hue, sat / 2, 50, 0.8)
       let c3 = p5.color(hue, sat, 90, 0.9)
       gradient.addColorStop(0, c1.toString())
