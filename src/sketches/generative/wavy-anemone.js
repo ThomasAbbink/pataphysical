@@ -75,13 +75,6 @@ const sketch = (p5) => {
     increment: 0.0001,
   })
 
-  const getHue = generateLoopNumber({
-    min: 0,
-    max: 360,
-    increment: 0.1,
-    initialValue: p5.random(0, 360),
-  })
-
   const getBackgroundHue = generateLoopNumber({
     min: 0,
     max: 360,
@@ -101,6 +94,13 @@ const sketch = (p5) => {
     min: 1,
     max: 8,
     increment: 0.001,
+  })
+
+  const getHue = generateLoopNumber({
+    min: 0,
+    max: 360,
+    increment: 0.1,
+    initialValue: 0,
   })
 
   p5.draw = () => {
@@ -135,18 +135,18 @@ const sketch = (p5) => {
     p5.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height)
 
     const hue = getHue()
-    const gradient = p5.drawingContext.createRadialGradient(0, 0, 0, 0, 0, 200)
+    // const gradient = p5.drawingContext.createRadialGradient(0, 0, 0, 0, 0, 200)
 
-    const c1 = p5.color(backgroundHue, backgroundSat, 5, 0)
-    let c2 = p5.color(hue, backgroundSat, 30, 0.2)
-    let c3 = p5.color(hue, 80, 60, 0.9)
-    gradient.addColorStop(0, c1.toString())
+    // const c1 = p5.color(backgroundHue, backgroundSat, 5, 0)
+    // let c2 = p5.color(hue, 40, 40, 0.5)
+    // let c3 = p5.color(hue, 80, 90, 0.9)
+    // gradient.addColorStop(0, c1.toString())
 
-    gradient.addColorStop(0.2, c2.toString())
+    // gradient.addColorStop(0.2, c2.toString())
 
-    gradient.addColorStop(0.8, c3.toString())
+    // gradient.addColorStop(0.8, c3.toString())
 
-    p5.drawingContext.fillStyle = gradient
+    // p5.drawingContext.fillStyle = gradient
     const baseThickness = getBaseThickness()
     p5.background(backgroundColor, 0, 0, 0.3)
     flurbs.forEach(({ draw }) =>
@@ -155,6 +155,8 @@ const sketch = (p5) => {
         baseAngle: baseAngle + baseAngleOffset,
         homeTarget,
         baseThickness,
+        backgroundHue,
+        hue,
       }),
     )
   }
@@ -179,10 +181,19 @@ const flurb =
     for (let i = 0; i < segmentCount; i++) {
       segmentRotations.push(0)
     }
-    const minLength = 50
+    const minLength = 70
     const maxLength = 150
-
-    const draw = ({ target: mouse, baseAngle, homeTarget, baseThickness }) => {
+    let sat = 80
+    let minSat = 10
+    let maxSat = 100
+    const draw = ({
+      target: mouse,
+      baseAngle,
+      homeTarget,
+      baseThickness,
+      backgroundHue,
+      hue,
+    }) => {
       const pOff = p5.createVector(position.x + xOff, position.y + yOff)
       const widthSquared = p5.width * p5.width
 
@@ -249,6 +260,32 @@ const flurb =
         p.push({ vector: v1, key: i })
         p.push({ vector: v2, key: segmentCount * 2 - i })
       }
+
+      const gradient = p5.drawingContext.createRadialGradient(
+        0,
+        0,
+        0,
+        0,
+        0,
+        200,
+      )
+      const isHome = target === homeTarget
+      if (isHome && sat > minSat) {
+        sat -= 1
+      }
+      if (!isHome && sat < maxSat) {
+        sat += 1
+      }
+      const c1 = p5.color(backgroundHue, 5, 5, 0)
+      let c2 = p5.color(hue, sat / 2, 50, 0.8)
+      let c3 = p5.color(hue, sat, 90, 0.9)
+      gradient.addColorStop(0, c1.toString())
+
+      gradient.addColorStop(0.2, c2.toString())
+
+      gradient.addColorStop(0.8, c3.toString())
+
+      p5.drawingContext.fillStyle = gradient
 
       p5.noStroke()
       // const opactity = p5.map(dist, 0, widthSquared / 8, 0, 200, true)
