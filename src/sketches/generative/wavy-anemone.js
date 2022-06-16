@@ -13,7 +13,7 @@ let backgroundColor = 0
 
 const sketch = (p5) => {
   const { items: flurbs, create } = destroyableSet()
-  const flurbsPerRow = 20
+  const flurbsPerRow = 15
   let homeTarget
   let target
   p5.setup = () => {
@@ -167,7 +167,7 @@ const flurb =
     let xOff = p5.random(0, max_offset)
     let yOff = p5.random(0, max_offset)
 
-    const segmentCount = 4
+    const segmentCount = 5
 
     let segmentRotations = []
 
@@ -279,7 +279,7 @@ const flurb =
         0,
         0,
         0,
-        200,
+        maxLength,
       )
       const isHome = target === homeTarget
       if (isHome && sat > minSat) {
@@ -289,8 +289,8 @@ const flurb =
         sat += 1
       }
       const c1 = p5.color(backgroundHue, 0, 0, 0)
-      let c2 = p5.color(hue, sat / 2, 50, 0.3)
-      let c3 = p5.color(hue, sat, 90, 0.9)
+      let c2 = p5.color(hue, sat / 2, 50, 0.8)
+      let c3 = p5.color(hue, sat, 80, 1)
       gradient.addColorStop(0, c1.toString())
 
       gradient.addColorStop(0.6, c2.toString())
