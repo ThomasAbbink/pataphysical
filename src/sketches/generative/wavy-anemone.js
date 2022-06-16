@@ -84,7 +84,7 @@ const sketch = (p5) => {
 
   const getBackgroundSaturation = generateOscillatingNumber({
     min: 10,
-    max: 50,
+    max: 30,
     easing: 0.1,
     restFrames: 500,
     initialValue: 10,
@@ -92,8 +92,8 @@ const sketch = (p5) => {
 
   const getBaseThickness = generateOscillatingNumber({
     min: 1,
-    max: 8,
-    increment: 0.001,
+    max: 5,
+    increment: 0.01,
   })
 
   const getHue = generateLoopNumber({
@@ -102,8 +102,11 @@ const sketch = (p5) => {
     increment: 0.1,
     initialValue: 0,
   })
-
+  let isDrifting = true
   p5.draw = () => {
+    if (p5.frameCount % 500 === 0) {
+      isDrifting = !isDrifting
+    }
     p5.translate(p5.width / 2, p5.height / 2)
 
     homeTarget.rotate(getHomeRotation())
@@ -124,10 +127,10 @@ const sketch = (p5) => {
     )
     const bc1 = p5.color(backgroundHue, backgroundSat, 5)
     const bc2 = p5.color(backgroundHue, backgroundSat, 10)
-    const bc3 = p5.color(backgroundHue, backgroundSat, 100)
+    const bc3 = p5.color(backgroundHue, backgroundSat, 20)
     backgroundRadius.addColorStop(0, bc1.toString())
 
-    backgroundRadius.addColorStop(0.3, bc2.toString())
+    backgroundRadius.addColorStop(0.5, bc2.toString())
 
     backgroundRadius.addColorStop(0.9, bc3.toString())
     p5.drawingContext.fillStyle = backgroundRadius
@@ -146,6 +149,7 @@ const sketch = (p5) => {
         baseThickness,
         backgroundHue,
         hue,
+        isDrifting,
       }),
     )
   }
@@ -154,27 +158,29 @@ const sketch = (p5) => {
 const flurb =
   ({ p5, position }) =>
   ({ destroy, id }) => {
-    let length = 150
+    let length = 80
     let rotation = 0
 
     let easing = 0.02
     let lengthStep = 0.01
-    const max_offset = 30
-    const xOff = p5.random(-max_offset, max_offset)
-    const yOff = p5.random(-max_offset, max_offset)
+    const max_offset = p5.random(0, 60)
+    let xOff = p5.random(0, max_offset)
+    let yOff = p5.random(0, max_offset)
 
-    const segmentCount = 3
+    const segmentCount = 4
 
     let segmentRotations = []
 
     for (let i = 0; i < segmentCount; i++) {
       segmentRotations.push(0)
     }
-    const minLength = 70
+    const minLength = 80
     const maxLength = 150
     let sat = 80
     let minSat = 10
     let maxSat = 100
+    const thickness = p5.random(1, 5)
+
     const draw = ({
       target: mouse,
       baseAngle,
@@ -182,7 +188,25 @@ const flurb =
       baseThickness,
       backgroundHue,
       hue,
+      isDrifting = true,
     }) => {
+      if (isDrifting) {
+        if (xOff < max_offset) {
+          xOff += 0.1
+        }
+        if (yOff < max_offset) {
+          yOff += 0.1
+        }
+      }
+
+      if (!isDrifting) {
+        if (xOff > 0) {
+          xOff -= 0.1
+        }
+        if (yOff > 0) {
+          yOff -= 0.1
+        }
+      }
       const pOff = p5.createVector(position.x + xOff, position.y + yOff)
       const widthSquared = p5.width * p5.width
 
@@ -205,11 +229,13 @@ const flurb =
 
       p5.push()
       p5.translate(pOff.x, pOff.y)
-      const thickness = 4
       const p = []
 
       function easeInSine(x) {
         return 1 - Math.cos((x * Math.PI) / 2)
+      }
+      function easeOutSine(x) {
+        return Math.sin((x * Math.PI) / 2)
       }
       // use ease in to slow the acceleration, reduce jitter
 
@@ -220,15 +246,12 @@ const flurb =
 
       for (let i = 0; i <= segmentCount; i += 1) {
         const w = i * (thickness / segmentCount) + baseThickness
+        const progress = p5.map(i, 0, segmentCount, 0, 1, true)
+        // segments spaced closer together at the bottom
+        const h = -(length - length * easeOutSine(progress))
         // start with the top
-        const v1 = p5.createVector(
-          -w,
-          0 - (length - i * (length / segmentCount)),
-        )
-        const v2 = p5.createVector(
-          w,
-          0 - (length - i * (length / segmentCount)),
-        )
+        const v1 = p5.createVector(-w, h)
+        const v2 = p5.createVector(w, h)
         // each segment rotation follows the previous one
         if (i === 0) {
           segmentRotations[i] = lerpAngle(
@@ -265,24 +288,23 @@ const flurb =
       if (!isHome && sat < maxSat) {
         sat += 1
       }
-      const c1 = p5.color(backgroundHue, 5, 0, 0)
-      let c2 = p5.color(hue, sat / 2, 50, 0.8)
+      const c1 = p5.color(backgroundHue, 0, 0, 0)
+      let c2 = p5.color(hue, sat / 2, 50, 0.3)
       let c3 = p5.color(hue, sat, 90, 0.9)
       gradient.addColorStop(0, c1.toString())
 
-      gradient.addColorStop(0.2, c2.toString())
+      gradient.addColorStop(0.6, c2.toString())
 
       gradient.addColorStop(0.8, c3.toString())
 
       p5.drawingContext.fillStyle = gradient
 
       p5.noStroke()
-      // const opactity = p5.map(dist, 0, widthSquared / 8, 0, 200, true)
       p.sort((a, b) => a.key - b.key)
 
       p5.beginShape()
       p.forEach(({ vector }) => {
-        // p5.ellipse(vector.x, vector.y, 4, 4)
+        // p5.ellipse(vector.x, vector.y, 4, 4) // for debugging
         p5.curveVertex(vector.x, vector.y)
       })
       p5.endShape(p5.CLOSE)
