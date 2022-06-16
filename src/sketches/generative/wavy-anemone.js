@@ -92,7 +92,7 @@ const sketch = (p5) => {
 
   const getBaseThickness = generateOscillatingNumber({
     min: 1,
-    max: 5,
+    max: 3,
     increment: 0.01,
   })
 
@@ -174,8 +174,8 @@ const flurb =
     for (let i = 0; i < segmentCount; i++) {
       segmentRotations.push(0)
     }
-    const minLength = 80
-    const maxLength = 150
+    const maxLength = p5.map(p5.width, 400, 1200, 80, 150)
+    const minLength = maxLength / 3
     let sat = 80
     let minSat = 10
     let maxSat = 100
@@ -289,11 +289,11 @@ const flurb =
         sat += 1
       }
       const c1 = p5.color(backgroundHue, 0, 0, 0)
-      let c2 = p5.color(hue, sat / 2, 50, 0.8)
+      let c2 = p5.color(hue, sat / 2, 50, 0.3)
       let c3 = p5.color(hue, sat, 80, 1)
       gradient.addColorStop(0, c1.toString())
 
-      gradient.addColorStop(0.6, c2.toString())
+      gradient.addColorStop(0.4, c2.toString())
 
       gradient.addColorStop(0.8, c3.toString())
 
