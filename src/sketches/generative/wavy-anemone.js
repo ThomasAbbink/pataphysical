@@ -16,6 +16,7 @@ const sketch = (p5) => {
   const flurbsPerRow = 15
   let homeTarget
   let target
+
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
@@ -125,8 +126,8 @@ const sketch = (p5) => {
       0,
       p5.height,
     )
-    const bc1 = p5.color(backgroundHue, backgroundSat, 5)
-    const bc2 = p5.color(backgroundHue, backgroundSat, 10)
+    const bc1 = p5.color(backgroundHue, 0, 5)
+    const bc2 = p5.color(backgroundHue, 0, 10)
     const bc3 = p5.color(backgroundHue, backgroundSat, 20)
     backgroundRadius.addColorStop(0, bc1.toString())
 
@@ -140,7 +141,6 @@ const sketch = (p5) => {
     const hue = getHue()
 
     const baseThickness = getBaseThickness()
-    p5.background(backgroundColor, 0, 0, 0.3)
     flurbs.forEach(({ draw }) =>
       draw({
         target,
@@ -167,7 +167,7 @@ const flurb =
     let xOff = p5.random(0, max_offset)
     let yOff = p5.random(0, max_offset)
 
-    const segmentCount = 5
+    const segmentCount = 4
 
     let segmentRotations = []
 
@@ -290,12 +290,12 @@ const flurb =
       }
       const c1 = p5.color(backgroundHue, 0, 0, 0)
       let c2 = p5.color(hue, sat / 2, 50, 0.3)
-      let c3 = p5.color(hue, sat, 80, 1)
+      let c3 = p5.color(hue, sat, 90, 1)
       gradient.addColorStop(0, c1.toString())
 
-      gradient.addColorStop(0.4, c2.toString())
+      gradient.addColorStop(0.3, c2.toString())
 
-      gradient.addColorStop(0.8, c3.toString())
+      gradient.addColorStop(0.9, c3.toString())
 
       p5.drawingContext.fillStyle = gradient
 
