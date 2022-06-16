@@ -8,6 +8,7 @@ export const P5Wrapper = ({ sketch }) => {
 
   useEffect(() => {
     p5ref.current = new p5(sketch, ref.current)
+    p5ref.current.disableFriendlyErrors = true
     return () => {
       p5ref.current.remove()
     }
