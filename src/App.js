@@ -11,9 +11,9 @@ function App() {
       <BrowserRouter>
         <Base>
           <Routes>
-            <Route exact path="/" element={<CarouselPage />}></Route>
-            <Route exact path="/kiosk" element={<KioskPage />}></Route>
-            <Route element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+            <Route path="/" element={<CarouselPage />}></Route>
+            <Route path="/kiosk" element={<KioskPage />}></Route>
           </Routes>
         </Base>
       </BrowserRouter>
