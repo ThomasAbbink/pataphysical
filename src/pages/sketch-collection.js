@@ -17,7 +17,6 @@ import SunnyTunnel from '../sketches/generative/sunny-tunnel'
 
 export default function sketchCollection() {
   return [
-    <Cube key="cube" />,
     <SunnyTunnel key="sunny-tunnel" />,
     <WavyAnemone key="wavy-anemone" />,
     <WavyCircle key="wavy-circle" />,
@@ -33,5 +32,6 @@ export default function sketchCollection() {
     <PollockAreas key="areas" />,
     <PollockLines key="lines" />,
     <Cardioid key="cardioid" />,
+    <Cube key="cube" />,
   ]
 }
