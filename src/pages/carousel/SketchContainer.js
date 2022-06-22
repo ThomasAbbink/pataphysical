@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components'
 import useIntersectionObserver from '../../utility/useIntersectionObserver'
 
@@ -8,7 +8,6 @@ export default ({ sketch }) => {
     threshold: 0.01,
   })
   const isVisible = !!entry?.isIntersecting
-
   return (
     <Container key={sketch.id} ref={ref}>
       {isVisible && sketch}

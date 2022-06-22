@@ -1,4 +1,3 @@
-import React from 'react'
 import Kiosk from './Kiosk'
 import sketchCollection from '../sketch-collection'
 

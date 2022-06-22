@@ -1,4 +1,3 @@
-import React from 'react'
 import { getCanvasSize } from '../../../utility/canvas'
 import { P5Wrapper } from '../../P5Wrapper'
 import { matrixLine } from './matrix-line'

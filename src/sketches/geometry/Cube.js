@@ -1,6 +1,6 @@
 import { matmul, scale } from './MatrixHelper'
 import { P5Wrapper } from '../P5Wrapper'
-import React from 'react'
+
 import { getCanvasSize } from '../../utility/canvas'
 
 const p = (p) => {
@@ -125,26 +125,26 @@ const p = (p) => {
     p.fill(255)
     p.noStroke()
     p.textSize(30)
-    p.text(
-      `x: ${xSlider.value()}`,
-      xSlider.width + xSlider.x * 2,
-      xSlider.y + xSlider.height / 2,
-    )
-    p.text(
-      `y: ${ySlider.value()}`,
-      ySlider.width + ySlider.x * 2,
-      ySlider.y + ySlider.height / 2,
-    )
-    p.text(
-      `z: ${zSlider.value()}`,
-      zSlider.width + zSlider.x * 2,
-      zSlider.y + zSlider.height / 2,
-    )
-    p.text(
-      `w: ${wSlider.value()}`,
-      wSlider.width + wSlider.x * 2,
-      wSlider.y + wSlider.height / 2,
-    )
+    // p.text(
+    //   `x: ${xSlider.value()}`,
+    //   xSlider.width + xSlider.x * 2,
+    //   xSlider.y + xSlider.height / 2,
+    // )
+    // p.text(
+    //   `y: ${ySlider.value()}`,
+    //   ySlider.width + ySlider.x * 2,
+    //   ySlider.y + ySlider.height / 2,
+    // )
+    // p.text(
+    //   `z: ${zSlider.value()}`,
+    //   zSlider.width + zSlider.x * 2,
+    //   zSlider.y + zSlider.height / 2,
+    // )
+    // p.text(
+    //   `w: ${wSlider.value()}`,
+    //   wSlider.width + wSlider.x * 2,
+    //   wSlider.y + wSlider.height / 2,
+    // )
     p.translate(p.windowWidth / 2, p.windowHeight / 2 - sliderDividerHeight * 2)
 
     const projected = points.map((point) => {

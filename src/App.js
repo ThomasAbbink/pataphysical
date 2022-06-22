@@ -1,10 +1,8 @@
-import React from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import NotFoundPage from './nav/NotFoundPage'
 import KioskPage from './pages/kiosk/KioskPage'
 import CarouselPage from './pages/carousel/CarouselPage'
 import styled, { createGlobalStyle } from 'styled-components'
-import Portraits from './sketches/generative/image-rendering/render-image'
 
 function App() {
   return (
@@ -12,12 +10,11 @@ function App() {
       <GlobalStyle />
       <BrowserRouter>
         <Base>
-          <Switch>
-            <Route exact path="/" component={CarouselPage} />
-            <Route exact path="/kiosk" component={KioskPage} />
-            <Route exact path="/portraits" component={Portraits} />
-            <Route component={NotFoundPage} />
-          </Switch>
+          <Routes>
+            <Route exact path="/" element={<CarouselPage />}></Route>
+            <Route exact path="/kiosk" element={<KioskPage />}></Route>
+            <Route element={<NotFoundPage />} />
+          </Routes>
         </Base>
       </BrowserRouter>
     </>

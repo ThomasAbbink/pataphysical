@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import p5 from 'p5'
 import styled from 'styled-components' // eslint-disable-line
 

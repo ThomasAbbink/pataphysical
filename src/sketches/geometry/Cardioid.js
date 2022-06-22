@@ -1,5 +1,5 @@
 import { P5Wrapper } from '../P5Wrapper'
-import React from 'react'
+
 import { getCanvasSize } from '../../utility/canvas'
 
 const sketch = (p5) => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { getCanvasSize } from '../../../utility/canvas'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import { P5Wrapper } from '../../P5Wrapper'
