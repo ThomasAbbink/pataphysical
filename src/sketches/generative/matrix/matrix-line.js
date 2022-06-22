@@ -1,6 +1,7 @@
 import { Vector } from 'p5'
 import { symbol } from './symbol'
 import { v4 as uuid } from 'uuid'
+import { distanceSquared } from '../../../utility/vectors'
 
 /**
  * @param {width: number, height: number} bounds
@@ -19,7 +20,7 @@ export const matrixLine = (
   const symbols = new Map()
 
   const isAtTarget = () => {
-    return position.dist(targetPosition) <= 10
+    return distanceSquared(position, targetPosition) < 100
   }
 
   const canAddSymbol = () => {
@@ -29,12 +30,9 @@ export const matrixLine = (
     if (!symbols.size) {
       return true
     }
-    if (position.dist(targetPosition) < 10) {
-      return false
-    }
 
     const lastSymbol = Array.from(symbols.values()).pop()
-    return position.dist(lastSymbol.position) > 12
+    return distanceSquared(position, lastSymbol.position) > 200
   }
 
   const onDestroySymbol = (id) => {
