@@ -3,18 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "es-iter": "^1.1.1",
-    "faker": "^5.1.0",
     "h264-mp4-encoder": "^1.0.12",
     "p5": "0.10.2",
     "react": "^16.12.0",
-    "react-art": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.3.1",
     "styled-components": "^5.0.1",
-    "three": "^0.125.0",
     "uuid": "^8.3.2"
   },
   "scripts": {

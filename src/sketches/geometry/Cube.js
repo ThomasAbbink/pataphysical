@@ -2,7 +2,6 @@ import { matmul, scale } from './MatrixHelper'
 import { P5Wrapper } from '../P5Wrapper'
 import React from 'react'
 import { getCanvasSize } from '../../utility/canvas'
-// import Iter from 'es-iter'
 
 const p = (p) => {
   // const randomStartVal = () => {
@@ -36,19 +35,6 @@ const p = (p) => {
     [[0.5], [-0.5], [0.5], [0.5]],
     [[0.5], [0.5], [0.5], [0.5]],
   ]
-
-  // let dimensions = 2
-  // const points2 = new Iter('AB').combinations(2).toArray()
-  // console.log(points2)
-  // const points2 = []
-  // for (let i = 0; i < Math.pow(2, dimensions); i++) {
-  //   const point = []
-  //   for (let j = 0; j < dimensions; j++) {
-
-  //     point.push()
-  //   }
-  //   points2.push(point)
-  // }
 
   const rotationZ = (angle) => [
     [p.cos(angle), p.sin(angle), 0, 0],
