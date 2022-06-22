@@ -14,9 +14,11 @@ import TruchetTiles2 from '../sketches/generative/truchet-tiles/truchet-tiles-2'
 import TruchetTiles3 from '../sketches/generative/truchet-tiles/truchet-tiles-3'
 import WavyCircle from '../sketches/generative/wavy-circle'
 import WavyAnemone from '../sketches/generative/wavy-anemone'
+import SunnyTunnel from '../sketches/generative/sunny-tunnel'
 
 export default function sketchCollection() {
   return [
+    <SunnyTunnel key="sunny-tunnel" />,
     <WavyAnemone key="wavy-anemone" />,
     <WavyCircle key="wavy-circle" />,
     <TruchetTiles3 key="truchet-tiles-3" />,

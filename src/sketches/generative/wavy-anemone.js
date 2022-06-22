@@ -1,13 +1,14 @@
 import React from 'react'
 import { getCanvasSize } from '../../utility/canvas'
 import { P5Wrapper } from '../P5Wrapper'
-import { v4 as uuid } from 'uuid'
+
 import { distanceSquared } from '../../utility/vectors'
 import {
   generateLoopNumber,
   generateOscillatingNumber,
 } from '../../utility/numbers'
 import { lerpAngle } from '../../utility/vectors'
+import { destroyableSet } from '../../utility/destroyableSet'
 
 let backgroundColor = 0
 
@@ -26,6 +27,7 @@ const sketch = (p5) => {
     homeTarget.setMag(p5.width / 5)
     target.setMag(p5.height / 5)
     p5.colorMode(p5.HSL)
+
     const widthPadding = p5.width / 2.5
     const heightPadding = p5.height / 2.5
     for (let i = 0; i < flurbsPerRow; i++) {
@@ -312,22 +314,5 @@ const flurb =
     }
     return { draw }
   }
-
-const destroyableSet = () => {
-  const items = new Map()
-
-  const destroy = (id) => {
-    items.delete(id)
-  }
-
-  const create = (item) => {
-    if (typeof item !== 'function') {
-      throw new Error('item must be a function')
-    }
-    const id = uuid()
-    items.set(id, item({ id, destroy }))
-  }
-  return { create, destroy, items }
-}
 
 export default () => <P5Wrapper sketch={sketch} />
