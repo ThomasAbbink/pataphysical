@@ -8,20 +8,19 @@ export const loadEncoder = async ({ width, height }) => {
     encoder.width = width
     encoder.height = height
     encoder.frameRate = 60
-    encoder.kbps = 50000 // video quality
+    encoder.kbps = 10000 // video quality
     encoder.groupOfPictures = 10 // lower if you have fast actions.
     encoder.initialize()
   })
 }
 
-export const recordFrame = () => {
+export const recordFrame = (p5) => {
   encoder.addFrameRgba(
     p5.drawingContext.getImageData(0, 0, encoder.width, encoder.height).data,
   )
 }
 
 export const endRecordingAndDownloadVideo = () => {
-  isRecording = false
   encoder.finalize()
   const uint8Array = encoder.FS.readFile(encoder.outputFilename)
   const anchor = document.createElement('a')
@@ -31,5 +30,4 @@ export const endRecordingAndDownloadVideo = () => {
   anchor.download = encoder.outputFilename
   anchor.click()
   encoder.delete()
-  p5.preload()
 }

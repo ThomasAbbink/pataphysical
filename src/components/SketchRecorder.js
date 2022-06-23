@@ -1,30 +1,43 @@
-import { useEffect, useState } from 'react'
-import { endRecordingAndDownloadVideo } from '../utility/record-canvas'
+import { useEffect, useState, useRef } from 'react'
+import {
+  endRecordingAndDownloadVideo,
+  loadEncoder,
+  recordFrame,
+} from '../utility/record-canvas'
+import styled from 'styled-components'
 
-export const SketchRecorder = ({ p5 }) => {
+export const SketchRecorder = ({ p5, bleep }) => {
   const drawRef = useRef()
   const [isRecording, setIsRecording] = useState(false)
 
   useEffect(() => {
-    loadEncoder({ width: p5.width, height: p5.height })
-    drawRef.current = p5ref.current.draw
+    if (isRecording) {
+      const { width, height } = p5.current
+      const w = width - (width % 2)
+      const h = height - (height % 2)
 
-    p5.draw = () => {
-      if (isRecording) {
-        recordFrame()
+      loadEncoder({ width: w, height: h }).then(() => {
+        drawRef.current = p5.current.draw
+
+        p5.current.draw = () => {
+          recordFrame(p5.current)
+          drawRef.current()
+        }
+      })
+      return () => {
+        p5.current.draw = drawRef.current
+        endRecordingAndDownloadVideo()
       }
-      drawRef.current()
     }
   }, [isRecording])
 
   const onClickRecord = () => {
-    if (isRecording) {
-      endRecordingAndDownloadVideo()
-      setIsRecording(false)
-    } else {
-      setIsRecording(true)
-    }
+    setIsRecording(!isRecording)
   }
 
-  return <button onClick={onClickRecord}>record</button>
+  return <Botton onClick={onClickRecord}>record</Botton>
 }
+
+const Botton = styled.button`
+  position: absolute;
+`
