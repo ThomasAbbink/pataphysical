@@ -95,21 +95,21 @@ const ball =
       p5.rotate(rotation * (1 - magNormal))
 
       p5.fill(
-        p5.map(magNormal, 0, 0.7, 90, 0, true),
-        p5.map(magNormal, 0, 0.7, 60, 100, true),
-        p5.map(magNormal, 0, 0.7, 100, 50, true),
+        p5.map(magNormal, 0, 0.8, 90, 0, true),
+        p5.map(magNormal, 0, 0.8, 60, 100, true),
+        p5.map(magNormal, 0, 0.8, 100, 50, true),
       )
       p5.translate(p.x, p.y, z)
       if (size < maxSize * magNormal) {
-        size += 0.05
+        size += 0.04
       }
       if (size > maxSize * magNormal) {
-        size -= 0.05
+        size -= 0.04
       }
       p5.sphere(size)
       p5.pop()
 
-      if (magNormal >= 0.7) {
+      if (magNormal >= 1) {
         destroy(id)
       }
     }
