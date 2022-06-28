@@ -114,3 +114,5 @@ const ball =
     }
     return { draw }
   }
+
+sunnyTunnel.date = '2022-06-22'

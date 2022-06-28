@@ -41,3 +41,5 @@ export const cardioid = (p5) => {
     return p5.createVector(x, y)
   }
 }
+
+cardioid.date = '2020-01-02'

@@ -6,7 +6,7 @@ export default ({ sketches }) => {
   return (
     <Container>
       {sketches
-        .sort((a, b) => b.name.localeCompare(a.name))
+        .sort((a, b) => b.date.localeCompare(a.date))
         .map((s) => (
           <CarouselSketchWrapper sketch={s} key={s.name} />
         ))}

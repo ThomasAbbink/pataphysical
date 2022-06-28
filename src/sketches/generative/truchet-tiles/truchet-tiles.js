@@ -199,3 +199,5 @@ const tile = (p5, { x, y, size }) => {
     y,
   }
 }
+
+flippingTruchetTiles.date = '2022-04-22'

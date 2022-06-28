@@ -149,3 +149,5 @@ export const cube = (p5) => {
     p5.line(a[0][0], a[1][0], b[0][0], b[1][0])
   }
 }
+
+cube.date = '2020-01-01'

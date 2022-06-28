@@ -448,3 +448,5 @@ const polygon = (p5, { x, y, radius, points, rotation }) => {
   p5.endShape()
   return corners
 }
+
+truchetPatterns.date = '2022-05-15'

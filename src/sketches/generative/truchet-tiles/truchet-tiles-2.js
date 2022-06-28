@@ -169,3 +169,4 @@ const tile = (p5, { x, y }) => {
     y,
   }
 }
+pythagoreanTruchetTiles.date = '2022-04-29'

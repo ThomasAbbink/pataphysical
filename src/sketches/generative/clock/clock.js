@@ -77,3 +77,5 @@ const toIndexes = (number) => {
 }
 
 const addZero = (i) => (i < 10 ? `0${i}` : i)
+
+clock.date = '2021-06-25'

@@ -311,3 +311,5 @@ const flurb =
     }
     return { draw }
   }
+
+wavyAnemone.date = '2022-06-15'

@@ -91,3 +91,5 @@ export const pollockAreas = (p5) => {
     backgroundOpacity += backgroundOpacityVelocity
   }
 }
+
+pollockAreas.date = '2021-06-24'

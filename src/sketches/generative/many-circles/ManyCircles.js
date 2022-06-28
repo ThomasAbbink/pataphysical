@@ -1,5 +1,6 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { generateOscillatingNumber } from '../../../utility/numbers'
+import { lotusCircles } from '../lotus-circles/LotusCircles'
 
 export const manyCircles = (p5) => {
   let backgroundColor = p5.color(122, 177, 222)
@@ -209,3 +210,5 @@ const circle = (p5, props) => {
     },
   }
 }
+
+manyCircles.date = '2022-03-14'
