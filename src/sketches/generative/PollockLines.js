@@ -1,10 +1,9 @@
 import { getCanvasSize } from '../../utility/canvas'
-import { P5Wrapper } from '../P5Wrapper'
 import { Vector } from 'p5'
 import { getPalette } from './color-palettes'
 
 let colors = []
-const sketch = (p5) => {
+export const pollockLines = (p5) => {
   const flubs = new Set()
 
   p5.setup = () => {
@@ -78,5 +77,3 @@ const flurble = (p5) => {
     isOutOfBounds,
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

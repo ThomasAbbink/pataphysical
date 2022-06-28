@@ -1,6 +1,4 @@
 import { getCanvasSize } from '../../utility/canvas'
-import { P5Wrapper } from '../P5Wrapper'
-
 import { distanceSquared } from '../../utility/vectors'
 import {
   generateLoopNumber,
@@ -11,7 +9,7 @@ import { destroyableSet } from '../../utility/destroyableSet'
 
 let backgroundColor = 0
 
-const sketch = (p5) => {
+export const wavyAnemone = (p5) => {
   const { items: flurbs, create } = destroyableSet()
   const flurbsPerRow = 15
   let homeTarget
@@ -313,5 +311,3 @@ const flurb =
     }
     return { draw }
   }
-
-export default () => <P5Wrapper sketch={sketch} />

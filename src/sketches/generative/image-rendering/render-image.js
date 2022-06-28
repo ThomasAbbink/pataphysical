@@ -1,5 +1,4 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
 import { createPattern } from './pattern'
 
 let image
@@ -19,7 +18,7 @@ const images = [
 
 const patterns = []
 let backgroundColor = 255
-const sketch = (p5) => {
+export const portraits = (p5) => {
   p5.preload = () => {
     transition(true)
   }
@@ -112,5 +111,3 @@ const sketch = (p5) => {
     )
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

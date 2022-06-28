@@ -1,8 +1,8 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
+
 import { v4 as uuid } from 'uuid'
 
-const sketch = (p5) => {
+export const lotusCircles = (p5) => {
   let backgroundColor = p5.color(11, 33, 88)
   const circles = new Map()
 
@@ -125,5 +125,3 @@ const circle = (p5, props) => {
     },
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

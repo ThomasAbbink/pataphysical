@@ -1,8 +1,7 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { generateOscillatingNumber } from '../../../utility/numbers'
-import { P5Wrapper } from '../../P5Wrapper'
 
-const sketch = (p5) => {
+export const manyCircles = (p5) => {
   let backgroundColor = p5.color(122, 177, 222)
   const circles = new Map()
   p5.setup = () => {
@@ -210,5 +209,3 @@ const circle = (p5, props) => {
     },
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

@@ -1,12 +1,16 @@
 import styled from 'styled-components'
-import SketchContainer from './SketchContainer'
+import { backgroundColor } from '../../style/colors'
+import CarouselSketchWrapper from './CarouselSketchWrapper'
 
-export default ({ children }) => {
+export default ({ sketches }) => {
   return (
     <Container>
-      {children.map((s) => (
-        <SketchContainer sketch={s} key={s.key} />
-      ))}
+      {sketches
+        .sort((a, b) => b.name.localeCompare(a.name))
+        .map((s) => (
+          <CarouselSketchWrapper sketch={s} key={s.name} />
+        ))}
+      <Footer />
     </Container>
   )
 }
@@ -21,4 +25,11 @@ const Container = styled.div`
   overflow-y: scroll;
   width: 100%;
   scroll-snap-type: y mandatory;
+`
+
+const Footer = styled.div`
+  width: 100%;
+  background-color: ${backgroundColor};
+  height: 100px;
+  min-height: 100px;
 `

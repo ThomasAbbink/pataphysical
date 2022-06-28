@@ -3,11 +3,10 @@ import {
   generateLoopNumber,
   generateOscillatingNumber,
 } from '../../utility/numbers'
-import { P5Wrapper } from '../P5Wrapper'
 
 let backgroundColor = 255
 
-const sketch = (p5) => {
+export const wavyCircle = (p5) => {
   let c
   let circleSize
 
@@ -216,5 +215,3 @@ const circle = ({ p5, position, size }) => {
 
   return { draw }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

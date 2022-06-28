@@ -1,8 +1,7 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
 import sevenSegment from './seven-segment'
 
-const sketch = (p5) => {
+export const clock = (p5) => {
   const backgroundColor = p5.color(33, 33, 40)
   const createDisplays = () => {
     const width = p5.width
@@ -78,5 +77,3 @@ const toIndexes = (number) => {
 }
 
 const addZero = (i) => (i < 10 ? `0${i}` : i)
-
-export default () => <P5Wrapper sketch={sketch} />

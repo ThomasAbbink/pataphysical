@@ -1,11 +1,10 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import { v4 as uuid } from 'uuid'
 
 let backgroundColor = 0
 
-const sketch = (p5) => {
+export const truchetPatterns = (p5) => {
   const tiles = new Map()
   const tileCount = 10
   let rowCount
@@ -449,5 +448,3 @@ const polygon = (p5, { x, y, radius, points, rotation }) => {
   p5.endShape()
   return corners
 }
-
-export default () => <P5Wrapper sketch={sketch} />

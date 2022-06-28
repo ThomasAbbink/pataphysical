@@ -1,9 +1,9 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
+
 import { matrixLine } from './matrix-line'
 import { v4 as uuid } from 'uuid'
 
-const sketch = (p5) => {
+export const matrix = (p5) => {
   let lines = new Map()
   const lineWidth = 15
   let backgroundColor = p5.color(5, 18, 10)
@@ -146,5 +146,3 @@ const sketch = (p5) => {
     })
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

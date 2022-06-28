@@ -1,10 +1,9 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
 import { Vector } from 'p5'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import { distanceSquared } from '../../../utility/vectors'
 
-const sketch = (p5) => {
+export const repulsionAttraction = (p5) => {
   let backgroundColor = p5.color(100, 130, 150)
   const gridPoints = []
   const movers = []
@@ -213,5 +212,3 @@ const getClosestVector = (position, vectors = []) => {
     .map((v) => ({ distance: distanceSquared(v.position, position), v }))
     .sort((a, b) => a.distance - b.distance)[0].v
 }
-
-export default () => <P5Wrapper sketch={sketch} />

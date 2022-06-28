@@ -1,8 +1,6 @@
-import { P5Wrapper } from '../P5Wrapper'
-
 import { getCanvasSize } from '../../utility/canvas'
 
-const sketch = (p5) => {
+export const cardioid = (p5) => {
   let radius = 300
   let points = 200
   let factor = 0
@@ -43,5 +41,3 @@ const sketch = (p5) => {
     return p5.createVector(x, y)
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

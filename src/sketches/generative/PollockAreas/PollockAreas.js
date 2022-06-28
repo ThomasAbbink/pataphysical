@@ -1,9 +1,8 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { P5Wrapper } from '../../P5Wrapper'
 import area from './area'
 import { Vector } from 'p5'
 
-const sketch = (p5) => {
+export const pollockAreas = (p5) => {
   const areas = []
   let backgroundOpacity = 0.5
   let backgroundOpacityVelocity = 0
@@ -92,5 +91,3 @@ const sketch = (p5) => {
     backgroundOpacity += backgroundOpacityVelocity
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

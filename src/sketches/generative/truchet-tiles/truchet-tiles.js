@@ -1,9 +1,8 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { generateOscillatingNumber } from '../../../utility/numbers'
-import { P5Wrapper } from '../../P5Wrapper'
 
 let isFlipping = false
-const sketch = (p5) => {
+export const flippingTruchetTiles = (p5) => {
   let tileSize
   const tiles = []
   let backgroundColor = p5.color(33, 33, 40)
@@ -200,5 +199,3 @@ const tile = (p5, { x, y, size }) => {
     y,
   }
 }
-
-export default () => <P5Wrapper sketch={sketch} />

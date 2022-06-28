@@ -1,6 +1,6 @@
 import Carousel from './Carousel'
-import sketchCollection from '../sketch-collection'
+import * as sketches from '../../sketches'
 
 export default function CarouselPage() {
-  return <Carousel>{sketchCollection()}</Carousel>
+  return <Carousel sketches={Object.values(sketches)} />
 }

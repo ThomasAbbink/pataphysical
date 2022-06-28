@@ -1,9 +1,8 @@
 import { getCanvasSize } from '../../utility/canvas'
 import { generateOscillatingNumber } from '../../utility/numbers'
-import { P5Wrapper } from '../P5Wrapper'
 import { destroyableSet } from '../../utility/destroyableSet'
 
-const sketch = (p5) => {
+export const sunnyTunnel = (p5) => {
   const { create, items: balls } = destroyableSet()
   let backgroundColor
   let ballCount = 20
@@ -115,5 +114,3 @@ const ball =
     }
     return { draw }
   }
-
-export default () => <P5Wrapper sketch={sketch} />

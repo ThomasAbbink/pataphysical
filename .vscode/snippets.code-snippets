@@ -21,7 +21,7 @@
     "prefix": "sketch",
     "body": [
       "import { getCanvasSize } from '../../../utility/canvas'",
-      "import { P5Wrapper } from '../../P5Wrapper'",
+      "",
 
       "let backgroundColor = 255",
       "const sketch = (p5) => {",
@@ -39,7 +39,7 @@
       "p5.draw = () => {}",
       "}",
       "",
-      "export default () => <P5Wrapper sketch={sketch} />"
+      "export default sketch"
     ]
   }
 }

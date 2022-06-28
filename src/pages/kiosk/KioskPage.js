@@ -1,6 +1,6 @@
 import Kiosk from './Kiosk'
-import sketchCollection from '../sketch-collection'
+import * as sketches from '../../sketches'
 
 export default function KioskPage() {
-  return <Kiosk>{sketchCollection()}</Kiosk>
+  return <Kiosk sketches={Object.values(sketches)}></Kiosk>
 }
