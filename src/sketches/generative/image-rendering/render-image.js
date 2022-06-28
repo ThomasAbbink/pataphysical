@@ -112,4 +112,4 @@ export const portraits = (p5) => {
   }
 }
 
-portraits.date = '2022-06-10'
+portraits.date = '2021-06-10'

@@ -45,8 +45,8 @@ const ProgressBar = styled.div`
     }
   }
 
-  height: 1px;
-  background-color: ${backgroundColor};
+  height: 3px;
+  background-color: white;
   animation: ${({ timeout }) =>
     `barWidth calc(${timeout} * 1ms) linear infinite alternate;`};
 `

@@ -3,6 +3,7 @@ import NotFoundPage from './nav/NotFoundPage'
 import KioskPage from './pages/kiosk/KioskPage'
 import CarouselPage from './pages/carousel/CarouselPage'
 import styled, { createGlobalStyle } from 'styled-components'
+import { backgroundColor } from './style/colors'
 
 function App() {
   return (
@@ -36,6 +37,7 @@ const Base = styled.div`
   max-height: 100vh;
   overflow: hidden;
   width: 100%;
+  background-color: ${backgroundColor};
 `
 
 export default App

@@ -18,7 +18,6 @@ export default ({ sketches }) => {
 const Container = styled.div`
   display: flex;
   flex-grow: 1;
-  background-color: white;
   scroll-behavior: smooth;
   flex-direction: column;
   overflow-x: hidden;

@@ -3,7 +3,7 @@ import { useP5 } from '../../utility/useP5'
 
 export default ({ sketch }) => {
   const { ref: canvasRef } = useP5(sketch)
-  return <Wrapper id="sketch-wrapper" ref={canvasRef}></Wrapper>
+  return <Wrapper id="sketch-wrapper" ref={canvasRef} />
 }
 
 const Wrapper = styled.div`
