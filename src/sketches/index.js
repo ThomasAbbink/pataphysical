@@ -14,3 +14,4 @@ export { pythagoreanTruchetTiles } from '../sketches/generative/truchet-tiles/tr
 export { wavyAnemone } from '../sketches/generative/wavy-anemone'
 export { truchetPatterns } from '../sketches/generative/truchet-tiles/truchet-tiles-3'
 export { sunnyTunnel } from '../sketches/generative/sunny-tunnel'
+export { doodle } from './doodle'

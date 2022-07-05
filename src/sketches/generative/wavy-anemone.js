@@ -6,6 +6,7 @@ import {
 } from '../../utility/numbers'
 import { lerpAngle } from '../../utility/vectors'
 import { destroyableSet } from '../../utility/destroyableSet'
+import { easeInSine, easeOutSine } from '../../utility/easing'
 
 let backgroundColor = 0
 
@@ -230,14 +231,7 @@ const flurb =
       p5.translate(pOff.x, pOff.y)
       const p = []
 
-      function easeInSine(x) {
-        return 1 - Math.cos((x * Math.PI) / 2)
-      }
-      function easeOutSine(x) {
-        return Math.sin((x * Math.PI) / 2)
-      }
       // use ease in to slow the acceleration, reduce jitter
-
       const eis = easeInSine(
         p5.map(Math.abs(rotation - targetAngle), 0, p5.PI, 0.1, 1, true),
       )

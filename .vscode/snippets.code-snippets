@@ -20,11 +20,11 @@
     "scope": "javascript",
     "prefix": "sketch",
     "body": [
-      "import { getCanvasSize } from '../../../utility/canvas'",
+      "import { getCanvasSize } from '../utility/canvas'",
+      "import { backgroundColor } from '../style/colors'",
       "",
 
-      "let backgroundColor = 255",
-      "const sketch = (p5) => {",
+      "const ${1:sketch} = (p5) => {",
       "p5.setup = () => {",
       "const { width, height } = getCanvasSize()",
       "p5.createCanvas(width, height)",
@@ -36,10 +36,11 @@
       "p5.resizeCanvas(width, height)",
       "}",
       "",
-      "p5.draw = () => {}",
+      "p5.draw = () => {$0}",
       "}",
       "",
-      "export default sketch"
+      "${1:sketch}.date = '${2}'",
+      "export { ${1:sketch} }"
     ]
   }
 }
