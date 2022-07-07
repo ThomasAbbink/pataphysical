@@ -1,9 +1,9 @@
 import { getCanvasSize } from '../../utility/canvas'
 import { generateOscillatingNumber } from '../../utility/numbers'
-import { destroyableSet } from '../../utility/destroyableSet'
+import { destroyableMap } from '../../utility/destroyableSet'
 
 export const sunnyTunnel = (p5) => {
-  const { create, items: balls } = destroyableSet()
+  const { create, items: balls } = destroyableMap()
   let backgroundColor
   let ballCount = 20
   let isFlipped = false

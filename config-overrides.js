@@ -19,6 +19,12 @@ module.exports = function override(config) {
       Buffer: ['buffer', 'Buffer'],
     }),
   ])
-
+  const rules = config.module.rules || []
+  config.module.rules = rules.concat([
+    {
+      test: /\.(glsl|vert|frag)$/,
+      type: 'asset/source',
+    },
+  ])
   return config
 }

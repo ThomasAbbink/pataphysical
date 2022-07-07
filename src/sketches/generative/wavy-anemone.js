@@ -5,13 +5,13 @@ import {
   generateOscillatingNumber,
 } from '../../utility/numbers'
 import { lerpAngle } from '../../utility/vectors'
-import { destroyableSet } from '../../utility/destroyableSet'
+import { destroyableMap } from '../../utility/destroyableSet'
 import { easeInSine, easeOutSine } from '../../utility/easing'
 
 let backgroundColor = 0
 
 export const wavyAnemone = (p5) => {
-  const { items: flurbs, create } = destroyableSet()
+  const { items: flurbs, create } = destroyableMap()
   const flurbsPerRow = 15
   let homeTarget
   let target

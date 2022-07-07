@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-export const destroyableSet = () => {
+export const destroyableMap = () => {
   const items = new Map()
 
   const destroy = (id) => {
