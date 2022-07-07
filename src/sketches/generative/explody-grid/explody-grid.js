@@ -20,7 +20,7 @@ const explodyGrid = (p5) => {
     shader = p5.createShader(vert, frag)
 
     createPatch({ position: p5.createVector(0, 1, -height / 6) })
-    createPatch({ position: p5.createVector(1, 1, 1) })
+
     createPatch({ position: p5.createVector(1, 1, height / 6) })
 
     target.setMag(p5.width / 2)

@@ -13,7 +13,7 @@ precision mediump float;
 // we need the sketch resolution to perform some calculations
 uniform vec2 resolution;
 uniform int point_size;
-uniform vec3 points[300];
+uniform vec3 points[200];
 
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
@@ -22,7 +22,7 @@ void main() {
   bool is_close = false;
   float distance_to_closest_point = 1.0;
   float z = 0.0;
-  for (int i = 0; i < 300; i++) {
+  for (int i = 0; i < 200; i++) {
     vec3 point = points[i];
     float dist = distance(st, point.xy);
 
