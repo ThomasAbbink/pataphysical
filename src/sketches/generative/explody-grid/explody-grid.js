@@ -19,9 +19,9 @@ const explodyGrid = (p5) => {
     p5.createCanvas(width, height, p5.WEBGL)
     shader = p5.createShader(vert, frag)
 
-    createPatch({ position: p5.createVector(0, 1, -height / 6) })
+    createPatch({ position: p5.createVector(0, 1, -20) })
 
-    createPatch({ position: p5.createVector(1, 1, height / 6) })
+    createPatch({ position: p5.createVector(1, 0, 20) })
 
     target.setMag(p5.width / 2)
     p5.pixelDensity(1)
@@ -87,14 +87,14 @@ const normalizePoints = (p5, points) => {
     .map((point) => {
       const x = p5.map(point.x, -p5.width / 2, p5.width / 2, 1.0, 0.0, true)
       const y = p5.map(point.y, -p5.height / 2, p5.height / 2, 0.0, 1.0, true)
-      const z = p5.map(point.z, -100, 100, 1, 0, true) // arbitrary z
+      const z = p5.map(point.z, -1000, 1000, 0.0, 1.0, true)
       return [x, y, z]
     })
     .flat()
 }
 
 const patch = (p5, { position, patchSize = p5.width / 3 }) => {
-  const flurbCount = 10
+  const flurbCount = 5
 
   const { items: flurbs, create } = destroyableMap()
   for (let i = 0; i < flurbCount; i++) {
@@ -103,7 +103,10 @@ const patch = (p5, { position, patchSize = p5.width / 3 }) => {
         position.x + (patchSize / flurbCount) * i - patchSize + patchSize / 2
       const y =
         position.y + (patchSize / flurbCount) * j - patchSize + patchSize / 2
-      create(flurb(p5, { gridPosition: p5.createVector(x, y, 0), patchSize }))
+
+      const vec = p5.createVector(x, y, position.z)
+
+      create(flurb(p5, { gridPosition: vec, patchSize }))
     }
   }
 
@@ -169,7 +172,7 @@ const flurb =
         target.x - position.x - gridPosition.x,
       )
 
-      let ease = isScattering ? 0.005 : 0.03
+      let ease = isScattering ? 0.01 : 0.03
       xRotation = lerpAngle(xRotation, targetAngle, ease)
 
       yRotation = lerpAngle(yRotation, targetAngle, ease * 0.8)
