@@ -1,12 +1,13 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { destroyableMap } from '../../../utility/destroyableSet'
-import { distanceSquared, lerpAngle } from '../../../utility/vectors'
-import { easeInSine, easeOutSine } from '../../../utility/easing'
+import { lerpAngle } from '../../../utility/vectors'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import vert from './shader.vert'
 import frag from './shader.frag'
 import { Vector } from 'p5'
 
+const isDebugging = false
+const backgroundColor = 0
 const explodyGrid = (p5) => {
   const patches = []
   let target = p5.createVector(1, 1)
@@ -19,9 +20,9 @@ const explodyGrid = (p5) => {
     p5.createCanvas(width, height, p5.WEBGL)
     shader = p5.createShader(vert, frag)
 
-    createPatch({ position: p5.createVector(0, 1, -20) })
+    createPatch({ position: p5.createVector(0, 1, -50) })
 
-    createPatch({ position: p5.createVector(1, 0, 20) })
+    createPatch({ position: p5.createVector(1, 0, 50) })
 
     target.setMag(p5.width / 2)
     p5.pixelDensity(1)
@@ -36,16 +37,9 @@ const explodyGrid = (p5) => {
     p5.resizeCanvas(width, height)
   }
 
-  const getTargetMag = generateOscillatingNumber({
-    min: 1,
-    max: width / 2,
-    increment: width / 1000,
-    initialValue: width * 0.9,
-  })
-
   const getTargetRotation = generateOscillatingNumber({
-    min: -0.03,
-    max: 0.03,
+    min: -0.01,
+    max: 0.01,
     easing: 0.1,
     restFrames: 400,
   })
@@ -54,31 +48,82 @@ const explodyGrid = (p5) => {
     min: 0.0,
     max: 0.02,
     easing: 0.1,
+    restFrames: 800,
+  })
+
+  const getTargetMag = generateOscillatingNumber({
+    min: width / 8,
+    max: width / 2,
+    easing: 0.1,
     restFrames: 400,
   })
+  const getSize = generateOscillatingNumber({
+    initialValue: 0.1,
+    easing: 0.001,
+    min: 0.1,
+    max: 0.9,
+    restFrames: 100,
+  })
+
+  const getRed = generateOscillatingNumber({
+    min: 0.7,
+    max: 0.85,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.8,
+    restFrames: 100,
+  })
+  const getGreen = generateOscillatingNumber({
+    min: 0.7,
+    max: 0.85,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.8,
+    restFrames: p5.random(0, 100),
+  })
+  const getBlue = generateOscillatingNumber({
+    min: 0.7,
+    max: 0.85,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.7,
+  })
+
   let rotation = 0
 
   p5.draw = () => {
     p5.noStroke()
-    target.rotate(getTargetRotation())
-    target.setMag(getTargetMag())
+    const mag = getTargetMag()
+    target.setMag(mag)
+    target.rotate(
+      getTargetRotation() * p5.map(mag, width / 8, width / 2, 2, 1),
+      true,
+    )
     const points = []
 
     patches.forEach((patch) => {
       points.push(patch.update({ target, angle: rotation }))
     })
 
-    p5.translate(-p5.width / 2, -p5.height / 2)
+    if (isDebugging) {
+      p5.background(backgroundColor)
+      p5.ellipse(target.x, target.y, 10, 10)
+      patches.forEach((patch) => {
+        patch.draw()
+      })
+    }
 
-    const normalized = normalizePoints(p5, points.flat())
-    const inner_eye_size = getInnerEyeSize()
-    shader.setUniform('resolution', [p5.width, p5.height])
-    shader.setUniform('points', normalized)
-    shader.setUniform('inner_eye_size', inner_eye_size)
+    if (!isDebugging) {
+      p5.translate(-p5.width / 2, -p5.height / 2)
 
-    p5.shader(shader)
+      const normalized = normalizePoints(p5, points.flat())
+      const inner_eye_size = getInnerEyeSize()
+      shader.setUniform('resolution', [p5.width, p5.height])
+      shader.setUniform('points', normalized)
+      shader.setUniform('inner_eye_size', inner_eye_size)
+      shader.setUniform('size', getSize())
+      shader.setUniform('color', [getRed(), getGreen(), getBlue()])
+      p5.shader(shader)
 
-    p5.rect(0, 0, p5.width, p5.height)
+      p5.rect(0, 0, p5.width, p5.height)
+    }
   }
 }
 
@@ -112,12 +157,9 @@ const patch = (p5, { position, patchSize = p5.width / 3 }) => {
 
   // returns an array of vectors
   const update = ({ target }) => {
-    const dist = distanceSquared(position, target)
-    const isScattering = dist < patchSize * patchSize
     const res = []
-
     for (let point of flurbs.values()) {
-      res.push(point.update({ target, isScattering, position }))
+      res.push(point.update({ target, position }))
     }
 
     return res
@@ -133,55 +175,29 @@ const patch = (p5, { position, patchSize = p5.width / 3 }) => {
 }
 
 const flurb =
-  (p5, { gridPosition, patchSize } = {}) =>
+  (p5, { gridPosition } = {}) =>
   ({ destroy, id }) => {
     let zRotation = 0
     let yRotation = 0
     let xRotation = 0
-    const gridOffset = gridPosition.copy()
-    const scatterPosition = p5.createVector(
-      p5.sin(gridOffset.x) * p5.TWO_PI,
-      p5.sin(gridOffset.y) * p5.TWO_PI,
-      p5.sin(gridOffset.z) * p5.TWO_PI,
-    )
-    scatterPosition.setMag(patchSize)
-    const scatterSpeed = 10
-    const gatherSpeed = 20
     let endPos
-
+    let magVelocity = 0
     //returns a 3d vector with the latest position
-    const update = ({ target, position, isScattering }) => {
-      // increase te magnitude to a max if the flurb is scattering
-      if (isScattering && gridOffset.mag() < patchSize) {
-        const velocity = easeOutSine(1 - gridOffset.mag() / patchSize)
-        gridOffset.setMag(gridOffset.mag() + scatterSpeed * velocity)
-      }
+    const update = ({ target, position: patchCenter }) => {
+      let ease = 0.05
+      endPos = patchCenter.copy()
 
-      // return the flurb to its original position in the grid if it is not scattering
-      if (!isScattering && gridOffset.mag() > gridPosition.mag()) {
-        const velocity = easeInSine(1 - gridPosition.mag() / gridOffset.mag())
-        let next = gridOffset.mag() - velocity * gatherSpeed
-        if (next < gridPosition.mag()) {
-          next = gridPosition.mag()
-        }
-        gridOffset.setMag(next)
-      }
+      endPos.add(gridPosition)
 
-      const targetAngle = p5.atan2(
-        target.y - position.y - gridPosition.y,
-        target.x - position.x - gridPosition.x,
-      )
+      endPos.setMag(endPos.mag() + magVelocity)
 
-      let ease = isScattering ? 0.01 : 0.03
+      const targetAngle = p5.atan2(target.y - endPos.y, target.x - endPos.x)
+
       xRotation = lerpAngle(xRotation, targetAngle, ease)
-
-      yRotation = lerpAngle(yRotation, targetAngle, ease * 0.8)
+      yRotation = lerpAngle(yRotation, targetAngle, ease * 2)
       zRotation = lerpAngle(zRotation, targetAngle, ease)
 
       // apply the rotation to the endpos
-      const c = position.copy()
-      endPos = c.add(gridOffset)
-
       endPos = rotateAround(endPos, p5.createVector(1, 0, 0), xRotation)
       endPos = rotateAround(endPos, p5.createVector(0, 1, 0), yRotation)
       endPos = rotateAround(endPos, p5.createVector(0, 0, 1), zRotation)
@@ -190,11 +206,8 @@ const flurb =
 
     const draw = () => {
       p5.push()
-
       p5.translate(endPos.x, endPos.y, endPos.z)
-
       p5.sphere(10)
-
       p5.pop()
     }
 

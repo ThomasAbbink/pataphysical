@@ -2,6 +2,8 @@ precision highp float;
 
 uniform vec2 resolution;
 uniform vec3 points[50];
+uniform  float size;
+uniform vec3 color;
 
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
@@ -21,14 +23,14 @@ void main() {
 
 
   float dist_to_closest_point = distance(st, closest_point.xy);
-  float size = 0.1;
-  vec4 background_color = vec4(0.01, 0.01, 0.01, 1.0);
+
+  vec4 background_color = vec4(0.05, 0.07, 0.1, 1.0);
 
 
   float v = smoothstep(size, 0.0, dist_to_closest_point);
-  float r = clamp(0.0, 0.80, v);
-  float g = clamp(0.0, 0.87, v);
-  float b = clamp(0.0, 0.98, v);
+  float r = clamp(0.0, color.r, v);
+  float g = clamp(0.0, color.g, v);
+  float b = clamp(0.0, color.b, v);
 
 
 
