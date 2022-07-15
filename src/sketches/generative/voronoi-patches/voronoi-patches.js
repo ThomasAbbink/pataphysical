@@ -1,40 +1,47 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { destroyableMap } from '../../../utility/destroyableSet'
-import { lerpAngle } from '../../../utility/vectors'
+import { lerpAngle, rotateAround } from '../../../utility/vectors'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import vert from './shader.vert'
 import frag from './shader.frag'
-import { Vector } from 'p5'
 
 const isDebugging = false
 const backgroundColor = 0
-const explodyGrid = (p5) => {
+const voronoiPatches = (p5) => {
   const patches = []
   let target = p5.createVector(1, 1)
   let shader
 
-  p5.preload = () => {}
   const { width, height } = getCanvasSize()
+  let smallestWindowDimension = width > height ? height : width
 
   p5.setup = () => {
     p5.createCanvas(width, height, p5.WEBGL)
     shader = p5.createShader(vert, frag)
 
-    createPatch({ position: p5.createVector(0, 1, -50) })
+    createPatch({
+      position: p5.createVector(0, 1, -smallestWindowDimension / 10),
+      patchSize: smallestWindowDimension / 3,
+      flurbCount: 5,
+    })
+    createPatch({
+      position: p5.createVector(1, 0, smallestWindowDimension / 10),
+      patchSize: smallestWindowDimension / 3,
+      flurbCount: 5,
+    })
 
-    createPatch({ position: p5.createVector(1, 0, 50) })
-
-    target.setMag(p5.width / 2)
+    target.setMag(smallestWindowDimension / 2)
     p5.pixelDensity(1)
   }
 
-  const createPatch = ({ position }) => {
-    patches.push(patch(p5, { position }))
+  const createPatch = (options) => {
+    patches.push(patch(p5, options))
   }
 
   p5.windowResized = () => {
     const { width, height } = getCanvasSize()
     p5.resizeCanvas(width, height)
+    smallestWindowDimension = width > height ? height : width
   }
 
   const getTargetRotation = generateOscillatingNumber({
@@ -44,25 +51,26 @@ const explodyGrid = (p5) => {
     restFrames: 400,
   })
 
-  const getInnerEyeSize = generateOscillatingNumber({
-    min: 0.0,
-    max: 0.02,
-    easing: 0.1,
-    restFrames: 800,
-  })
-
   const getTargetMag = generateOscillatingNumber({
-    min: width / 8,
-    max: width / 2,
+    min: smallestWindowDimension / 8,
+    max: smallestWindowDimension / 2,
     easing: 0.1,
     restFrames: 400,
   })
-  const getSize = generateOscillatingNumber({
-    initialValue: 0.1,
-    easing: 0.001,
-    min: 0.1,
-    max: 0.9,
-    restFrames: 100,
+
+  const getShineSize = generateOscillatingNumber({
+    initialValue: 0.16,
+    easing: 0.0001,
+    min: 0.16,
+    max: 0.5,
+    restFrames: 500,
+  })
+
+  const getInnerEyeSize = generateOscillatingNumber({
+    min: 0.0,
+    max: 0.15,
+    increment: 0.0001,
+    restFrames: 200,
   })
 
   const getRed = generateOscillatingNumber({
@@ -85,21 +93,46 @@ const explodyGrid = (p5) => {
     increment: p5.random(0.0001, 0.001),
     initialValue: 0.7,
   })
-
-  let rotation = 0
+  const getBackgroundRed = generateOscillatingNumber({
+    min: 0.0,
+    max: 0.2,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.0,
+    restFrames: 100,
+  })
+  const getBackgroundGreen = generateOscillatingNumber({
+    min: 0.0,
+    max: 0.2,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.0,
+    restFrames: p5.random(0, 100),
+  })
+  const getBackgroundBlue = generateOscillatingNumber({
+    min: 0.0,
+    max: 0.2,
+    increment: p5.random(0.0001, 0.001),
+    initialValue: 0.0,
+  })
 
   p5.draw = () => {
     p5.noStroke()
     const mag = getTargetMag()
     target.setMag(mag)
     target.rotate(
-      getTargetRotation() * p5.map(mag, width / 8, width / 2, 2, 1),
+      getTargetRotation() *
+        p5.map(
+          mag,
+          smallestWindowDimension / 8,
+          smallestWindowDimension / 2,
+          2,
+          1,
+        ),
       true,
     )
     const points = []
 
     patches.forEach((patch) => {
-      points.push(patch.update({ target, angle: rotation }))
+      points.push(patch.update({ target }))
     })
 
     if (isDebugging) {
@@ -111,18 +144,23 @@ const explodyGrid = (p5) => {
     }
 
     if (!isDebugging) {
-      p5.translate(-p5.width / 2, -p5.height / 2)
+      p5.translate(-width / 2, -height / 2)
 
       const normalized = normalizePoints(p5, points.flat())
       const inner_eye_size = getInnerEyeSize()
-      shader.setUniform('resolution', [p5.width, p5.height])
+      shader.setUniform('resolution', [width, height])
       shader.setUniform('points', normalized)
       shader.setUniform('inner_eye_size', inner_eye_size)
-      shader.setUniform('size', getSize())
-      shader.setUniform('color', [getRed(), getGreen(), getBlue()])
+      shader.setUniform('shine_size', getShineSize())
+      shader.setUniform('color', [getRed(), getGreen(), getBlue(), 1.0])
+      shader.setUniform('background_color', [
+        getBackgroundRed(),
+        getBackgroundGreen(),
+        getBackgroundBlue(),
+      ])
       p5.shader(shader)
 
-      p5.rect(0, 0, p5.width, p5.height)
+      p5.rect(0, 0, width, height)
     }
   }
 }
@@ -138,9 +176,7 @@ const normalizePoints = (p5, points) => {
     .flat()
 }
 
-const patch = (p5, { position, patchSize = p5.width / 3 }) => {
-  const flurbCount = 5
-
+const patch = (p5, { position, patchSize = p5.width / 3, flurbCount = 5 }) => {
   const { items: flurbs, create } = destroyableMap()
   for (let i = 0; i < flurbCount; i++) {
     for (let j = 0; j < flurbCount; j++) {
@@ -176,20 +212,18 @@ const patch = (p5, { position, patchSize = p5.width / 3 }) => {
 
 const flurb =
   (p5, { gridPosition } = {}) =>
-  ({ destroy, id }) => {
+  () => {
     let zRotation = 0
     let yRotation = 0
     let xRotation = 0
     let endPos
-    let magVelocity = 0
+
     //returns a 3d vector with the latest position
     const update = ({ target, position: patchCenter }) => {
       let ease = 0.05
       endPos = patchCenter.copy()
 
       endPos.add(gridPosition)
-
-      endPos.setMag(endPos.mag() + magVelocity)
 
       const targetAngle = p5.atan2(target.y - endPos.y, target.x - endPos.x)
 
@@ -214,22 +248,5 @@ const flurb =
     return { draw, update }
   }
 
-// Rotate one vector (vect) around another (axis) by the specified angle.
-function rotateAround(vect, axis, angle) {
-  // Make sure our axis is a unit vector
-  axis = Vector.normalize(axis)
-
-  return Vector.add(
-    Vector.mult(vect, Math.cos(angle)),
-    Vector.add(
-      Vector.mult(Vector.cross(axis, vect), Math.sin(angle)),
-      Vector.mult(
-        Vector.mult(axis, Vector.dot(axis, vect)),
-        1 - Math.cos(angle),
-      ),
-    ),
-  )
-}
-
-explodyGrid.date = '2022-06-28'
-export { explodyGrid }
+voronoiPatches.date = '2022-06-28'
+export { voronoiPatches }

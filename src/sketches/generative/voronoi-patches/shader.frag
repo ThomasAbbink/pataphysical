@@ -2,8 +2,11 @@ precision highp float;
 
 uniform vec2 resolution;
 uniform vec3 points[50];
-uniform  float size;
+uniform  float shine_size;
+uniform  float inner_eye_size;
 uniform vec3 color;
+uniform vec4 background_color;
+uniform float time;
 
 void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
@@ -17,22 +20,19 @@ void main() {
     float dist_to_closest_point = distance(st, closest_point.xy);
     if (dist_to_point < dist_to_closest_point) {
         closest_point = point;
-
     }
   }
 
 
   float dist_to_closest_point = distance(st, closest_point.xy);
 
-  vec4 background_color = vec4(0.05, 0.07, 0.1, 1.0);
 
-
-  float v = smoothstep(size, 0.0, dist_to_closest_point);
+  float v = smoothstep(shine_size, 0.0, dist_to_closest_point);
   float r = clamp(0.0, color.r, v);
   float g = clamp(0.0, color.g, v);
   float b = clamp(0.0, color.b, v);
 
 
 
-  gl_FragColor = background_color +  vec4(r, g, b, v) - vec4(smoothstep(size / 8.0, 0.0, dist_to_closest_point)) ;
+  gl_FragColor = background_color +  vec4(r, g, b, v) - vec4(smoothstep(inner_eye_size, 0.0, dist_to_closest_point)) ;
 }
