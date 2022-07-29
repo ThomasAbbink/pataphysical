@@ -2,7 +2,7 @@ precision highp float;
 
 uniform vec2 resolution;
 uniform float factor;
-uniform vec2 balls[2];
+uniform vec2 balls[5];
 uniform float ball_size;
 uniform float flurb_size;
 uniform float r;
@@ -24,7 +24,7 @@ void main() {
   vec2 st = gl_FragCoord.xy / resolution.xy;
   vec3 color = vec3(0.0);
   float ball_dist = 1.0;
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 5; i++) {
     float dist = distance(st, balls[i]);
     if(dist < ball_dist){
       ball_dist = dist;

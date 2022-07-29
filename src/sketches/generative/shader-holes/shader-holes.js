@@ -32,6 +32,30 @@ const shaderHoles = (p5) => {
         position: p5.createVector(-p5.width / 2, -p5.height / 2),
       }),
     )
+    balls.push(
+      ball({
+        p5,
+        rotation: 0.01,
+        magnitude: p5.width * 0.3,
+        position: p5.createVector(p5.width / 2, -p5.height / 2),
+      }),
+    )
+    balls.push(
+      ball({
+        p5,
+        rotation: 0.01,
+        magnitude: p5.width * 0.3,
+        position: p5.createVector(-p5.width / 2, p5.height / 2),
+      }),
+    )
+    balls.push(
+      ball({
+        p5,
+        rotation: 0.01,
+        magnitude: 0,
+        position: p5.createVector(-p5.width / 2, p5.height / 2),
+      }),
+    )
   }
 
   p5.windowResized = () => {
