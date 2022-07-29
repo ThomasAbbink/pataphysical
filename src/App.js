@@ -13,7 +13,6 @@ function App() {
         <Base>
           <Routes>
             <Route path="/" element={<CarouselPage />}></Route>
-            <Route path="index.html" element={<CarouselPage />}></Route>
             <Route path="/kiosk" element={<KioskPage />}></Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
