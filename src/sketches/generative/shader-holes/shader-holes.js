@@ -45,12 +45,13 @@ const shaderHoles = (p5) => {
     min: 10,
     max: 20,
     increment: 0.01,
+    initialValue: 20,
   })
 
   const getWildFactor = generateOscillatingNumber({
-    min: -5,
+    min: 0,
     max: 200,
-    increment: 0.11,
+    increment: 0.1,
     restFrames: 400,
     initialValue: 0,
   })
@@ -83,9 +84,19 @@ const shaderHoles = (p5) => {
     initialValue: p5.random(0, 0.6),
   })
 
+  const getRotation = generateOscillatingNumber({
+    min: -1,
+    max: 1,
+    easing: 0.001,
+    restFrames: 1000,
+    initialValue: 0.9,
+  })
+
   p5.draw = () => {
+    const wildFactor = getWildFactor()
+    const rotation = (getRotation() / 100) * p5.map(wildFactor, 0, 200, 1, 1.5)
     balls.forEach((b) => {
-      b.update()
+      b.update({ rotation })
     })
 
     const vec = balls
@@ -100,7 +111,7 @@ const shaderHoles = (p5) => {
       .flat()
 
     shader.setUniform('resolution', [width, height])
-    shader.setUniform('factor', getFactor() + getWildFactor())
+    shader.setUniform('factor', getFactor() + wildFactor)
     shader.setUniform('flurb_size', getFlurbSize())
     shader.setUniform('r', getR())
     shader.setUniform('g', getG())
@@ -114,13 +125,13 @@ const shaderHoles = (p5) => {
 
 const ball = ({
   p5,
-  rotation = 0.01,
+
   magnitude = p5.width / 3,
   position = p5.createVector(p5.width / 2, p5.height / 2),
 }) => {
   position.setMag(magnitude)
 
-  const update = () => {
+  const update = ({ rotation }) => {
     position.rotate(rotation)
   }
 

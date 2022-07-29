@@ -35,7 +35,7 @@ void main() {
   vec2 st_mult = st * factor * ball_dist ;
   vec2 st_fract = fract(st_mult);
   color = vec3(clamp( st_fract.y, 0.1, r), clamp( st_fract.y, 0.1, g), clamp( st_fract.y, 0.1, b));
-  color = color + vec3(circle(st_fract, flurb_size) * 0.7);
+  color = color + vec3(circle(st_fract, flurb_size) * 0.9);
   color =  color * smoothstep(0.5, 0.0, ball_dist);
   color =  color * smoothstep(0.0, 0.05, ball_dist);
   gl_FragColor = vec4(color, 1.0) ;
