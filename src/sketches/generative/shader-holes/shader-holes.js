@@ -48,14 +48,6 @@ const shaderHoles = (p5) => {
         position: p5.createVector(-p5.width / 2, p5.height / 2),
       }),
     )
-    balls.push(
-      ball({
-        p5,
-        rotation: 0.01,
-        magnitude: 0,
-        position: p5.createVector(-p5.width / 2, p5.height / 2),
-      }),
-    )
   }
 
   p5.windowResized = () => {
@@ -85,6 +77,13 @@ const shaderHoles = (p5) => {
     max: 0.5,
     easing: 0.002,
     restFrames: 400,
+  })
+
+  const getMagnitude = generateOscillatingNumber({
+    min: 30,
+    max: 500,
+    easing: 0.002,
+    restFrames: 5,
   })
 
   const getR = generateOscillatingNumber({
@@ -119,8 +118,11 @@ const shaderHoles = (p5) => {
   p5.draw = () => {
     const wildFactor = getWildFactor()
     const rotation = (getRotation() / 100) * p5.map(wildFactor, 0, 200, 1, 1.5)
+    const magnitude = getMagnitude()
+    p5.background(0)
     balls.forEach((b) => {
-      b.update({ rotation })
+      b.update({ rotation, magnitude })
+      b.draw()
     })
 
     const vec = balls
@@ -149,13 +151,13 @@ const shaderHoles = (p5) => {
 
 const ball = ({
   p5,
-
   magnitude = p5.width / 3,
   position = p5.createVector(p5.width / 2, p5.height / 2),
 }) => {
   position.setMag(magnitude)
 
-  const update = ({ rotation }) => {
+  const update = ({ rotation, magnitude: m }) => {
+    position.setMag(m)
     position.rotate(rotation)
   }
 
