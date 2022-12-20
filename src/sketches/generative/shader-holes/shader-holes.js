@@ -80,10 +80,10 @@ const shaderHoles = (p5) => {
   })
 
   const getMagnitude = generateOscillatingNumber({
-    min: 30,
-    max: 500,
+    min: 0.001,
+    max: 0.5,
     easing: 0.002,
-    restFrames: 5,
+    restFrames: 10,
   })
 
   const getR = generateOscillatingNumber({
@@ -118,7 +118,7 @@ const shaderHoles = (p5) => {
   p5.draw = () => {
     const wildFactor = getWildFactor()
     const rotation = (getRotation() / 100) * p5.map(wildFactor, 0, 200, 1, 1.5)
-    const magnitude = getMagnitude()
+    const magnitude = p5.width * getMagnitude()
     p5.background(0)
     balls.forEach((b) => {
       b.update({ rotation, magnitude })
