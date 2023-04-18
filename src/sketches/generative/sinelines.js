@@ -62,13 +62,13 @@ const line =
     const ownAngle = p5.map(y, 0, p5.height, 0.01, 0.02)
     const draw = ({ angleIncrement = 0.05, maxGrowth = 100 }) => {
       angle += ownAngle + angleIncrement
-      let width = Math.abs(p5.sin(angle)) * maxGrowth + minWidth
+      let width = p5.sin(angle) * maxGrowth + minWidth
 
-      const b = p5.map(ownAngle, 0.01, 0.02, 255, 200, true)
+      const b = p5.map(ownAngle, 0.01, 0.02, 255, 190, true)
 
       p5.fill(220, 220, b)
       const x = isLeft ? 0 : p5.width - width
-      p5.rect(x, yWithOffset, width, LINE_HEIGHT)
+      p5.rect(x, yWithOffset, width, LINE_HEIGHT, 1)
     }
 
     return { draw }
