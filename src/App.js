@@ -4,6 +4,7 @@ import KioskPage from './pages/kiosk/KioskPage'
 import CarouselPage from './pages/carousel/CarouselPage'
 import styled, { createGlobalStyle } from 'styled-components'
 import { backgroundColor } from './style/colors'
+import RecorderPage from './pages/recorder/RecorderPage'
 
 function App() {
   return (
@@ -12,8 +13,9 @@ function App() {
       <BrowserRouter>
         <Base>
           <Routes>
-            <Route path="/" element={<CarouselPage />}></Route>
-            <Route path="/kiosk" element={<KioskPage />}></Route>
+            <Route path="/" element={<CarouselPage />} />
+            <Route path="/kiosk" element={<KioskPage />} />
+            <Route path="/record" element={<RecorderPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Base>

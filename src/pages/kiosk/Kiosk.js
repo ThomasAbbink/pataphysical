@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { backgroundColor } from '../../style/colors'
 import KioskSketchWrapper from './KioskSketchWrapper'
 
 export default function Kiosk({ sketches }) {

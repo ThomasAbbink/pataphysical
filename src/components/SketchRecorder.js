@@ -6,12 +6,13 @@ import {
 } from '../utility/record-canvas'
 import styled from 'styled-components'
 
-export const SketchRecorder = ({ p5, bleep }) => {
+export const SketchRecorder = ({ p5 }) => {
   const drawRef = useRef()
   const [isRecording, setIsRecording] = useState(false)
 
   useEffect(() => {
-    if (isRecording) {
+    console.log('sketchrecorder: p5:', p5)
+    if (isRecording && p5.current) {
       const { width, height } = p5.current
       const w = width - (width % 2)
       const h = height - (height % 2)
@@ -29,7 +30,7 @@ export const SketchRecorder = ({ p5, bleep }) => {
         endRecordingAndDownloadVideo()
       }
     }
-  }, [isRecording])
+  }, [isRecording, p5])
 
   const onClickRecord = () => {
     setIsRecording(!isRecording)
