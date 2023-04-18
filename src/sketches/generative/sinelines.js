@@ -2,7 +2,7 @@ import { getCanvasSize } from '../../utility/canvas'
 import { backgroundColor } from '../../style/colors'
 import { generateOscillatingNumber } from '../../utility/numbers'
 
-const LINE_HEIGHT = 20
+const LINE_HEIGHT = 16
 
 const sinelines = (p5) => {
   const lines = []
@@ -21,8 +21,8 @@ const sinelines = (p5) => {
       lines.push(line(p5)({ y: i, isLeft: true }))
     }
     getMaxGrowth = generateOscillatingNumber({
-      min: -width / 6,
-      max: width / 6,
+      min: -width / 5,
+      max: width / 5,
       increment: p5.map(p5.width, 0, 1920, 0.5, 1, true),
       initialValue: 1,
     })
@@ -36,9 +36,9 @@ const sinelines = (p5) => {
   }
   const getAngleIncrement = generateOscillatingNumber({
     initialValue: 0.01,
-    min: -0.05,
+    min: 0,
     max: 0.05,
-    increment: 0.00001,
+    increment: 0.0001,
   })
 
   p5.draw = () => {
@@ -59,12 +59,12 @@ const line =
 
     let angle = p5.map(y, 0, p5.height, p5.TWO_PI, true)
 
-    const ownAngle = p5.map(y, 0, p5.height, 0.01, 0.02)
+    const ownAngle = p5.map(y, 0, p5.height, -0.005, 0.005)
     const draw = ({ angleIncrement = 0.05, maxGrowth = 100 }) => {
       angle += ownAngle + angleIncrement
-      let width = p5.sin(angle) * maxGrowth + minWidth
-
-      const b = p5.map(ownAngle, 0.01, 0.02, 255, 190, true)
+      let width = Math.abs(p5.sin(angle)) * maxGrowth + minWidth
+      const b = p5.map(ownAngle, -0.005, 0.005, 255, 190, true)
+      p5.stroke(230, 230, b)
 
       p5.fill(220, 220, b)
       const x = isLeft ? 0 : p5.width - width
