@@ -12,7 +12,7 @@ let backgroundColor = 0
 
 export const wavyAnemone = (p5) => {
   const { items: flurbs, create } = destroyableMap()
-  const flurbsPerRow = 15
+  const flurbsPerRow = 20
   let homeTarget
   let target
 

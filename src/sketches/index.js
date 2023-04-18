@@ -16,3 +16,4 @@ export { truchetPatterns } from '../sketches/generative/truchet-tiles/truchet-ti
 export { sunnyTunnel } from '../sketches/generative/sunny-tunnel'
 export { voronoiPatches } from '../sketches/generative/voronoi-patches/voronoi-patches'
 export { shaderHoles } from './generative/shader-holes/shader-holes'
+export { sinelines } from './generative/sinelines'
