@@ -23,8 +23,10 @@ const sinelines = (p5) => {
     getMaxGrowth = generateOscillatingNumber({
       min: -width / 5,
       max: width / 5,
-      increment: p5.map(p5.width, 0, 1920, 0.5, 1, true),
+      increment: p5.map(p5.width, 0, 1920, 0.1, 0.2, true),
       initialValue: 1,
+      restFrames: 400,
+      // easing: 0.01,
     })
   }
 
@@ -36,9 +38,11 @@ const sinelines = (p5) => {
   }
   const getAngleIncrement = generateOscillatingNumber({
     initialValue: 0.01,
-    min: 0,
+    min: -0.05,
     max: 0.05,
-    increment: 0.0001,
+    easing: 0.01,
+    restFrames: 300,
+    // increment: 0.0003,
   })
 
   p5.draw = () => {
@@ -59,14 +63,14 @@ const line =
 
     let angle = p5.map(y, 0, p5.height, p5.TWO_PI, true)
 
-    const ownAngle = p5.map(y, 0, p5.height, -0.005, 0.005)
+    const ownAngle = p5.map(y, 0, p5.height, -0.03, 0.03)
     const draw = ({ angleIncrement = 0.05, maxGrowth = 100 }) => {
       angle += ownAngle + angleIncrement
       let width = Math.abs(p5.sin(angle)) * maxGrowth + minWidth
-      const b = p5.map(ownAngle, -0.005, 0.005, 255, 190, true)
+      const b = p5.map(ownAngle, -0.03, 0.03, 255, 190, true)
       p5.stroke(230, 230, b)
 
-      p5.fill(220, 220, b)
+      p5.fill(230, 220, b)
       const x = isLeft ? 0 : p5.width - width
       p5.rect(x, yWithOffset, width, LINE_HEIGHT, 1)
     }
