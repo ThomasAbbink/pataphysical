@@ -11,7 +11,7 @@ const doodle = (p5) => {
     p5.createCanvas(width, height)
     p5.background(backgroundColor)
     const smallest = width < height ? width : height
-    const padding = 300
+    const padding = width / 10
     const radius = (smallest - padding) / CIRCLE_COUNT
 
     for (let i = CIRCLE_COUNT; i > 0; i--) {
