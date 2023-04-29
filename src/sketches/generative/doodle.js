@@ -2,7 +2,7 @@ import { getCanvasSize } from '../../utility/canvas'
 import { backgroundColor } from '../../style/colors'
 import { generateOscillatingNumber } from '../../utility/numbers'
 
-const CIRCLE_COUNT = 50
+const CIRCLE_COUNT = 32
 
 const doodle = (p5) => {
   const circles = []
