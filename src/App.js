@@ -4,6 +4,7 @@ import KioskPage from './pages/kiosk/KioskPage'
 import CarouselPage from './pages/carousel/CarouselPage'
 import styled, { createGlobalStyle } from 'styled-components'
 import { backgroundColor } from './style/colors'
+import PrivacyPolicy from './pages/pricacy-policy/PrivacyPolicy'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/" element={<CarouselPage />}></Route>
             <Route path="/kiosk" element={<KioskPage />}></Route>
             <Route path="*" element={<NotFoundPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </Base>
       </BrowserRouter>
