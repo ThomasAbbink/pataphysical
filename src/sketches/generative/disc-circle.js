@@ -2,9 +2,9 @@ import { getCanvasSize } from '../../utility/canvas'
 import { backgroundColor } from '../../style/colors'
 import { generateOscillatingNumber } from '../../utility/numbers'
 
-const CIRCLE_COUNT = 32
+const CIRCLE_COUNT = 16
 
-const doodle = (p5) => {
+const discCircle = (p5) => {
   const circles = []
   p5.setup = () => {
     const { width, height } = getCanvasSize()
@@ -68,10 +68,6 @@ const circle =
       for (let j = 0; j < lineCount; j++) {
         p5.rotate(angle)
 
-        // pointOnInnerEdge.rotate(p5.sin(rotation / 100))
-        // pointOnOuterEdge.rotate()
-        // p5.push()
-
         if (i % 2 === 0) {
           const rightOuter = p5.createVector(
             pointOnOuterEdge.x,
@@ -121,8 +117,6 @@ const circle =
             pointOnOuterEdge.y,
           )
         }
-        // p5.pop()
-        // p5.rotate(angle / 2)
       }
       p5.noStroke()
       p5.ellipse(0, 0, radius, radius)
@@ -131,5 +125,5 @@ const circle =
     return { draw }
   }
 
-doodle.date = '22-04-2023'
-export { doodle }
+discCircle.date = '22-04-2023'
+export { discCircle }
