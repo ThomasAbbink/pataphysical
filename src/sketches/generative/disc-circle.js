@@ -27,6 +27,8 @@ const discCircle = (p5) => {
   let rotation = 0
   let hasOwnVelocity = true
   p5.draw = () => {
+    p5.background(backgroundColor)
+
     p5.translate(p5.width / 2, p5.height / 2)
 
     rotation += 0.01
@@ -119,6 +121,7 @@ const circle =
         }
       }
       p5.noStroke()
+      p5.fill(backgroundColor)
       p5.ellipse(0, 0, radius, radius)
       p5.pop()
     }
