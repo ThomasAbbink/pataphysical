@@ -18,3 +18,4 @@ export { voronoiPatches } from '../sketches/generative/voronoi-patches/voronoi-p
 export { shaderHoles } from './generative/shader-holes/shader-holes'
 export { sinelines } from './generative/sinelines'
 export { discCircle } from './generative/disc-circle'
+export { doodle } from './generative/doodle'

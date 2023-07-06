@@ -128,5 +128,5 @@ const circle =
     return { draw }
   }
 
-discCircle.date = '22-04-2023'
+discCircle.date = '2023-04-22'
 export { discCircle }
