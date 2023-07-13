@@ -71,20 +71,28 @@ const doodle = (p5) => {
     increment: 0.03,
   })
   const backgroundOpacity = generateOscillatingNumber({
-    min: 1,
+    min: 5,
     max: 20,
     initialValue: 1,
     restFrames: 300,
     increment: 0.1,
   })
 
+  const fillOpacity = generateOscillatingNumber({
+    min: 0,
+    max: 20,
+    easing: 0.01,
+    restFrames: 400,
+    initialValue: 10,
+  })
+
   let rotation = 0.003
   p5.draw = () => {
     p5.translate(p5.width / 2, p5.height / 2)
 
-    p5.noFill()
+    p5.fill(180, 180, 230, fillOpacity())
     p5.background(0, 0, 0, backgroundOpacity())
-    p5.stroke(230, 230, 250, 200)
+    p5.stroke(230, 230, 250)
     p5.push()
     top.rotate(rotation)
     bottom.rotate(rotation)
