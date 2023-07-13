@@ -1,5 +1,4 @@
 import { getCanvasSize } from '../../utility/canvas'
-import { backgroundColor } from '../../style/colors'
 import { generateOscillatingNumber } from '../../utility/numbers'
 
 const paddingHorizontal = 100
@@ -9,26 +8,30 @@ const doodle = (p5) => {
   const lines = []
   let w = 2
   let h = 3
+  let top, bottom
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    p5.translate(p5.width / 2, p5.height / 2)
     const availableHeight = height - paddingHorizontal * 2
     const controlDistanceFromPoint = availableHeight / 4
     w = width / 200
     h = height / 400
-    controlTop = p5.createVector(
-      p5.width / 2,
-      paddingHorizontal + controlDistanceFromPoint,
-    )
+
+    top = p5.createVector(0 / 2, -(height / 2) + paddingHorizontal)
+
+    bottom = p5.createVector(0, p5.height / 2 - paddingHorizontal)
+    controlTop = p5.createVector(0, -controlDistanceFromPoint)
     controlBottom = p5.createVector(
-      p5.width / 2,
-      height - paddingHorizontal - controlDistanceFromPoint,
+      0,
+      height / 2 - paddingHorizontal - controlDistanceFromPoint,
     )
 
-    lines.push(line(p5)({ x: p5.width / 2, controlTop, controlBottom }))
+    lines.push(line(p5)({ controlTop, controlBottom, top, bottom }))
     lines.push(
       line(p5)({
-        x: p5.width / 2,
+        top,
+        bottom,
         controlTop,
         controlBottom,
         isInverted: true,
@@ -63,8 +66,8 @@ const doodle = (p5) => {
   })
   const getBottomControlYVelocity = generateOscillatingNumber({
     initialValue: 1,
-    min: -2,
-    max: 2,
+    min: -1.5,
+    max: 1.5,
     increment: 0.03,
   })
   const backgroundOpacity = generateOscillatingNumber({
@@ -75,11 +78,17 @@ const doodle = (p5) => {
     increment: 0.1,
   })
 
+  let rotation = 0.003
   p5.draw = () => {
+    p5.translate(p5.width / 2, p5.height / 2)
+
     p5.noFill()
     p5.background(0, 0, 0, backgroundOpacity())
     p5.stroke(230, 230, 250, 200)
-
+    p5.push()
+    top.rotate(rotation)
+    bottom.rotate(rotation)
+    p5.pop()
     controlTop.x += getTopControlVelocity() * w
     controlTop.y += getTopControlYVelocity() * h
     controlBottom.x += getBottomControlVelocity() * w
@@ -94,31 +103,34 @@ const doodle = (p5) => {
 
 const line =
   (p5) =>
-  ({ x, controlTop, controlBottom, isInverted }) => {
+  ({ controlTop, controlBottom, isInverted, top, bottom }) => {
     const draw = () => {
-      const top = p5.createVector(x, paddingHorizontal)
-
-      const bottom = p5.createVector(x, p5.height - paddingHorizontal)
       p5.bezier(
-        isInverted ? p5.map(top.x, 0, p5.width, p5.width, 0) : top.x,
+        top.x,
         top.y,
         isInverted
-          ? p5.map(controlTop.x, 0, p5.width, p5.width, 0)
+          ? p5.map(
+              controlTop.x,
+              -p5.width / 2,
+              p5.width / 2,
+              p5.width / 2,
+              -p5.width / 2,
+            )
           : controlTop.x,
         controlTop.y,
         isInverted
-          ? p5.map(controlBottom.x, 0, p5.width, p5.width, 0)
+          ? p5.map(
+              controlBottom.x,
+              -p5.width / 2,
+              p5.width / 2,
+              p5.width / 2,
+              -p5.width / 2,
+            )
           : controlBottom.x,
         controlBottom.y,
-        isInverted ? p5.map(bottom.x, 0, p5.width, p5.width, 0) : bottom.x,
+        bottom.x,
         bottom.y,
       )
-      // p5.push()
-      // p5.fill(255)
-      // p5.noStroke()
-      // p5.ellipse(controlTop.x, controlTop.y, 10, 10)
-      // p5.ellipse(controlBottom.x, controlBottom.y, 10, 10)
-      // p5.pop()
     }
 
     return { draw }
