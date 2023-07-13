@@ -5,15 +5,11 @@ on:
       - master
 jobs:
   main:
-    name: Build and Deploy
+    name: Deploy to Firebase
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-      - uses: actions/setup-node@v1
-      - run: npm ci
-      - name: Deploy to Firebase
-        uses: lowply/deploy-firebase@v0.0.5
+      - uses: actions/checkout@v2
+      - uses: lowply/deploy-firebase@v0.0.5
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT: pataphysical-99efa
+          FIREBASE_PROJECT: name-of-the-project
