@@ -1,11 +1,20 @@
 {
   "hosting": {
     "public": "build",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "headers": [
       {
         "source": "**",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ],
     "rewrites": [
@@ -14,6 +23,8 @@
         "destination": "/index.html"
       }
     ],
-    "predeploy": ["npm run build"]
+    "predeploy": [
+      "npm run build"
+    ]
   }
 }
