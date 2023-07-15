@@ -2,7 +2,7 @@ import { getCanvasSize } from '../../utility/canvas'
 import { generateOscillatingNumber } from '../../utility/numbers'
 
 const paddingHorizontal = 100
-const doodle = (p5) => {
+const bezierLines = (p5) => {
   let controlTop
   let controlBottom
   const lines = []
@@ -86,6 +86,8 @@ const doodle = (p5) => {
     initialValue: 10,
   })
 
+  let showControls = false
+
   let rotation = 0.003
   p5.draw = () => {
     p5.translate(p5.width / 2, p5.height / 2)
@@ -101,6 +103,15 @@ const doodle = (p5) => {
     controlTop.y += getTopControlYVelocity() * h
     controlBottom.x += getBottomControlVelocity() * w
     controlBottom.y += getBottomControlYVelocity() * h
+
+    if (showControls) {
+      p5.ellipse(controlTop.x, controlTop.y, 10, 10)
+      p5.ellipse(controlBottom.x, controlBottom.y, 10, 10)
+    }
+
+    if (p5.frameCount % 1000 === 0) {
+      showControls = !showControls
+    }
 
     p5.strokeWeight(3)
     lines.forEach((line) => {
@@ -144,5 +155,5 @@ const line =
     return { draw }
   }
 
-doodle.date = '2023-07-05'
-export { doodle }
+bezierLines.date = '2023-07-05'
+export { bezierLines }
