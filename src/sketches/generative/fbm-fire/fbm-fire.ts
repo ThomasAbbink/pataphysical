@@ -5,7 +5,7 @@ import vert from './shader.vert'
 import frag from './shader.frag'
 import { resolveLygia } from 'resolve-lygia'
 
-const sketch = (p5: p5) => {
+const fbmFire = (p5: p5) => {
   let shader: p5.Shader
   const { width, height } = getCanvasSize()
   p5.setup = () => {
@@ -28,5 +28,5 @@ const sketch = (p5: p5) => {
   }
 }
 
-sketch.date = '2024-03-30'
-export { sketch }
+fbmFire.date = '2024-06-20'
+export { fbmFire }
