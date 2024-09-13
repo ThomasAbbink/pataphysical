@@ -5,7 +5,7 @@ import { resolveLygia } from 'resolve-lygia'
 import vert from './shader.vert'
 import frag from './shader.frag'
 
-const fbmGrid = (p5: p5) => {
+const fbmBlob = (p5: p5) => {
   let shader: p5.Shader
   const { width, height } = getCanvasSize()
   p5.setup = () => {
@@ -29,5 +29,5 @@ const fbmGrid = (p5: p5) => {
   }
 }
 
-fbmGrid.date = '2024-09-13'
-export { fbmGrid }
+fbmBlob.date = '2024-09-13'
+export { fbmBlob }
