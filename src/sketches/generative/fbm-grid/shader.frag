@@ -9,8 +9,7 @@ uniform float u_time;
 
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution.xy;
-    vec3 color = vec3(0.2, 0.3, 0.4); // Changed this line to set a greyish blue background
-    
+    vec3 color = vec3(0.1294, 0.1294, 0.1569);
     // Define the moving center area
     float centerRadius = 0.15;
     vec2 center = vec2(
