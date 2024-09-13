@@ -34,12 +34,8 @@ void main() {
 
     color = mix(color, startColor, sin(st.x + u_time) -  dot(q,q));
     color = mix(color, endColor,sin(st.x + u_time) +  dot(r,r));
-    // color = mix( color, endColor, vec3(1 - pow(st.y, 10.)));
 
-    // color  += mix(startColor, endColor, st.x);
-    // color += step(0.9, r.y);
-    
-    
+
     gl_FragColor = vec4(color,1.0);
 
 }
