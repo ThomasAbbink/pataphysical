@@ -12,7 +12,9 @@ const fbmBlob = (p5: p5) => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height, p5.WEBGL)
     p5.background(backgroundColor)
-    p5.pixelDensity(1)
+    if (width > 900) {
+      p5.pixelDensity(1)
+    }
     shader = p5.createShader(vert, resolveLygia(frag))
   }
 

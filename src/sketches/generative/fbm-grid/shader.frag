@@ -13,8 +13,8 @@ void main() {
     // Define the moving center area
     float centerRadius = 0.15;
     vec2 center = vec2(
-        0.5 + sin(u_time * 0.25) * 0.4, // Bounce horizontally, slower
-        0.5 + cos(u_time * 0.35) * 0.4  // Bounce vertically, slower
+        0.5 + sin(u_time * 0.25) * 0.2, // Bounce horizontally, slower and closer to center
+        0.5 + cos(u_time * 0.35) * 0.2  // Bounce vertically, slower and closer to center
     );
     
     // Rotate the scene
@@ -27,9 +27,9 @@ void main() {
     float distFromCenter = distance(st, center);
     float distFromEdge = min(min(st.x, 1.0 - st.x), min(st.y, 1.0 - st.y));
     
-    // Vary the line count over time (30 to 70 line s)
+    // Vary the line count over time (30 to 70 lines)
     float lineCountVariation = sin(u_time * 0.1) * 0.5 + 0.5; // Oscillates between 0 and 1
-    float lineCount = 30.0 + lineCountVariation * 40.0;
+    float lineCount = 40.0 + lineCountVariation * 40.0;
     
     // Add moving vertical lines, 5 pixels wide, evenly spaced apart
     float lineWidth = 5.0 / u_resolution.x;
@@ -39,21 +39,21 @@ void main() {
     
     // Calculate brightness factor based on center's distance from screen center
     float centerDistFromScreenCenter = distance(center, vec2(0.5));
-    float brightnessFactor = 1.0 - smoothstep(0.0, 0.4, centerDistFromScreenCenter);
+    float brightnessFactor = 1.0 - smoothstep(0.0, 1.0, centerDistFromScreenCenter);
     
     // Calculate darkness factor based on distance from screen center
-    float darknessFactor = smoothstep(0.0, 0.5, centerDistFromScreenCenter);
+    float darknessFactor = smoothstep(0.0, 1.0, centerDistFromScreenCenter);
     
     // Generate FBM twice for more complex skewing
     float fbmValue1 = fbm(st * sin(u_time * 0.01));
-    float fbmValue2 = fbm(vec2(fbmValue1) *  vec2(sin(u_time * 0.01)));
+    float fbmValue2 = fbm(vec2(fbmValue1) * vec2(sin(u_time * 0.01)));
     float fbmCombined = (fbmValue1 + fbmValue2) * 0.1; // Combine the two FBM values
     
-    float centerThreshold = 0.15; // Reduced central area
-    float edgeThreshold = 0.0; // Much smaller edge area
+    float centerThreshold = 0.25; // Increased central area
+    float edgeThreshold = 0.1; // Slightly larger edge area
     float fbmEffect = fbmCombined * pow(smoothstep(centerThreshold, 0.0, distFromCenter), 2.0) * smoothstep(0.0, edgeThreshold, distFromEdge);
     
-    for (int i = 0; i < 70; i++) {
+    for (int i = 0; i < 50; i++) {
         float t = float(i) / lineCount;
         if (t > 1.0) break; // Stop when we reach the current line count
         float linePosition = (verticalOscillation + t) - floor(verticalOscillation + t);
@@ -76,7 +76,7 @@ void main() {
     // Add moving horizontal lines, 5 pixels wide, evenly spaced apart
     float horizontalOscillation = cos(u_time * 0.125) * 0.5 + 0.5; // Slower speed for horizontal lines
     
-    for (int i = 0; i < 70; i++) {
+    for (int i = 0; i < 40; i++) {
         float t = float(i) / lineCount;
         if (t > 1.0) break; // Stop when we reach the current line count
         float linePosition = (horizontalOscillation + t) - floor(horizontalOscillation + t);
