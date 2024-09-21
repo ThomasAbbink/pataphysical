@@ -1,7 +1,7 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { backgroundColor } from '../../../style/colors'
 import p5 from 'p5'
-import { resolveLygia } from 'resolve-lygia'
+
 import vert from './shader.vert'
 import frag from './shader.frag'
 
@@ -13,7 +13,7 @@ const fbmGrid = (p5: p5) => {
     p5.createCanvas(width, height, p5.WEBGL)
     p5.background(backgroundColor)
     p5.pixelDensity(1)
-    shader = p5.createShader(vert, resolveLygia(frag))
+    shader = p5.createShader(vert, frag)
   }
 
   p5.windowResized = () => {

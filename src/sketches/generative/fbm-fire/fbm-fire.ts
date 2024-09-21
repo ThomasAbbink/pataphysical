@@ -3,7 +3,6 @@ import { backgroundColor } from '../../../style/colors'
 import p5 from 'p5'
 import vert from './shader.vert'
 import frag from './shader.frag'
-import { resolveLygia } from 'resolve-lygia'
 
 const fbmFire = (p5: p5) => {
   let shader: p5.Shader
@@ -12,7 +11,7 @@ const fbmFire = (p5: p5) => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height, p5.WEBGL)
     p5.background(backgroundColor)
-    shader = p5.createShader(vert, resolveLygia(frag))
+    shader = p5.createShader(vert, frag)
   }
 
   p5.windowResized = () => {
