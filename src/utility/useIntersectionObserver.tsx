@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
+import { MutableRefObject, useEffect, useState } from 'react'
 
 function useIntersectionObserver(
-  elementRef,
+  elementRef: MutableRefObject<HTMLElement | null>,
   { threshold = 0, root = null, rootMargin = '0%', freezeOnceVisible = false },
 ) {
-  const [entry, setEntry] = useState()
+  const [entry, setEntry] = useState<IntersectionObserverEntry>()
 
   const frozen = entry?.isIntersecting && freezeOnceVisible
 
-  const updateEntry = ([entry]) => {
+  const updateEntry = (entries: IntersectionObserverEntry[]) => {
+    const [entry] = entries
     setEntry(entry)
   }
 

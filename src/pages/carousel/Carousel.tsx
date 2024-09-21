@@ -1,8 +1,13 @@
 import styled from 'styled-components'
 import { backgroundColor } from '../../style/colors'
 import CarouselSketchWrapper from './CarouselSketchWrapper'
+import { Sketch } from '../../types/Sketch'
 
-export default ({ sketches }) => {
+type Props = {
+  sketches: Sketch[]
+}
+
+export default ({ sketches }: Props) => {
   return (
     <Container>
       {sketches

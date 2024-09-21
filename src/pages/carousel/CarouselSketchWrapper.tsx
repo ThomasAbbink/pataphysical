@@ -1,8 +1,12 @@
 import styled from 'styled-components'
-import { backgroundColor } from '../../style/colors'
 import { useP5 } from '../../utility/useP5'
+import { Sketch } from '../../types/Sketch'
 
-export default ({ sketch }) => {
+type Props = {
+  sketch: Sketch
+}
+
+export default ({ sketch }: Props) => {
   const { ref: canvasRef, isVisible } = useP5(sketch)
 
   return (
@@ -20,6 +24,6 @@ const Container = styled.div`
   width: 100vw;
   min-height: 100vh;
   max-height: 100vh;
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  opacity: ${({ isVisible }: { isVisible: boolean }) => (isVisible ? 1 : 0)};
   transition: opacity 1.5s ease-out;
 `
