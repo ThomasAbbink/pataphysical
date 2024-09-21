@@ -24,7 +24,7 @@ export const portraits = (p5) => {
   }
 
   const loadImage = (imgName, callback) => {
-    p5.loadImage(process.env.PUBLIC_URL + `/assets/${imgName}.jpeg`, (im) => {
+    p5.loadImage(`/assets/${imgName}.jpeg`, (im) => {
       image = im
 
       if (image.width < image.height) {

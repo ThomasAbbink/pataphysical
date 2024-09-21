@@ -5,7 +5,7 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-#include "lygia/generative/fbm.glsl"
+#include "/node_modules/lygia/generative/fbm.glsl"
 
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution.xy;

@@ -5,8 +5,8 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 
-#include "lygia/generative/fbm.glsl"
-#include "lygia/color/palette.glsl"
+#include "/node_modules/lygia/generative/fbm.glsl"
+#include "/node_modules/lygia/color/palette.glsl"
 
 void main() {
     vec3 color = vec3(.1);
