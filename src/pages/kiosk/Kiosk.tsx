@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { backgroundColor } from '../../style/colors'
 import KioskSketchWrapper from './KioskSketchWrapper'
+import { Sketch } from '../../types/Sketch'
 
-export default function Kiosk({ sketches }) {
+type Props = {
+  sketches: Sketch[]
+}
+
+export default function Kiosk({ sketches }: Props) {
   const timeout = 60000
   const [currentSketch, setCurrentSketch] = useState(0)
 
@@ -15,7 +19,7 @@ export default function Kiosk({ sketches }) {
       }
 
       setCurrentSketch(nextSketch)
-    }, [timeout])
+    }, timeout)
     return () => {
       clearTimeout(timer)
     }
@@ -47,6 +51,6 @@ const ProgressBar = styled.div`
 
   height: 3px;
   background-color: white;
-  animation: ${({ timeout }) =>
+  animation: ${({ timeout }: { timeout: number }) =>
     `barWidth calc(${timeout} * 1ms) linear infinite alternate;`};
 `

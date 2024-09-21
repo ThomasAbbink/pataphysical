@@ -1,10 +1,11 @@
 import { useRef, useEffect } from 'react'
 import p5 from 'p5'
 import useIntersectionObserver from '../utility/useIntersectionObserver'
+import { Sketch } from '../types/Sketch'
 
-export const useP5 = (sketch) => {
-  const ref = useRef()
-  const p5ref = useRef()
+export const useP5 = (sketch: Sketch) => {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const p5ref = useRef<p5 | null>(null)
   const entry = useIntersectionObserver(ref, {
     threshold: 0.01,
   })
@@ -12,7 +13,7 @@ export const useP5 = (sketch) => {
   const isVisible = !!entry?.isIntersecting
   useEffect(() => {
     if (isVisible) {
-      p5ref.current = new p5(sketch, ref.current)
+      p5ref.current = new p5(sketch, ref.current ?? undefined)
       p5ref.current.disableFriendlyErrors = true
     }
     return () => {
