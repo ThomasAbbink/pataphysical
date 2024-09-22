@@ -1,12 +1,31 @@
-export const generateNumber = ({ initialValue, heuristic, ...props }) => {
+import p5 from 'p5'
+
+type GenerateNumberProps = {
+  initialValue: number
+  heuristic: ({ value }: { value: number }) => number
+}
+
+export const generateNumber = ({
+  initialValue,
+  heuristic,
+}: GenerateNumberProps) => {
   let value = initialValue
   const update = () => {
-    value = heuristic({ ...props, value })
+    value = heuristic({ value })
     return value
   }
   return update
 }
 
+type Props = {
+  initialValue: number
+  increment: number
+  min: number
+  max: number
+  easing: number
+  minSpeed: number
+  restFrames: number
+}
 export const generateOscillatingNumber = ({
   initialValue,
   increment = 0,
@@ -15,13 +34,13 @@ export const generateOscillatingNumber = ({
   easing = 0,
   minSpeed = (max - min) / 1000,
   restFrames = 0,
-}) => {
+}: Props) => {
   if (easing !== 0 && increment !== 0) {
     throw new Error('Cannot have both easing and increment')
   }
   let rest = 0
   let direction = true
-  const heuristic = ({ value }) => {
+  const heuristic = ({ value }: { value: number }) => {
     if (rest > 0) {
       rest -= 1
       return direction ? min : max
@@ -66,6 +85,14 @@ export const generateOscillatingNumber = ({
   })
 }
 
+type BeatProps = {
+  min: number
+  max: number
+  bpm: number
+  p5: p5
+  frameRate: number
+  framesAtBeat: number
+}
 export const generateBeatNumber = ({
   min,
   max,
@@ -73,7 +100,7 @@ export const generateBeatNumber = ({
   p5,
   frameRate = 60,
   framesAtBeat = 5,
-}) => {
+}: BeatProps) => {
   const heuristic = () => {
     const frameCount = p5.frameCount
     const framesPerBeat = Math.floor(frameRate / (bpm / 60))
@@ -83,8 +110,20 @@ export const generateBeatNumber = ({
   return generateNumber({ initialValue: min, heuristic })
 }
 
-export const generateLoopNumber = ({ min, max, initialValue, increment }) => {
-  const heuristic = ({ value }) => {
+type LoopProps = {
+  min: number
+  max: number
+  initialValue: number
+  increment: number
+}
+
+export const generateLoopNumber = ({
+  min,
+  max,
+  initialValue,
+  increment,
+}: LoopProps) => {
+  const heuristic = ({ value }: { value: number }) => {
     const next = value + increment
     if (next > max) {
       return min
@@ -94,4 +133,5 @@ export const generateLoopNumber = ({ min, max, initialValue, increment }) => {
   return generateNumber({ initialValue: initialValue || min, heuristic })
 }
 
-export const clamp = (num, min, max) => Math.min(Math.max(num, min), max)
+export const clamp = (num: number, min: number, max: number) =>
+  Math.min(Math.max(num, min), max)

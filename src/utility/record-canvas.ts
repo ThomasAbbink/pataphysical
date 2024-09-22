@@ -1,7 +1,14 @@
 import * as HME from 'h264-mp4-encoder'
+import p5 from 'p5'
 
-let encoder
-export const loadEncoder = async ({ width, height }) => {
+let encoder: HME.H264MP4Encoder
+export const loadEncoder = async ({
+  width,
+  height,
+}: {
+  width: number
+  height: number
+}) => {
   return HME.createH264MP4Encoder().then((enc) => {
     encoder = enc
     encoder.outputFilename = 'test'
@@ -14,7 +21,7 @@ export const loadEncoder = async ({ width, height }) => {
   })
 }
 
-export const recordFrame = (p5) => {
+export const recordFrame = (p5: p5) => {
   encoder.addFrameRgba(
     p5.drawingContext.getImageData(0, 0, encoder.width, encoder.height).data,
   )
