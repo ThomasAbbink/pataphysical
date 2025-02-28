@@ -7,7 +7,7 @@ import treeFrag from './tree-shader.frag'
 
 const PADDING = 20
 const MAX_DIST = 50
-const TREE_COUNT = 50
+const TREE_COUNT = 30
 
 const doodle = (p5: p5) => {
   const trees: Tree[] = []
@@ -22,8 +22,9 @@ const doodle = (p5: p5) => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height, p5.WEBGL)
     p5.pixelDensity(1)
+    // p5.blendMode(p5.REMOVE)
     backgroundGraphics = p5.createGraphics(p5.width, p5.height, p5.WEBGL)
-    treeGraphics = p5.createGraphics(p5.width, p5.height, p5.WEBGL)
+    treeGraphics = p5.createGraphics(100, 100, p5.WEBGL)
     shader = p5.createShader(vert, frag)
     treeShader = p5.createShader(vert, treeFrag)
 
@@ -57,7 +58,7 @@ const doodle = (p5: p5) => {
     )
 
     treeGraphics.shader(treeShader)
-    treeGraphics.rect(-p5.width / 2, -p5.height / 2, p5.width, p5.height)
+    treeGraphics.rect(-0, 0, p5.width, p5.height)
 
     // p5.shader(treeShader)
 
@@ -94,7 +95,6 @@ const tree =
     const setup = () => {
       for (let i = 0; i < points; i++) {
         const v = new Vector(start.x, start.y, p5.random(1, 1.2))
-
         vectors.push({ vector: v, isDone: false })
       }
     }
