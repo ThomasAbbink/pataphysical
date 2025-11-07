@@ -29,5 +29,5 @@ const fmbGrass = (p5: p5) => {
   }
 }
 
-fmbGrass.date = '2025-2-28'
+fmbGrass.date = '2025-02-28'
 export { fmbGrass }
