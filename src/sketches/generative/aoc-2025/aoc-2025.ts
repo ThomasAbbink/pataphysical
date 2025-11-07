@@ -6,7 +6,7 @@ import { doDay, parse } from './solver/solver'
 import { HexgGrid } from './solver/hexgrid'
 import { Cell, solarLocations } from './solver/types'
 
-let SEED = 'some_seed'
+let SEED = 'my-seed'
 let cells = parse(input)
 let grid: HexgGrid | null = null
 let i = 0
