@@ -17,7 +17,7 @@
   // }
 
   "New sketch": {
-    "scope": "javascript",
+    "scope": "typescript",
     "prefix": "sketch",
     "body": [
       "import { getCanvasSize } from '../utility/canvas'",
@@ -44,7 +44,7 @@
     ]
   },
   "New sketch with shader": {
-    "scope": "javascript",
+    "scope": "typescript",
     "prefix": "shader-sketch",
     "body": [
       "import { getCanvasSize } from '../../../utility/canvas'",
