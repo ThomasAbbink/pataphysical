@@ -10,15 +10,19 @@ let SEED = 'my-seed'
 let cells = parse(input)
 let grid: HexgGrid | null = null
 let i = 0
-
 let FRAME_INTERVAL = 10
 let SHOW_LIGHT = false
 let ADD_FLUORESCENCE = false
+let harvestCount = 0
 
 //@ts-expect-error
 let speedSlider: p5.Slider
 //@ts-expect-error
 let seedInput: p5.Input
+//@ts-expect-error
+let daylabel: p5.Input
+//@ts-expect-error
+let harvestLabel: p5.Input
 
 const fetchInput = () => {
   fetch(`https://aoc.infi.nl/api/aoc/input/2025/${SEED}`)
@@ -67,6 +71,8 @@ const aoc2025 = (p5: p5) => {
 
     createLabel('Slow', { x: 10, y: 20 })
     createLabel('Fast', { x: 100, y: 20 })
+    harvestLabel = createLabel(`Harvest: ${harvestCount}`, { x: 10, y: 60 })
+    daylabel = createLabel(`Day: ${i}`, { x: 10, y: 80 })
 
     speedSlider = p5.createSlider(1, 49, FRAME_INTERVAL, 1)
     speedSlider.position(10, 40)
@@ -97,6 +103,8 @@ const aoc2025 = (p5: p5) => {
   }
   const onSeedInputChange = () => {
     SEED = seedInput.value()
+    harvestCount = 0
+    i = 0
     fetchInput()
   }
 
@@ -110,8 +118,14 @@ const aoc2025 = (p5: p5) => {
     if (!grid) return
     if (p5.frameCount % FRAME_INTERVAL === 0) {
       grid.reset()
-      doDay(grid, solarLocations[i % solarLocations.length], ADD_FLUORESCENCE)
+      harvestCount += doDay(
+        grid,
+        solarLocations[i % solarLocations.length],
+        ADD_FLUORESCENCE,
+      )
       i++
+      daylabel.html(`Day: ${i}`)
+      harvestLabel.html(`Harvest: ${harvestCount}`)
     }
     for (const cell of grid.cells) {
       hexagon(p5, cell, grid)
