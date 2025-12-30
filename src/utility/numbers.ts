@@ -19,13 +19,14 @@ export const generateNumber = ({
 
 type Props = {
   initialValue: number
-  increment: number
+  increment?: number
   min: number
   max: number
-  easing: number
+  easing?: number
   minSpeed: number
   restFrames: number
 }
+
 export const generateOscillatingNumber = ({
   initialValue,
   increment = 0,

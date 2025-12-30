@@ -1,7 +1,9 @@
 import { getCanvasSize } from '../../../utility/canvas'
 
 import p5 from 'p5'
+import { generateOscillatingNumber } from '../../../utility/numbers'
 
+let showimage = false
 const backgroundColor = 255
 const e = (p5: p5) => {
   let cardObject: ReturnType<typeof card> | undefined
@@ -9,18 +11,32 @@ const e = (p5: p5) => {
   const waves: ReturnType<typeof wave>[] = []
   const flames: ReturnType<typeof flame>[] = []
 
+  let image: p5.Image | undefined
+  let cardWidth = 0
+  let cardHeight = 0
+  let cardX = 0
+  let cardY = 0
+
   p5.preload = () => {
-    p5.loadImage(`/assets/e2.png`, (im) => {
+    p5.loadImage(`/assets/g2.png`, (im) => {
       im.loadPixels()
+      im.resize(cardWidth, cardHeight)
+      image = im
     })
   }
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
     p5.background(backgroundColor)
-    cardObject = card(p5)
+    cardObject = card(p5, {
+      image: image!,
+      cardWidth,
+      cardHeight,
+      cardX,
+      cardY,
+    })
 
-    const rayCount = 100
+    const rayCount = 500
     for (let i = 0; i < rayCount; i++) {
       sunrays.push(
         sunRay(p5, {
@@ -41,32 +57,96 @@ const e = (p5: p5) => {
         }),
       )
     }
+    resize()
+  }
+  p5.mousePressed = () => {
+    showimage = !showimage
+  }
+
+  const getPixelData = (pos: p5.Vector) => {
+    if (
+      !image ||
+      pos.x < cardX ||
+      pos.x > cardX + cardWidth ||
+      pos.y < cardY ||
+      pos.y > cardY + cardHeight
+    ) {
+      return null
+    }
+    return image.get(pos.x - cardX, pos.y - cardY)
+  }
+
+  const resize = () => {
+    const cardAspectRatio = 210 / 148
+    const canvasAspectRatio = p5.width / p5.height
+    if (canvasAspectRatio < cardAspectRatio) {
+      cardWidth = p5.width - p5.width * 0.3
+      cardHeight = cardWidth / cardAspectRatio
+    }
+    if (canvasAspectRatio > cardAspectRatio) {
+      cardHeight = p5.height - p5.height * 0.3
+      cardWidth = cardHeight * cardAspectRatio
+    }
+    cardX = p5.width / 2 - cardWidth / 2
+    cardY = p5.height / 2 - cardHeight / 2
+
+    if (image) {
+      image.resize(cardWidth, cardHeight)
+    }
   }
 
   p5.windowResized = () => {
     const { width, height } = getCanvasSize()
     p5.resizeCanvas(width, height)
-    cardObject?.resize()
+    resize()
     p5.background(backgroundColor)
   }
+  const opacity = generateOscillatingNumber({
+    min: 0.5,
+    max: 3,
+    initialValue: 2,
+    increment: 0.01,
+    minSpeed: 0.01,
+    restFrames: 1000,
+  })
 
   p5.draw = () => {
-    cardObject?.draw()
     sunrays.forEach((sunray) => {
       // @ts-ignore
-      sunray.draw(cardObject?.getPixelData)
+      sunray.draw(getPixelData)
       sunray.update()
     })
     waves.forEach((wave) => {
       // @ts-ignore
-      wave.draw(cardObject?.getPixelData)
+      wave.draw(getPixelData)
       wave.update()
     })
     flames.forEach((flame) => {
       // @ts-ignore
-      flame.draw(cardObject?.getPixelData)
+      flame.draw(getPixelData)
       flame.update()
     })
+    if (image) {
+      p5.blend(
+        image,
+        image.width / 2 + 2,
+        0,
+        image.width / 2,
+        image.height,
+        cardX + cardWidth / 2,
+        cardY,
+        cardWidth / 2,
+        cardHeight,
+        p5.BLEND,
+      )
+    }
+    p5.background(255, 255, 255, opacity())
+    if (showimage) {
+      p5.image(image!, cardX, cardY, cardWidth, cardHeight)
+    }
+    // if (p5.frameCount % 1000 === 0) {
+    //   p5.background(255, 255, 255, 255)
+    // }
   }
 }
 
@@ -100,7 +180,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    let brightnessBasedSize = p5.map(pixelData[1], 0, 255, size, 0, true) / 2
+    let brightnessBasedSize = p5.map(pixelData[0], 0, 255, size, 0, true) / 3
 
     p5.push()
     p5.noStroke()
@@ -118,14 +198,19 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
 
 const wave = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
-  const color = [p5.random(0, 10), p5.random(150, 220), 255]
+  const color = [p5.random(40, 50), p5.random(150, 170), 100]
+  // const color = [0, 0, 0]
   const speed = p5.random(2, 4)
   const size = p5.random(speed + 4, 10)
 
   const update = () => {
     // use perlin noise to move the ray
     const noise = p5.noise(p5.frameCount)
-    position.add(p5.createVector(Math.sin(noise), 0).setMag(speed))
+    position.add(
+      p5
+        .createVector(Math.sin(noise), p5.random(-noise / 4, noise / 4))
+        .setMag(speed),
+    )
     if (position.y > p5.height || position.x > p5.width) {
       position = start.copy()
     }
@@ -145,7 +230,7 @@ const wave = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    let brightnessBasedSize = p5.map(pixelData[2], 0, 255, size, 0, true) / 2
+    let brightnessBasedSize = p5.map(pixelData[1], 0, 255, size, 0, true) / 2
 
     p5.push()
     p5.noStroke()
@@ -191,7 +276,7 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    let brightnessBasedSize = p5.map(pixelData[1], 0, 100, size, 0, true) / 2
+    let brightnessBasedSize = p5.map(pixelData[2], 0, 100, size, 0, true) / 2
 
     p5.push()
     p5.noStroke()
@@ -206,63 +291,46 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
   }
 }
 
-const card = (p5: p5) => {
-  let width = 0
-  let height = 0
-  let x = 0
-  let y = 0
-  let image: p5.Image | undefined
-
-  const resize = () => {
-    const cardAspectRatio = 105 / 148
-    const canvasAspectRatio = p5.width / p5.height
-    if (canvasAspectRatio < cardAspectRatio) {
-      width = p5.width - p5.width * 0.3
-      height = width / cardAspectRatio
-    }
-    if (canvasAspectRatio > cardAspectRatio) {
-      height = p5.height - p5.height * 0.3
-      width = height * cardAspectRatio
-    }
-    x = p5.width / 2 - width / 2
-    y = p5.height / 2 - height / 2
-  }
-
-  const loadImage = () => {
-    p5.loadImage(`/assets/e2.png`, (im) => {
-      image = im
-      image.resize(width, height)
-      im.loadPixels()
-    })
-  }
-
+const card = (
+  p5: p5,
+  {
+    image,
+    cardWidth,
+    cardHeight,
+    cardX,
+    cardY,
+  }: {
+    image: p5.Image
+    cardWidth: number
+    cardHeight: number
+    cardX: number
+    cardY: number
+  },
+) => {
   const getPixelData = (pos: p5.Vector) => {
     if (
       !image ||
-      pos.x < x ||
-      pos.x > x + width ||
-      pos.y < y ||
-      pos.y > y + height
+      pos.x < cardX ||
+      pos.x > cardX + cardWidth ||
+      pos.y < cardY ||
+      pos.y > cardY + cardHeight
     ) {
       return null
     }
-    return image.get(pos.x - x, pos.y - y)
+    return image.get(pos.x - cardX, pos.y - cardY)
   }
 
   const draw = () => {
     p5.push()
     p5.noStroke()
     p5.noFill()
-    p5.fill(255, 255, 255, 0.1)
-    p5.rect(x, y, width, height)
+    p5.fill(255, 255, 255, 100)
+    p5.rect(cardX, cardY, cardWidth, cardHeight)
     p5.pop()
   }
-  resize()
-  loadImage()
 
   return {
     draw,
-    resize,
     getPixelData,
   }
 }
