@@ -6,7 +6,6 @@ import { generateOscillatingNumber } from '../../../utility/numbers'
 let showimage = false
 const backgroundColor = 255
 const e = (p5: p5) => {
-  let cardObject: ReturnType<typeof card> | undefined
   let sunrays: ReturnType<typeof sunRay>[] = []
   const waves: ReturnType<typeof wave>[] = []
   const flames: ReturnType<typeof flame>[] = []
@@ -28,13 +27,6 @@ const e = (p5: p5) => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
     p5.background(backgroundColor)
-    cardObject = card(p5, {
-      image: image!,
-      cardWidth,
-      cardHeight,
-      cardX,
-      cardY,
-    })
 
     const rayCount = 500
     for (let i = 0; i < rayCount; i++) {
@@ -58,11 +50,11 @@ const e = (p5: p5) => {
       )
     }
     resize()
-  }
-  p5.mousePressed = () => {
-    showimage = !showimage
-    if (!showimage) {
-      p5.background(255, 255, 255, 255)
+    p5.mousePressed = () => {
+      if (image) {
+        showimage = !showimage
+        p5.background(255, 255, 255, 255)
+      }
     }
   }
 
@@ -144,8 +136,8 @@ const e = (p5: p5) => {
       )
     }
     p5.background(255, 255, 255, opacity())
-    if (showimage) {
-      p5.image(image!, cardX, cardY, cardWidth, cardHeight)
+    if (showimage && image) {
+      p5.image(image, cardX, cardY, cardWidth, cardHeight)
     }
     // if (p5.frameCount % 1000 === 0) {
     //   p5.background(255, 255, 255, 255)
@@ -202,13 +194,12 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
 const wave = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(40, 50), p5.random(150, 170), 100]
-  // const color = [0, 0, 0]
   const speed = p5.random(2, 4)
   const size = p5.random(speed + 4, 10)
 
   const update = () => {
     // use perlin noise to move the ray
-    const noise = p5.noise(p5.frameCount)
+    const noise = p5.noise(p5.random(1000000), p5.random(1000000))
     position.add(
       p5
         .createVector(Math.sin(noise), p5.random(-noise / 4, noise / 4))
@@ -291,50 +282,6 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
   return {
     update,
     draw,
-  }
-}
-
-const card = (
-  p5: p5,
-  {
-    image,
-    cardWidth,
-    cardHeight,
-    cardX,
-    cardY,
-  }: {
-    image: p5.Image
-    cardWidth: number
-    cardHeight: number
-    cardX: number
-    cardY: number
-  },
-) => {
-  const getPixelData = (pos: p5.Vector) => {
-    if (
-      !image ||
-      pos.x < cardX ||
-      pos.x > cardX + cardWidth ||
-      pos.y < cardY ||
-      pos.y > cardY + cardHeight
-    ) {
-      return null
-    }
-    return image.get(pos.x - cardX, pos.y - cardY)
-  }
-
-  const draw = () => {
-    p5.push()
-    p5.noStroke()
-    p5.noFill()
-    p5.fill(255, 255, 255, 100)
-    p5.rect(cardX, cardY, cardWidth, cardHeight)
-    p5.pop()
-  }
-
-  return {
-    draw,
-    getPixelData,
   }
 }
 
