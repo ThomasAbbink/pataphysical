@@ -1,7 +1,7 @@
 import { getCanvasSize } from '../../../utility/canvas'
-// import { backgroundColor } from '../../../style/colors'
+
 import p5 from 'p5'
-import { generateOscillatingNumber } from '../../../utility/numbers'
+
 const backgroundColor = 255
 const e = (p5: p5) => {
   let cardObject: ReturnType<typeof card> | undefined
@@ -48,14 +48,17 @@ const e = (p5: p5) => {
   p5.draw = () => {
     cardObject?.draw()
     sunrays.forEach((sunray) => {
+      // @ts-ignore
       sunray.draw(cardObject?.getPixelData)
       sunray.update()
     })
     waves.forEach((wave) => {
+      // @ts-ignore
       wave.draw(cardObject?.getPixelData)
       wave.update()
     })
     flames.forEach((flame) => {
+      // @ts-ignore
       flame.draw(cardObject?.getPixelData)
       flame.update()
     })
@@ -77,7 +80,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
     }
   }
   const draw = (
-    getPixelData: (pos: p5.Vector) => [number, number, number, number],
+    getPixelData: (pos: p5.Vector) => [number, number, number, number] | null,
   ) => {
     const pixelData = getPixelData(position)
     // if the ray is more than halfway down, make it smaller
@@ -92,7 +95,6 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    const brightness = pixelData[0] + pixelData[1] + pixelData[2]
     let brightnessBasedSize = p5.map(pixelData[1], 0, 255, size, 0, true) / 2
 
     p5.push()
@@ -124,7 +126,7 @@ const wave = (p5: p5, { start }: { start: p5.Vector }) => {
     }
   }
   const draw = (
-    getPixelData: (pos: p5.Vector) => [number, number, number, number],
+    getPixelData: (pos: p5.Vector) => [number, number, number, number] | null,
   ) => {
     const pixelData = getPixelData(position)
 
@@ -137,7 +139,7 @@ const wave = (p5: p5, { start }: { start: p5.Vector }) => {
       p5.pop()
       return
     }
-    const brightness = pixelData[0] + pixelData[1] + pixelData[2]
+
     let brightnessBasedSize = p5.map(pixelData[2], 0, 255, size, 0, true) / 2
 
     p5.push()
@@ -170,7 +172,7 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
     }
   }
   const draw = (
-    getPixelData: (pos: p5.Vector) => [number, number, number, number],
+    getPixelData: (pos: p5.Vector) => [number, number, number, number] | null,
   ) => {
     const pixelData = getPixelData(position)
 
@@ -183,7 +185,7 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
       p5.pop()
       return
     }
-    const brightness = pixelData[0] + pixelData[1] + pixelData[2]
+
     let brightnessBasedSize = p5.map(pixelData[1], 0, 100, size, 0, true) / 2
 
     p5.push()
