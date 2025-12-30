@@ -61,6 +61,9 @@ const e = (p5: p5) => {
   }
   p5.mousePressed = () => {
     showimage = !showimage
+    if (!showimage) {
+      p5.background(255, 255, 255, 255)
+    }
   }
 
   const getPixelData = (pos: p5.Vector) => {
