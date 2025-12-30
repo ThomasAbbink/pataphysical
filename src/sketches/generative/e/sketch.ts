@@ -163,7 +163,7 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
     // use perlin noise to move the ray
     const noise = p5.noise(p5.random(1000000), p5.random(1000000))
     position.add(
-      p5.createVector(-Math.sin(noise), -Math.cos(noise)).setMag(speed),
+      p5.createVector(Math.sin(noise), -Math.cos(noise)).setMag(speed),
     )
     if (position.y < 0 || position.x < 0) {
       position = start.copy()
@@ -241,18 +241,12 @@ const card = (p5: p5) => {
     }
     return image.get(pos.x - x, pos.y - y)
   }
-  const opacity = generateOscillatingNumber({
-    min: 0,
-    max: 2,
-    increment: 0.01,
-    initialValue: 0,
-    restFrames: 100,
-  })
+
   const draw = () => {
     p5.push()
     p5.noStroke()
     p5.noFill()
-    // p5.fill(0, 0, 0, 2)
+    p5.fill(255, 255, 255, 0.1)
     p5.rect(x, y, width, height)
     p5.pop()
   }
