@@ -9,6 +9,11 @@ const e = (p5: p5) => {
   const waves: ReturnType<typeof wave>[] = []
   const flames: ReturnType<typeof flame>[] = []
 
+  p5.preload = () => {
+    p5.loadImage(`/assets/e2.png`, (im) => {
+      im.loadPixels()
+    })
+  }
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
@@ -119,7 +124,7 @@ const wave = (p5: p5, { start }: { start: p5.Vector }) => {
 
   const update = () => {
     // use perlin noise to move the ray
-    const noise = p5.noise(p5.random(1000000), p5.random(1000000))
+    const noise = p5.noise(p5.frameCount)
     position.add(p5.createVector(Math.sin(noise), 0).setMag(speed))
     if (position.y > p5.height || position.x > p5.width) {
       position = start.copy()
