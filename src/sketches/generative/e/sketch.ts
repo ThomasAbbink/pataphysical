@@ -50,6 +50,13 @@ const e = (p5: p5) => {
       )
     }
     resize()
+    p5.saveGif('e.gif', 10, { silent: true, units: 'seconds' })
+    setTimeout(() => {
+      if (image) {
+        showimage = !showimage
+        p5.background(255, 255, 255, 255)
+      }
+    }, 9)
     p5.mousePressed = () => {
       if (image) {
         showimage = !showimage
@@ -75,11 +82,11 @@ const e = (p5: p5) => {
     const cardAspectRatio = 210 / 148
     const canvasAspectRatio = p5.width / p5.height
     if (canvasAspectRatio < cardAspectRatio) {
-      cardWidth = p5.width - p5.width * 0.3
+      cardWidth = p5.width - p5.width * 0.2
       cardHeight = cardWidth / cardAspectRatio
     }
     if (canvasAspectRatio > cardAspectRatio) {
-      cardHeight = p5.height - p5.height * 0.3
+      cardHeight = p5.height - p5.height * 0.2
       cardWidth = cardHeight * cardAspectRatio
     }
     cardX = p5.width / 2 - cardWidth / 2
@@ -97,8 +104,8 @@ const e = (p5: p5) => {
     p5.background(backgroundColor)
   }
   const opacity = generateOscillatingNumber({
-    min: 0.5,
-    max: 3,
+    min: 1,
+    max: 4,
     initialValue: 2,
     increment: 0.01,
     minSpeed: 0.01,
@@ -124,7 +131,7 @@ const e = (p5: p5) => {
     if (image) {
       p5.blend(
         image,
-        image.width / 2 + 2,
+        image.width / 2,
         0,
         image.width / 2,
         image.height,
@@ -149,7 +156,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(255, 255), p5.random(190, 230), 9]
   const size = p5.random(5, 10)
-  const speed = p5.random(1, 3)
+  const speed = p5.random(2, 3)
 
   const update = () => {
     // use perlin noise to move the ray
@@ -194,7 +201,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
 const wave = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(40, 50), p5.random(150, 170), 100]
-  const speed = p5.random(2, 4)
+  const speed = p5.random(3, 5)
   const size = p5.random(speed + 4, 10)
 
   const update = () => {
