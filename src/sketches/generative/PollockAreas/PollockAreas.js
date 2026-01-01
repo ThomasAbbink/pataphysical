@@ -1,6 +1,5 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import area from './area'
-import { Vector } from 'p5'
 
 export const pollockAreas = (p5) => {
   const areas = []
@@ -30,7 +29,7 @@ export const pollockAreas = (p5) => {
   }
 
   const addRandomArea = () => {
-    const v = Vector.random2D()
+    const v = p5.Vector.random2D()
     v.setMag(p5.random(50, width / 2))
     addArea(v)
   }

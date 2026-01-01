@@ -1,5 +1,4 @@
 import { getCanvasSize } from '../../../utility/canvas'
-import { Vector } from 'p5'
 import { generateOscillatingNumber } from '../../../utility/numbers'
 import { distanceSquared } from '../../../utility/vectors'
 
@@ -131,7 +130,7 @@ const dot = (p5, { position }) => {
         : initialPosition
 
     if (!isAtTarget(target)) {
-      let acceleration = Vector.sub(target, position)
+      let acceleration = p5.Vector.sub(target, position)
       velocity.add(acceleration)
       if (closestMover.isPusher && !target.equals(initialPosition)) {
         velocity.limit(
@@ -168,8 +167,8 @@ const dot = (p5, { position }) => {
 
 const mover = (p5, { initialPosition, isPusher, maxDistance }) => {
   let position = initialPosition.copy()
-  let velocity = new Vector(0, 0)
-  let target = Vector.random2D()
+  let velocity = p5.createVector(0, 0)
+  let target = p5.Vector.random2D()
   const minVelocity = p5.map(maxDistance, 40, 120, 5, 10, true)
   const getVelocityLimit = generateOscillatingNumber({
     increment: 0.1,

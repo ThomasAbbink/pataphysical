@@ -1,6 +1,5 @@
 import { getPalette } from '../color-palettes'
 import { line } from './line'
-// import { Vector } from 'p5'
 
 /**
  * A pattern represents a lifetime of a collection of lines

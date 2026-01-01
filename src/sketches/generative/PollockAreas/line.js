@@ -1,4 +1,3 @@
-import { Vector } from 'p5'
 import { distanceSquared } from '../../../utility/vectors'
 
 /**
@@ -12,13 +11,13 @@ const line = (p5) => {
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
-  let target = Vector.random2D()
+  let target = p5.Vector.random2D()
   let isMovingToCustomTarget = false
 
   const moveRandomly = () => {
     isMovingToCustomTarget = false
     if (target.x === 0 && target.y === 0) {
-      target = Vector.random2D()
+      target = p5.Vector.random2D()
     }
     target.rotate(p5.random(p5.PI / 3, p5.PI / 2))
     target.setMag(10000)
@@ -61,7 +60,7 @@ const line = (p5) => {
       moveRandomly()
     }
 
-    acceleration = Vector.sub(target, position)
+    acceleration = p5.Vector.sub(target, position)
     velocity.add(acceleration)
     velocity.limit(2)
     position.add(velocity)
