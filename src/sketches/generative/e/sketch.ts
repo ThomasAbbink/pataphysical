@@ -8,13 +8,14 @@ const backgroundColor = 255
 
 const baseSpeed = 0.5
 
-const gifFrames = 600
+const gifFrames = 800
 const e = (p5: p5) => {
   let sunrays: ReturnType<typeof sunRay>[] = []
   const waves: ReturnType<typeof wave>[] = []
   const flames: ReturnType<typeof flame>[] = []
 
   let image: p5.Image | undefined
+  let originalImage: p5.Image | undefined
   let cardWidth = 0
   let cardHeight = 0
   let cardX = 0
@@ -22,21 +23,30 @@ const e = (p5: p5) => {
 
   p5.setup = async () => {
     // const { width, height } = getCanvasSize()
-    const width = 640
-    const height = 360
+
+    const width = 720
+    const height = 480
+    // const width = 105 * 4
+    // const height = 148 * 2 * 4
+    // 105 *4
+    // 148 * 2 * 4
 
     p5.createCanvas(width, height)
-    p5.frameRate(20)
+    p5.frameRate(30)
 
-    await p5.loadImage(`/assets/g2.png`, (im) => {
+    await p5.loadImage(`/assets/g5.png`, (im) => {
       im.loadPixels()
       im.resize(cardWidth, cardHeight)
       image = im
       p5.background(backgroundColor, 255, 255, 255)
+    })
+
+    await p5.loadImage(`/assets/g5.png`, (im) => {
+      originalImage = im
       // p5.saveGif('e.gif', gifFrames, { units: 'frames', delay: 10 })
     })
 
-    const rayCount = 200
+    const rayCount = 250
     for (let i = 0; i < rayCount; i++) {
       sunrays.push(
         sunRay(p5, {
@@ -58,6 +68,14 @@ const e = (p5: p5) => {
       )
     }
     resize()
+
+    // p5.saveGif('e.gif', gifFrames, { units: 'frames', delay: 40 })
+
+    const callback = (files: any) => {
+      console.log(files)
+    }
+
+    // p5.saveFrames('e', 'png', 15, 20)
     // setTimeout(() => {
     //   if (image) {
     //     showimage = !showimage
@@ -100,7 +118,7 @@ const e = (p5: p5) => {
       cardHeight = cardWidth / cardAspectRatio
     }
     if (canvasAspectRatio > cardAspectRatio) {
-      cardHeight = p5.height - p5.height * 0.2
+      cardHeight = p5.height - p5.height * 0.1
       cardWidth = cardHeight * cardAspectRatio
     }
     cardX = p5.width / 2 - cardWidth / 2
@@ -132,6 +150,12 @@ const e = (p5: p5) => {
     if (p5.frameCount === gifFrames - 100) {
       showimage = true
     }
+
+    // if (p5.frameCount <= gifFrames) {
+    //   const leadingzeroes = String(p5.frameCount).padStart(3, '0')
+    //   p5.saveCanvas(`${leadingzeroes}-elias.jpg`, 'jpg')
+    // }
+
     sunrays.forEach((sunray) => {
       // @ts-ignore
       sunray.draw(getPixelData)
@@ -160,18 +184,17 @@ const e = (p5: p5) => {
     //   p5.background(255, 255, 255, 255)
     // }
 
-    if (image) {
-      p5.blend(
-        image,
-        parseInt(image.width / 2),
+    if (originalImage) {
+      p5.copy(
+        originalImage,
+        originalImage.width / 2 + 2,
         0,
-        parseInt(image.width / 2),
-        parseInt(image.height),
-        parseInt(cardX + cardWidth / 2),
-        parseInt(cardY),
-        parseInt(cardWidth / 2),
-        parseInt(cardHeight),
-        p5.BLEND,
+        originalImage.width / 2 + 2,
+        originalImage.height,
+        cardX + cardWidth / 2,
+        cardY,
+        cardWidth / 2,
+        cardHeight,
       )
     }
   }
@@ -207,7 +230,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    let brightnessBasedSize = p5.map(pixelData[0], 0, 255, size, 0, true) / 3
+    let brightnessBasedSize = p5.map(pixelData[0], 0, 255, size, 0, true) / 2.5
 
     p5.push()
     p5.noStroke()
