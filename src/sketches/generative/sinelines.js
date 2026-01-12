@@ -61,7 +61,7 @@ const line =
     const yWithOffset = isLeft ? y : y + LINE_HEIGHT
     const minWidth = p5.width / 2
 
-    let angle = p5.map(y, 0, p5.height, p5.TWO_PI, true)
+    let angle = p5.map(y, 0, p5.height, p5.TWO_PI, 0, true)
 
     const ownAngle = p5.map(y, 0, p5.height, -0.03, 0.03)
     const draw = ({ angleIncrement = 0.05, maxGrowth = 100 }) => {

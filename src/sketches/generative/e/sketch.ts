@@ -22,14 +22,8 @@ const e = (p5: p5) => {
   let cardY = 0
 
   p5.setup = async () => {
-    // const { width, height } = getCanvasSize()
-
     const width = 720
     const height = 480
-    // const width = 105 * 4
-    // const height = 148 * 2 * 4
-    // 105 *4
-    // 148 * 2 * 4
 
     p5.createCanvas(width, height)
     p5.frameRate(30)
@@ -43,7 +37,6 @@ const e = (p5: p5) => {
 
     await p5.loadImage(`/assets/g5.png`, (im) => {
       originalImage = im
-      // p5.saveGif('e.gif', gifFrames, { units: 'frames', delay: 10 })
     })
 
     const rayCount = 250
@@ -69,19 +62,6 @@ const e = (p5: p5) => {
     }
     resize()
 
-    // p5.saveGif('e.gif', gifFrames, { units: 'frames', delay: 40 })
-
-    const callback = (files: any) => {
-      console.log(files)
-    }
-
-    // p5.saveFrames('e', 'png', 15, 20)
-    // setTimeout(() => {
-    //   if (image) {
-    //     showimage = !showimage
-    //     p5.background(255, 255, 255, 255)
-    //   }
-    // }, 9)
     p5.mousePressed = () => {
       if (image) {
         showimage = !showimage
@@ -89,12 +69,6 @@ const e = (p5: p5) => {
       }
     }
   }
-
-  // p5.keyPressed = () => {
-  //   // setTimeout(() => {
-  //   //   showimage = !showimage
-  //   // }, 5)
-  // }
 
   const getPixelData = (pos: p5.Vector) => {
     if (
@@ -180,9 +154,6 @@ const e = (p5: p5) => {
       p5.image(image, cardX, cardY, cardWidth, cardHeight)
       p5.pop()
     }
-    // if (p5.frameCount % 1000 === 0) {
-    //   p5.background(255, 255, 255, 255)
-    // }
 
     if (originalImage) {
       p5.copy(
@@ -340,5 +311,5 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
   }
 }
 
-e.date = '2025-12-29'
+e.date = '1999-04-07'
 export { e }
