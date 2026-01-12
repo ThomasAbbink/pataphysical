@@ -1,5 +1,4 @@
 import { getCanvasSize } from '../../utility/canvas'
-import { Vector } from 'p5'
 import { getPalette } from './color-palettes'
 
 let colors = []
@@ -39,7 +38,7 @@ const flurble = (p5) => {
   const thickness = p5.random(5, 12)
   const position = p5.createVector(0, 0)
   const velocity = p5.createVector(0, 0)
-  let acceleration = Vector.random2D()
+  let acceleration = p5.Vector.random2D()
   let angle = 0
   let angleVelocity = p5.random(-(p5.PI / 100), p5.PI / 100)
 

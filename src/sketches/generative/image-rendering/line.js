@@ -1,4 +1,3 @@
-import { Vector } from 'p5'
 import { distanceSquared } from '../../../utility/vectors'
 
 /**
@@ -43,7 +42,7 @@ export const line = (
 
     p5.ellipse(position.x, position.y, t, t)
 
-    acceleration = Vector.sub(targetPosition, position)
+    acceleration = p5.Vector.sub(targetPosition, position)
     velocity.add(acceleration)
     velocity.limit(speedLimit)
     position.add(velocity)

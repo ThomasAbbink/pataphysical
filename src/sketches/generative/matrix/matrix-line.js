@@ -1,4 +1,3 @@
-import { Vector } from 'p5'
 import { symbol } from './symbol'
 import { v4 as uuid } from 'uuid'
 import { distanceSquared } from '../../../utility/vectors'
@@ -67,7 +66,7 @@ export const matrixLine = (
       symbol.draw()
     })
 
-    acceleration = Vector.sub(targetPosition, position)
+    acceleration = p5.Vector.sub(targetPosition, position)
     velocity.add(acceleration)
     velocity.limit(speedLimit)
     position.add(velocity)

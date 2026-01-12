@@ -54,7 +54,7 @@ const aoc2025 = (p5: p5) => {
     checkbox.style('font-family', 'monospace')
     checkbox.style('font-size', '16px')
     checkbox.style('color', 'white')
-    //@ts-expect-error
+
     checkbox.input(callback)
     return checkbox
   }

@@ -5,30 +5,41 @@ import { generateOscillatingNumber } from '../../../utility/numbers'
 
 let showimage = false
 const backgroundColor = 255
+
+const baseSpeed = 0.5
+
+const gifFrames = 800
 const e = (p5: p5) => {
   let sunrays: ReturnType<typeof sunRay>[] = []
   const waves: ReturnType<typeof wave>[] = []
   const flames: ReturnType<typeof flame>[] = []
 
   let image: p5.Image | undefined
+  let originalImage: p5.Image | undefined
   let cardWidth = 0
   let cardHeight = 0
   let cardX = 0
   let cardY = 0
 
-  p5.preload = () => {
-    p5.loadImage(`/assets/g2.png`, (im) => {
+  p5.setup = async () => {
+    const width = 720
+    const height = 480
+
+    p5.createCanvas(width, height)
+    p5.frameRate(30)
+
+    await p5.loadImage(`/assets/g5.png`, (im) => {
       im.loadPixels()
       im.resize(cardWidth, cardHeight)
       image = im
+      p5.background(backgroundColor, 255, 255, 255)
     })
-  }
-  p5.setup = () => {
-    const { width, height } = getCanvasSize()
-    p5.createCanvas(width, height)
-    p5.background(backgroundColor)
 
-    const rayCount = 500
+    await p5.loadImage(`/assets/g5.png`, (im) => {
+      originalImage = im
+    })
+
+    const rayCount = 250
     for (let i = 0; i < rayCount; i++) {
       sunrays.push(
         sunRay(p5, {
@@ -50,6 +61,7 @@ const e = (p5: p5) => {
       )
     }
     resize()
+
     p5.mousePressed = () => {
       if (image) {
         showimage = !showimage
@@ -72,14 +84,15 @@ const e = (p5: p5) => {
   }
 
   const resize = () => {
-    const cardAspectRatio = 210 / 148
+    //1,44308682
+    const cardAspectRatio = 1.44308682
     const canvasAspectRatio = p5.width / p5.height
     if (canvasAspectRatio < cardAspectRatio) {
-      cardWidth = p5.width - p5.width * 0.3
+      cardWidth = p5.width - p5.width * 0.1
       cardHeight = cardWidth / cardAspectRatio
     }
     if (canvasAspectRatio > cardAspectRatio) {
-      cardHeight = p5.height - p5.height * 0.3
+      cardHeight = p5.height - p5.height * 0.1
       cardWidth = cardHeight * cardAspectRatio
     }
     cardX = p5.width / 2 - cardWidth / 2
@@ -97,15 +110,26 @@ const e = (p5: p5) => {
     p5.background(backgroundColor)
   }
   const opacity = generateOscillatingNumber({
-    min: 0.5,
-    max: 3,
+    min: 1,
+    max: 4,
     initialValue: 2,
     increment: 0.01,
     minSpeed: 0.01,
     restFrames: 1000,
   })
 
+  let imageOpacity = 0
+
   p5.draw = () => {
+    if (p5.frameCount === gifFrames - 100) {
+      showimage = true
+    }
+
+    // if (p5.frameCount <= gifFrames) {
+    //   const leadingzeroes = String(p5.frameCount).padStart(3, '0')
+    //   p5.saveCanvas(`${leadingzeroes}-elias.jpg`, 'jpg')
+    // }
+
     sunrays.forEach((sunray) => {
       // @ts-ignore
       sunray.draw(getPixelData)
@@ -121,27 +145,29 @@ const e = (p5: p5) => {
       flame.draw(getPixelData)
       flame.update()
     })
-    if (image) {
-      p5.blend(
-        image,
-        image.width / 2 + 2,
+
+    p5.background(255, 255, 255, opacity())
+    if (showimage && image) {
+      imageOpacity += 3
+      p5.push()
+      p5.tint(255, imageOpacity)
+      p5.image(image, cardX, cardY, cardWidth, cardHeight)
+      p5.pop()
+    }
+
+    if (originalImage) {
+      p5.copy(
+        originalImage,
+        originalImage.width / 2 + 2,
         0,
-        image.width / 2,
-        image.height,
+        originalImage.width / 2 + 2,
+        originalImage.height,
         cardX + cardWidth / 2,
         cardY,
         cardWidth / 2,
         cardHeight,
-        p5.BLEND,
       )
     }
-    p5.background(255, 255, 255, opacity())
-    if (showimage && image) {
-      p5.image(image, cardX, cardY, cardWidth, cardHeight)
-    }
-    // if (p5.frameCount % 1000 === 0) {
-    //   p5.background(255, 255, 255, 255)
-    // }
   }
 }
 
@@ -149,7 +175,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(255, 255), p5.random(190, 230), 9]
   const size = p5.random(5, 10)
-  const speed = p5.random(1, 3)
+  const speed = p5.random(2, 3) * baseSpeed
 
   const update = () => {
     // use perlin noise to move the ray
@@ -175,7 +201,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
       return
     }
 
-    let brightnessBasedSize = p5.map(pixelData[0], 0, 255, size, 0, true) / 3
+    let brightnessBasedSize = p5.map(pixelData[0], 0, 255, size, 0, true) / 2.5
 
     p5.push()
     p5.noStroke()
@@ -194,7 +220,7 @@ const sunRay = (p5: p5, { start }: { start: p5.Vector }) => {
 const wave = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(40, 50), p5.random(150, 170), 100]
-  const speed = p5.random(2, 4)
+  const speed = p5.random(3, 5) * baseSpeed
   const size = p5.random(speed + 4, 10)
 
   const update = () => {
@@ -242,7 +268,7 @@ const wave = (p5: p5, { start }: { start: p5.Vector }) => {
 const flame = (p5: p5, { start }: { start: p5.Vector }) => {
   let position = start.copy()
   const color = [p5.random(240, 255), p5.random(80, 100), 0]
-  const speed = p5.random(2, 4)
+  const speed = p5.random(2, 4) * baseSpeed
   const size = p5.random(speed + 4, 10)
 
   const update = () => {
@@ -285,5 +311,5 @@ const flame = (p5: p5, { start }: { start: p5.Vector }) => {
   }
 }
 
-e.date = '2025-12-29'
+e.date = '1999-04-07'
 export { e }

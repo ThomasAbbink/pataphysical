@@ -19,9 +19,9 @@ const images = [
 const patterns = []
 let backgroundColor = 255
 export const portraits = (p5) => {
-  p5.preload = () => {
-    transition(true)
-  }
+  // p5.preload = () => {
+  //   transition(true)
+  // }
 
   const loadImage = (imgName, callback) => {
     p5.loadImage(`/assets/${imgName}.jpeg`, (im) => {

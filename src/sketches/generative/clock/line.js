@@ -1,4 +1,3 @@
-import { Vector } from 'p5'
 import { distanceSquared } from '../../../utility/vectors'
 
 /**
@@ -12,7 +11,7 @@ const line = (p5) => {
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
-  let target = Vector.random2D()
+  let target = p5.Vector.random2D()
 
   let speed = p5.map(thickness, 3, 8, 0.2, 2, true)
 
