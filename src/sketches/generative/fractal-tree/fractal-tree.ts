@@ -4,6 +4,11 @@ import { getCanvasSize } from '../../../utility/canvas'
 
 const SPEED = 3
 const REDRAW_DELAY = 3000
+const BEND_MIN = 1
+const BEND_MAX = 21
+const BEND_STEP = 5
+
+let bendAmount = BEND_MIN - BEND_STEP
 
 const fractalTree = (p5: p5) => {
   let branches: ReturnType<typeof branch>[] = []
@@ -18,6 +23,8 @@ const fractalTree = (p5: p5) => {
     redrawTimer = null
     leftAngleStep = p5.random(20, 40)
     rightAngleStep = p5.random(20, 40)
+    bendAmount =
+      ((bendAmount - BEND_MIN + BEND_STEP) % (BEND_MAX - BEND_MIN)) + BEND_MIN
     const { width, height } = getCanvasSize()
     const stemBase = p5.createVector(width / 2, height)
     const stemTip = p5.createVector(width / 2, height - 150)
@@ -47,12 +54,12 @@ const fractalTree = (p5: p5) => {
     angle: number,
     splitCount: number,
   ) => {
-    if (splitCount > 12) return
+    if (splitCount > 10) return
 
     const baseLength = p5.map(
       splitCount,
       0,
-      12,
+      10,
       p5.random(130, 180),
       p5.random(10, 20),
     )
@@ -166,7 +173,7 @@ function branch({
   const perpX = -dy / len
   const perpY = dx / len
   const noiseVal = p5.noise(start.x * 0.005, start.y * 0.005, end.x * 0.005)
-  const offset = (noiseVal - 0.5) * len * 1.2
+  const offset = (noiseVal - 0.5) * len * bendAmount
   const cx = (start.x + end.x) / 2 + perpX * offset
   const cy = (start.y + end.y) / 2 + perpY * offset
 
