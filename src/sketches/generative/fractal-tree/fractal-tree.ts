@@ -4,24 +4,36 @@ import { getCanvasSize } from '../../../utility/canvas'
 
 const SPEED = 3
 const REDRAW_DELAY = 3000
-const WIND_SCALE = 3
-const WIND_SPEED = 0.03
 
 const fractalTree = (p5: p5) => {
   let branches: ReturnType<typeof branch>[] = []
   let pendingBranches = 0
   let redrawTimer: ReturnType<typeof setTimeout> | null = null
-  let angleStep = 8
+  let leftAngleStep = 8
+  let rightAngleStep = 8
 
   const reset = () => {
     branches = []
     pendingBranches = 0
     redrawTimer = null
-
+    leftAngleStep = p5.random(20, 40)
+    rightAngleStep = p5.random(20, 40)
     const { width, height } = getCanvasSize()
-    const start = p5.createVector(width / 2, height)
-    angleStep = p5.random(6, 6)
-    createBranches(start, -p5.HALF_PI, 1)
+    const stemBase = p5.createVector(width / 2, height)
+    const stemTip = p5.createVector(width / 2, height - 150)
+    pendingBranches = 1
+    branches.push(
+      branch({
+        p5,
+        start: stemBase,
+        end: stemTip,
+        splitCount: 0,
+        onComplete: () => {
+          pendingBranches--
+          createBranches(stemTip, -p5.HALF_PI, 1)
+        },
+      }),
+    )
   }
 
   p5.setup = () => {
@@ -35,29 +47,32 @@ const fractalTree = (p5: p5) => {
     angle: number,
     splitCount: number,
   ) => {
-    if (splitCount > 9) return
+    if (splitCount > 12) return
 
-    const baseLength = 300 / splitCount
-
-    const maxAngleJitter = p5.radians(angleStep * 0.2)
-
-    const leftAngleJitter = p5.map(
+    const baseLength = p5.map(
+      splitCount,
+      0,
+      12,
+      p5.random(130, 180),
+      p5.random(10, 20),
+    )
+    const leftJitter = p5.map(
       p5.noise(start.x * 0.008, start.y * 0.008, angle - 1),
       0,
       1,
-      -maxAngleJitter,
-      maxAngleJitter,
+      -p5.radians(leftAngleStep * 0.2),
+      p5.radians(leftAngleStep * 0.2),
     )
-    const rightAngleJitter = p5.map(
+    const rightJitter = p5.map(
       p5.noise(start.x * 0.008, start.y * 0.008, angle + 1),
       0,
       1,
-      -maxAngleJitter,
-      maxAngleJitter,
+      -p5.radians(rightAngleStep * 0.2),
+      p5.radians(rightAngleStep * 0.2),
     )
 
-    const leftAngle = angle - angleStep + leftAngleJitter
-    const rightAngle = angle + angleStep + rightAngleJitter
+    const leftAngle = angle - p5.radians(leftAngleStep) + leftJitter
+    const rightAngle = angle + p5.radians(rightAngleStep) + rightJitter
 
     const leftLength =
       baseLength *
@@ -87,8 +102,8 @@ const fractalTree = (p5: p5) => {
       start.y + rightLength * p5.sin(rightAngle),
     )
 
-    const onBranchComplete = (end: p5.Vector, angle: number) => {
-      createBranches(end, angle, splitCount + 1)
+    const onBranchComplete = (end: p5.Vector, a: number) => {
+      createBranches(end, a, splitCount + 1)
       pendingBranches--
       if (pendingBranches === 0 && redrawTimer === null) {
         redrawTimer = setTimeout(reset, REDRAW_DELAY)
@@ -118,12 +133,18 @@ const fractalTree = (p5: p5) => {
 
   p5.draw = () => {
     p5.background(backgroundColor)
-    branches.forEach((b) => {
+    p5.push()
+    p5.stroke(255)
+    p5.noFill()
+    for (const b of branches) {
       b.update()
       b.draw()
-    })
+    }
+    p5.pop()
   }
 }
+
+type BranchPt = { x: number; y: number }
 
 function branch({
   p5,
@@ -142,29 +163,30 @@ function branch({
   const dy = end.y - start.y
   const len = Math.sqrt(dx * dx + dy * dy)
 
-  // Control point: perpendicular offset at the midpoint for a gentle arc
   const perpX = -dy / len
   const perpY = dx / len
-  // noise() returns [0,1], remap to [-1,1] so offset can curve either way
   const noiseVal = p5.noise(start.x * 0.005, start.y * 0.005, end.x * 0.005)
-  const offset = (noiseVal - 0.5) * len * 0.5
-  const control = {
-    x: (start.x + end.x) / 2 + perpX * offset,
-    y: (start.y + end.y) / 2 + perpY * offset,
+  const offset = (noiseVal - 0.5) * len * 1.2
+  const cx = (start.x + end.x) / 2 + perpX * offset
+  const cy = (start.y + end.y) / 2 + perpY * offset
+
+  // More segments for thick lower branches, taper off toward tips
+  const SEGMENTS = Math.max(6, 64 - splitCount * 3)
+  const strokeW = splitCount === 0 ? 8 : Math.max(1, 6 / splitCount)
+
+  // Pre-compute everything that is static for this branch's lifetime
+  const pts: BranchPt[] = new Array(SEGMENTS + 1)
+  for (let i = 0; i <= SEGMENTS; i++) {
+    const t = i / SEGMENTS
+    const mt = 1 - t
+    const x = mt * mt * start.x + 2 * mt * t * cx + t * t * end.x
+    const y = mt * mt * start.y + 2 * mt * t * cy + t * t * end.y
+    pts[i] = { x, y }
   }
 
   let progress = 0
   let completed = false
   const deltaT = SPEED / len
-  const SEGMENTS = 24
-
-  function quadBezier(t: number) {
-    const mt = 1 - t
-    return {
-      x: mt * mt * start.x + 2 * mt * t * control.x + t * t * end.x,
-      y: mt * mt * start.y + 2 * mt * t * control.y + t * t * end.y,
-    }
-  }
 
   function update() {
     if (completed) return
@@ -177,28 +199,13 @@ function branch({
 
   function draw() {
     const steps = Math.max(1, Math.round(progress * SEGMENTS))
-    const time = p5.frameCount * WIND_SPEED
-    p5.push()
-    p5.stroke(255)
-    p5.strokeWeight(Math.max(1, 4 / splitCount))
-    p5.noFill()
+    p5.strokeWeight(strokeW)
     p5.beginShape()
     for (let i = 0; i <= steps; i++) {
-      const t = (i / steps) * progress
-      const pt = quadBezier(t)
-      // depth interpolates from (splitCount-1) at the start to splitCount at the end,
-      // matching the depth used by child branches at their t=0 start
-      const depth = splitCount - 1 + t
-      // per-point phase offset so branches don't all swing in lockstep
-      const phase = p5.noise(pt.x * 0.005, pt.y * 0.005) * p5.TWO_PI
-      // slowly evolving gust strength
-      const gust = p5.noise(pt.x * 0.002, pt.y * 0.002, time)
-      const sway =
-        Math.sin(time * 2.5 + phase) * gust * Math.pow(depth, 1.2) * WIND_SCALE
-      p5.vertex(pt.x + sway, pt.y)
+      const { x, y } = pts[i]
+      p5.vertex(x, y)
     }
     p5.endShape()
-    p5.pop()
   }
 
   return { update, draw }
