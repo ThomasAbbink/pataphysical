@@ -11,7 +11,8 @@ const BEND_STEP = 8
 let bendAmount = BEND_MIN - BEND_STEP
 
 const fractalTree = (p5: p5) => {
-  let branches: ReturnType<typeof branch>[] = []
+  let growingBranches: ReturnType<typeof branch>[] = []
+  let completedLayer: p5.Graphics
   let pendingBranches = 0
   let redrawTimer: ReturnType<typeof setTimeout> | null = null
   let leftAngleStep = 8
@@ -20,19 +21,21 @@ const fractalTree = (p5: p5) => {
   let fadingOut = false
 
   const reset = () => {
-    branches = []
+    growingBranches = []
     pendingBranches = 0
     redrawTimer = null
     fadeAlpha = 255
+    fadingOut = false
     leftAngleStep = p5.random(20, 40)
     rightAngleStep = p5.random(20, 40)
     bendAmount =
       ((bendAmount - BEND_MIN + BEND_STEP) % (BEND_MAX - BEND_MIN)) + BEND_MIN
+    completedLayer.clear()
     const { width, height } = getCanvasSize()
     const stemBase = p5.createVector(width / 2, height)
     const stemTip = p5.createVector(width / 2, height - 150)
     pendingBranches = 1
-    branches.push(
+    growingBranches.push(
       branch({
         p5,
         start: stemBase,
@@ -44,11 +47,13 @@ const fractalTree = (p5: p5) => {
         },
       }),
     )
+    p5.loop()
   }
 
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    completedLayer = p5.createGraphics(width, height)
     reset()
   }
 
@@ -57,14 +62,14 @@ const fractalTree = (p5: p5) => {
     angle: number,
     splitCount: number,
   ) => {
-    if (splitCount > 10) return
+    if (splitCount > 12) return
 
     const baseLength = p5.map(
       splitCount,
       0,
       10,
       p5.random(130, 180),
-      p5.random(10, 20),
+      p5.random(20, 30),
     )
     const leftJitter = p5.map(
       p5.noise(start.x * 0.008, start.y * 0.008, angle - 1),
@@ -120,12 +125,13 @@ const fractalTree = (p5: p5) => {
           fadingOut = true
           fadeAlpha = 255
           redrawTimer = null
+          p5.loop()
         }, REDRAW_DELAY)
       }
     }
 
     pendingBranches += 2
-    branches.push(
+    growingBranches.push(
       branch({
         p5,
         start,
@@ -134,7 +140,7 @@ const fractalTree = (p5: p5) => {
         onComplete: () => onBranchComplete(leftEnd, leftAngle),
       }),
     )
-    branches.push(
+    growingBranches.push(
       branch({
         p5,
         start,
@@ -151,20 +157,41 @@ const fractalTree = (p5: p5) => {
     if (fadingOut) {
       fadeAlpha -= 255 * (p5.deltaTime / 500)
       if (fadeAlpha <= 0) {
-        fadingOut = false
         reset()
         return
       }
+      p5.tint(255, fadeAlpha)
+      p5.image(completedLayer, 0, 0)
+      p5.noTint()
+      return
     }
 
+    // Bake newly completed branches into the layer; keep only growing ones
+    const nextGrowing: ReturnType<typeof branch>[] = []
+    for (const b of growingBranches) {
+      b.update()
+      if (b.isCompleted) {
+        b.bake(completedLayer)
+      } else {
+        nextGrowing.push(b)
+      }
+    }
+    growingBranches = nextGrowing
+
+    // Draw the static completed layer then the growing branches on top
+    p5.image(completedLayer, 0, 0)
+
     p5.push()
-    p5.stroke(255, fadingOut ? fadeAlpha : 255)
+    p5.stroke(255)
     p5.noFill()
-    for (const b of branches) {
-      if (!fadingOut) b.update()
+    for (const b of growingBranches) {
       b.draw()
     }
     p5.pop()
+
+    if (growingBranches.length === 0) {
+      p5.noLoop()
+    }
   }
 }
 
@@ -194,18 +221,17 @@ function branch({
   const cx = (start.x + end.x) / 2 + perpX * offset
   const cy = (start.y + end.y) / 2 + perpY * offset
 
-  // More segments for thick lower branches, taper off toward tips
   const SEGMENTS = Math.max(3, 64 - splitCount * 3)
   const strokeW = splitCount === 0 ? 8 : Math.max(1, 6 / splitCount)
 
-  // Pre-compute everything that is static for this branch's lifetime
   const pts: BranchPt[] = new Array(SEGMENTS + 1)
   for (let i = 0; i <= SEGMENTS; i++) {
     const t = i / SEGMENTS
     const mt = 1 - t
-    const x = mt * mt * start.x + 2 * mt * t * cx + t * t * end.x
-    const y = mt * mt * start.y + 2 * mt * t * cy + t * t * end.y
-    pts[i] = { x, y }
+    pts[i] = {
+      x: mt * mt * start.x + 2 * mt * t * cx + t * t * end.x,
+      y: mt * mt * start.y + 2 * mt * t * cy + t * t * end.y,
+    }
   }
 
   let progress = 0
@@ -226,13 +252,33 @@ function branch({
     p5.strokeWeight(strokeW)
     p5.beginShape()
     for (let i = 0; i <= steps; i++) {
-      const { x, y } = pts[i]
-      p5.vertex(x, y)
+      p5.vertex(pts[i].x, pts[i].y)
     }
     p5.endShape()
   }
 
-  return { update, draw }
+  // Render the full branch permanently into an off-screen graphics layer
+  function bake(layer: p5.Graphics) {
+    layer.push()
+    layer.stroke(255)
+    layer.strokeWeight(strokeW)
+    layer.noFill()
+    layer.beginShape()
+    for (const { x, y } of pts) {
+      layer.vertex(x, y)
+    }
+    layer.endShape()
+    layer.pop()
+  }
+
+  return {
+    update,
+    draw,
+    bake,
+    get isCompleted() {
+      return completed
+    },
+  }
 }
 
 fractalTree.date = '2026-04-28'
