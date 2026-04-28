@@ -5,8 +5,8 @@ import { getCanvasSize } from '../../../utility/canvas'
 const SPEED = 3
 const REDRAW_DELAY = 3000
 const BEND_MIN = 1
-const BEND_MAX = 21
-const BEND_STEP = 5
+const BEND_MAX = 40
+const BEND_STEP = 8
 
 let bendAmount = BEND_MIN - BEND_STEP
 
@@ -16,11 +16,14 @@ const fractalTree = (p5: p5) => {
   let redrawTimer: ReturnType<typeof setTimeout> | null = null
   let leftAngleStep = 8
   let rightAngleStep = 8
+  let fadeAlpha = 255
+  let fadingOut = false
 
   const reset = () => {
     branches = []
     pendingBranches = 0
     redrawTimer = null
+    fadeAlpha = 255
     leftAngleStep = p5.random(20, 40)
     rightAngleStep = p5.random(20, 40)
     bendAmount =
@@ -113,7 +116,11 @@ const fractalTree = (p5: p5) => {
       createBranches(end, a, splitCount + 1)
       pendingBranches--
       if (pendingBranches === 0 && redrawTimer === null) {
-        redrawTimer = setTimeout(reset, REDRAW_DELAY)
+        redrawTimer = setTimeout(() => {
+          fadingOut = true
+          fadeAlpha = 255
+          redrawTimer = null
+        }, REDRAW_DELAY)
       }
     }
 
@@ -140,11 +147,21 @@ const fractalTree = (p5: p5) => {
 
   p5.draw = () => {
     p5.background(backgroundColor)
+
+    if (fadingOut) {
+      fadeAlpha -= 255 * (p5.deltaTime / 500)
+      if (fadeAlpha <= 0) {
+        fadingOut = false
+        reset()
+        return
+      }
+    }
+
     p5.push()
-    p5.stroke(255)
+    p5.stroke(255, fadingOut ? fadeAlpha : 255)
     p5.noFill()
     for (const b of branches) {
-      b.update()
+      if (!fadingOut) b.update()
       b.draw()
     }
     p5.pop()
@@ -178,7 +195,7 @@ function branch({
   const cy = (start.y + end.y) / 2 + perpY * offset
 
   // More segments for thick lower branches, taper off toward tips
-  const SEGMENTS = Math.max(6, 64 - splitCount * 3)
+  const SEGMENTS = Math.max(3, 64 - splitCount * 3)
   const strokeW = splitCount === 0 ? 8 : Math.max(1, 6 / splitCount)
 
   // Pre-compute everything that is static for this branch's lifetime
