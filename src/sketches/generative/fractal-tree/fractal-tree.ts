@@ -7,8 +7,10 @@ const REDRAW_DELAY = 3000
 const BEND_MIN = 1
 const BEND_MAX = 40
 const BEND_STEP = 8
+const MAX_SPLIT_COUNT = 10
 
 let bendAmount = BEND_MIN - BEND_STEP
+let hueOffset = 0
 
 const fractalTree = (p5: p5) => {
   let growingBranches: ReturnType<typeof branch>[] = []
@@ -28,6 +30,7 @@ const fractalTree = (p5: p5) => {
     fadingOut = false
     leftAngleStep = p5.random(20, 40)
     rightAngleStep = p5.random(20, 40)
+    hueOffset = Math.floor(p5.random(360))
     bendAmount =
       ((bendAmount - BEND_MIN + BEND_STEP) % (BEND_MAX - BEND_MIN)) + BEND_MIN
     completedLayer.clear()
@@ -54,6 +57,7 @@ const fractalTree = (p5: p5) => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
     completedLayer = p5.createGraphics(width, height)
+    p5.colorMode(p5.HSB, 360, 100, 100, 255)
     reset()
   }
 
@@ -62,14 +66,14 @@ const fractalTree = (p5: p5) => {
     angle: number,
     splitCount: number,
   ) => {
-    if (splitCount > 12) return
+    if (splitCount > MAX_SPLIT_COUNT) return
 
     const baseLength = p5.map(
       splitCount,
       0,
-      10,
+      MAX_SPLIT_COUNT,
       p5.random(130, 180),
-      p5.random(20, 30),
+      p5.random(10, 20),
     )
     const leftJitter = p5.map(
       p5.noise(start.x * 0.008, start.y * 0.008, angle - 1),
@@ -155,14 +159,18 @@ const fractalTree = (p5: p5) => {
     p5.background(backgroundColor)
 
     if (fadingOut) {
-      fadeAlpha -= 255 * (p5.deltaTime / 500)
+      // Cap deltaTime to one frame to prevent the first frame after noLoop()
+      // from consuming the entire elapsed sleep duration at once
+      fadeAlpha -= 255 * (Math.min(p5.deltaTime, 33) / 500)
       if (fadeAlpha <= 0) {
         reset()
         return
       }
-      p5.tint(255, fadeAlpha)
+      // Use drawingContext.globalAlpha to avoid HSB colorMode tint issues
+      ;(p5.drawingContext as CanvasRenderingContext2D).globalAlpha =
+        Math.max(0, fadeAlpha) / 255
       p5.image(completedLayer, 0, 0)
-      p5.noTint()
+      ;(p5.drawingContext as CanvasRenderingContext2D).globalAlpha = 1
       return
     }
 
@@ -178,11 +186,9 @@ const fractalTree = (p5: p5) => {
     }
     growingBranches = nextGrowing
 
-    // Draw the static completed layer then the growing branches on top
     p5.image(completedLayer, 0, 0)
 
     p5.push()
-    p5.stroke(255)
     p5.noFill()
     for (const b of growingBranches) {
       b.draw()
@@ -224,6 +230,11 @@ function branch({
   const SEGMENTS = Math.max(3, 64 - splitCount * 3)
   const strokeW = splitCount === 0 ? 8 : Math.max(1, 6 / splitCount)
 
+  // Rainbow: purple (stem) → blue → cyan → green → yellow → red (tips)
+  const hue = (p5.map(splitCount, 0, MAX_SPLIT_COUNT, 280, 0) + hueOffset) % 360
+  const sat = p5.map(splitCount, 0, MAX_SPLIT_COUNT, 0, 100)
+  const branchColor = p5.color(hue, sat, 100)
+
   const pts: BranchPt[] = new Array(SEGMENTS + 1)
   for (let i = 0; i <= SEGMENTS; i++) {
     const t = i / SEGMENTS
@@ -249,6 +260,7 @@ function branch({
 
   function draw() {
     const steps = Math.max(1, Math.round(progress * SEGMENTS))
+    p5.stroke(branchColor)
     p5.strokeWeight(strokeW)
     p5.beginShape()
     for (let i = 0; i <= steps; i++) {
@@ -257,10 +269,9 @@ function branch({
     p5.endShape()
   }
 
-  // Render the full branch permanently into an off-screen graphics layer
   function bake(layer: p5.Graphics) {
     layer.push()
-    layer.stroke(255)
+    layer.stroke(branchColor)
     layer.strokeWeight(strokeW)
     layer.noFill()
     layer.beginShape()
