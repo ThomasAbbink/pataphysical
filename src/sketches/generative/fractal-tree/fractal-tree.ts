@@ -5,39 +5,48 @@ import { getCanvasSize } from '../../../utility/canvas'
 const SPEED = 3
 const REDRAW_DELAY = 3000
 const BEND_MIN = 1
-const BEND_MAX = 40
+const BEND_MAX = 20
 const BEND_STEP = 8
-const MAX_SPLIT_COUNT = 10
+const MAX_CONCURRENT = 2000
+let MAX_SPLIT_COUNT = 13
 
 let bendAmount = BEND_MIN - BEND_STEP
 let hueOffset = 0
 
 const fractalTree = (p5: p5) => {
   let growingBranches: ReturnType<typeof branch>[] = []
+  let growthQueue: Array<() => void> = []
   let completedLayer: p5.Graphics
-  let pendingBranches = 0
   let redrawTimer: ReturnType<typeof setTimeout> | null = null
   let leftAngleStep = 8
   let rightAngleStep = 8
   let fadeAlpha = 255
   let fadingOut = false
+  let canvasWidth = 0
+  let canvasHeight = 0
+
+  const drainQueue = () => {
+    while (growingBranches.length < MAX_CONCURRENT && growthQueue.length > 0) {
+      growthQueue.shift()!()
+    }
+  }
 
   const reset = () => {
     growingBranches = []
-    pendingBranches = 0
+    growthQueue = []
     redrawTimer = null
     fadeAlpha = 255
     fadingOut = false
+    MAX_SPLIT_COUNT = Math.floor(p5.random(9, 14))
     leftAngleStep = p5.random(20, 40)
     rightAngleStep = p5.random(20, 40)
     hueOffset = Math.floor(p5.random(360))
     bendAmount =
       ((bendAmount - BEND_MIN + BEND_STEP) % (BEND_MAX - BEND_MIN)) + BEND_MIN
     completedLayer.clear()
-    const { width, height } = getCanvasSize()
-    const stemBase = p5.createVector(width / 2, height)
-    const stemTip = p5.createVector(width / 2, height - 150)
-    pendingBranches = 1
+    const stemHeight = canvasHeight * p5.random(0.15, 0.25)
+    const stemBase = p5.createVector(canvasWidth / 2, canvasHeight)
+    const stemTip = p5.createVector(canvasWidth / 2, canvasHeight - stemHeight)
     growingBranches.push(
       branch({
         p5,
@@ -45,8 +54,8 @@ const fractalTree = (p5: p5) => {
         end: stemTip,
         splitCount: 0,
         onComplete: () => {
-          pendingBranches--
           createBranches(stemTip, -p5.HALF_PI, 1)
+          drainQueue()
         },
       }),
     )
@@ -55,6 +64,8 @@ const fractalTree = (p5: p5) => {
 
   p5.setup = () => {
     const { width, height } = getCanvasSize()
+    canvasWidth = width
+    canvasHeight = height
     p5.createCanvas(width, height)
     completedLayer = p5.createGraphics(width, height)
     p5.colorMode(p5.HSB, 360, 100, 100, 255)
@@ -67,13 +78,12 @@ const fractalTree = (p5: p5) => {
     splitCount: number,
   ) => {
     if (splitCount > MAX_SPLIT_COUNT) return
-
     const baseLength = p5.map(
       splitCount,
       0,
       MAX_SPLIT_COUNT,
-      p5.random(130, 180),
-      p5.random(10, 20),
+      canvasHeight * p5.random(0.06, 0.14),
+      canvasHeight * p5.random(0.01, 0.035),
     )
     const leftJitter = p5.map(
       p5.noise(start.x * 0.008, start.y * 0.008, angle - 1),
@@ -123,35 +133,30 @@ const fractalTree = (p5: p5) => {
 
     const onBranchComplete = (end: p5.Vector, a: number) => {
       createBranches(end, a, splitCount + 1)
-      pendingBranches--
-      if (pendingBranches === 0 && redrawTimer === null) {
-        redrawTimer = setTimeout(() => {
-          fadingOut = true
-          fadeAlpha = 255
-          redrawTimer = null
-          p5.loop()
-        }, REDRAW_DELAY)
-      }
+      drainQueue()
     }
 
-    pendingBranches += 2
-    growingBranches.push(
-      branch({
-        p5,
-        start,
-        end: leftEnd,
-        splitCount,
-        onComplete: () => onBranchComplete(leftEnd, leftAngle),
-      }),
+    growthQueue.push(() =>
+      growingBranches.push(
+        branch({
+          p5,
+          start,
+          end: leftEnd,
+          splitCount,
+          onComplete: () => onBranchComplete(leftEnd, leftAngle),
+        }),
+      ),
     )
-    growingBranches.push(
-      branch({
-        p5,
-        start,
-        end: rightEnd,
-        splitCount,
-        onComplete: () => onBranchComplete(rightEnd, rightAngle),
-      }),
+    growthQueue.push(() =>
+      growingBranches.push(
+        branch({
+          p5,
+          start,
+          end: rightEnd,
+          splitCount,
+          onComplete: () => onBranchComplete(rightEnd, rightAngle),
+        }),
+      ),
     )
   }
 
@@ -174,7 +179,7 @@ const fractalTree = (p5: p5) => {
       return
     }
 
-    // Bake newly completed branches into the layer; keep only growing ones
+    // Update, bake completed, keep growing
     const nextGrowing: ReturnType<typeof branch>[] = []
     for (const b of growingBranches) {
       b.update()
@@ -186,6 +191,9 @@ const fractalTree = (p5: p5) => {
     }
     growingBranches = nextGrowing
 
+    // Fill open slots from the queue
+    drainQueue()
+
     p5.image(completedLayer, 0, 0)
 
     p5.push()
@@ -195,7 +203,15 @@ const fractalTree = (p5: p5) => {
     }
     p5.pop()
 
-    if (growingBranches.length === 0) {
+    if (growingBranches.length === 0 && growthQueue.length === 0) {
+      if (redrawTimer === null) {
+        redrawTimer = setTimeout(() => {
+          fadingOut = true
+          fadeAlpha = 255
+          redrawTimer = null
+          p5.loop()
+        }, REDRAW_DELAY)
+      }
       p5.noLoop()
     }
   }
