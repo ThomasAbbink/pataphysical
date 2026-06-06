@@ -5,7 +5,10 @@ import KioskSketchWrapper from '../kiosk/KioskSketchWrapper'
 
 export default function SketchPage() {
   const { name } = useParams<{ name: string }>()
-  const sketch = Object.values(sketches).find((s) => s.name === name)
+  const sketch =
+    name && name in sketches
+      ? sketches[name as keyof typeof sketches]
+      : undefined
 
   if (!sketch) return <NotFoundPage />
 
