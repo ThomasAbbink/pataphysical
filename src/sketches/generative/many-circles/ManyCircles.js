@@ -1,13 +1,13 @@
 import { getCanvasSize } from '../../../utility/canvas'
 import { generateOscillatingNumber } from '../../../utility/numbers'
-import { lotusCircles } from '../lotus-circles/LotusCircles'
 
 export const manyCircles = (p5) => {
-  let backgroundColor = p5.color(122, 177, 222)
+  let backgroundColor
   const circles = new Map()
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(122, 177, 222)
     p5.background(backgroundColor)
     p5.colorMode(p5.HSL)
   }

@@ -2,7 +2,7 @@ import { getCanvasSize } from '../../../utility/canvas'
 import sevenSegment from './seven-segment'
 
 export const clock = (p5) => {
-  const backgroundColor = p5.color(33, 33, 40)
+  let backgroundColor
   const createDisplays = () => {
     const width = p5.width
 
@@ -30,6 +30,7 @@ export const clock = (p5) => {
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(33, 33, 40)
     p5.background(backgroundColor)
     displays = createDisplays()
   }

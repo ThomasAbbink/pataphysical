@@ -42,7 +42,7 @@ export const line = (
 
     p5.ellipse(position.x, position.y, t, t)
 
-    acceleration = p5.Vector.sub(targetPosition, position)
+    acceleration = targetPosition.copy().sub(position)
     velocity.add(acceleration)
     velocity.limit(speedLimit)
     position.add(velocity)

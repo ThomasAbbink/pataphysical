@@ -3,7 +3,7 @@ import { getCanvasSize } from '../../../utility/canvas'
 import { v4 as uuid } from 'uuid'
 
 export const lotusCircles = (p5) => {
-  let backgroundColor = p5.color(11, 33, 88)
+  let backgroundColor
   const circles = new Map()
 
   const createCircle = (values) => {
@@ -18,6 +18,7 @@ export const lotusCircles = (p5) => {
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(11, 33, 88)
     p5.background(backgroundColor)
     const scale = Math.min(width, height) / 1080
     for (let i = 10; i < 100; i += 10) {

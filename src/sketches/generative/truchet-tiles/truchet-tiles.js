@@ -5,12 +5,13 @@ let isFlipping = false
 export const flippingTruchetTiles = (p5) => {
   let tileSize
   const tiles = []
-  let backgroundColor = p5.color(33, 33, 40)
+  let backgroundColor
   let getBezierOffset
   let getSizeMultiplier
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(33, 33, 40)
     p5.background(backgroundColor)
     tileSize = p5.height / 10
 
@@ -66,9 +67,12 @@ const flipTiles = (p5, tiles, matcher) => {
     if (!matches.length) {
       //  flipped through all tiles
       clearInterval(interval)
-      setTimeout(() => {
-        isFlipping = false
-      }, 2000 + tiles.length * 100)
+      setTimeout(
+        () => {
+          isFlipping = false
+        },
+        2000 + tiles.length * 100,
+      )
       return
     }
     matches.forEach((tile) => {

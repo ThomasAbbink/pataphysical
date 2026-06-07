@@ -15,9 +15,9 @@ export const truchetPatterns = (p5) => {
   let topRowHasOffset = false
 
   p5.setup = () => {
-    p5.colorMode(p5.HSB)
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    p5.colorMode(p5.HSB)
     p5.background(backgroundColor)
     radius = p5.width > p5.height ? p5.width / tileCount : p5.height / tileCount
     faceSize = p5.sin(p5.TWO_PI / 3) * radius * 2

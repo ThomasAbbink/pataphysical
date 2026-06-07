@@ -19,28 +19,17 @@ const images = [
 const patterns = []
 let backgroundColor = 255
 export const portraits = (p5) => {
-  // p5.preload = () => {
-  //   transition(true)
-  // }
+  const loadImage = async (imgName) => {
+    const im = await p5.loadImage(`/assets/${imgName}.jpeg`)
+    image = im
 
-  const loadImage = (imgName, callback) => {
-    p5.loadImage(`/assets/${imgName}.jpeg`, (im) => {
-      image = im
+    if (image.width < image.height) {
+      image.resize(p5.width, 0)
+    } else {
+      image.resize(0, p5.height)
+    }
 
-      if (image.width < image.height) {
-        image.resize(p5.width, 0)
-      } else {
-        image.resize(0, p5.height)
-      }
-
-      im.loadPixels()
-      callback && callback()
-    })
-  }
-  p5.setup = () => {
-    const { width, height } = getCanvasSize()
-    p5.createCanvas(width, height)
-    p5.background(255)
+    im.loadPixels()
   }
 
   const getPixelData = (pos) => {
@@ -51,7 +40,45 @@ export const portraits = (p5) => {
     ) {
       return [255, 255, 255, 255]
     }
-    return image.get(pos.x + image.width / 2, pos.y + image.height / 2)
+    const x = Math.floor(pos.x + image.width / 2)
+    const y = Math.floor(pos.y + image.height / 2)
+    const i = 4 * (y * image.width + x)
+    const { pixels } = image
+    return [pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]]
+  }
+
+  let currentImage = ''
+  const getNextImageName = () => {
+    const next = p5.random(images)
+    if (next === currentImage) {
+      return getNextImageName()
+    }
+    currentImage = next
+    return next
+  }
+
+  const transition = async (isFirst = false) => {
+    transitioning = true
+
+    if (!isFirst) {
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+    }
+
+    await loadImage(getNextImageName())
+    patterns.forEach((pattern) => {
+      pattern.stop()
+    })
+    p5.background(255)
+    patterns.push(createPattern(p5, { getPixelData }))
+    patterns.push(createPattern(p5, { getPixelData }))
+    transitioning = false
+  }
+
+  p5.setup = async () => {
+    const { width, height } = getCanvasSize()
+    p5.createCanvas(width, height)
+    p5.background(255)
+    await transition(true)
   }
 
   p5.windowResized = () => {
@@ -81,34 +108,6 @@ export const portraits = (p5) => {
         patterns.splice(index, 1)
       }
     })
-  }
-
-  let currentImage = ''
-  const getNextImageName = () => {
-    const next = p5.random(images)
-    if (next === currentImage) {
-      return getNextImageName()
-    }
-    currentImage = next
-    return next
-  }
-
-  const transition = (isFirst = false) => {
-    transitioning = true
-    setTimeout(
-      () => {
-        loadImage(getNextImageName(), () => {
-          patterns.forEach((pattern) => {
-            pattern.stop()
-          })
-          p5.background(255)
-          patterns.push(createPattern(p5, { getPixelData }))
-          patterns.push(createPattern(p5, { getPixelData }))
-          transitioning = false
-        })
-      },
-      isFirst ? 0 : 3000,
-    )
   }
 }
 

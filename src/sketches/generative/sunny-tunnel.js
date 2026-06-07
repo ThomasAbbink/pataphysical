@@ -12,9 +12,9 @@ export const sunnyTunnel = (p5) => {
 
   p5.setup = () => {
     const { width, height } = getCanvasSize()
+    p5.createCanvas(width, height, p5.WEBGL)
     p5.colorMode(p5.HSB)
     backgroundColor = p5.color(195, 0, 100)
-    p5.createCanvas(width, height, p5.WEBGL)
     p5.background(backgroundColor)
     p5.noStroke()
     p5.smooth()

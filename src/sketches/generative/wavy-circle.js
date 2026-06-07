@@ -12,8 +12,8 @@ export const wavyCircle = (p5) => {
 
   p5.setup = () => {
     const { width, height } = getCanvasSize()
-    p5.colorMode(p5.HSB)
     p5.createCanvas(width, height)
+    p5.colorMode(p5.HSB)
     p5.background(backgroundColor)
     circleSize = p5.width > p5.height ? p5.height / 2 - 20 : p5.width / 2 - 20
 
