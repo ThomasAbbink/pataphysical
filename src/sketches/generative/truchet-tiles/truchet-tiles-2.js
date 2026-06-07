@@ -4,7 +4,7 @@ import { generateOscillatingNumber } from '../../../utility/numbers'
 export const pythagoreanTruchetTiles = (p5) => {
   let maxTileSize
   const tiles = []
-  let backgroundColor = p5.color(33, 33, 40)
+  let backgroundColor
   let getGapSize
   let getTileSize
   let xTiles
@@ -15,6 +15,7 @@ export const pythagoreanTruchetTiles = (p5) => {
   p5.setup = () => {
     const { width, height } = getCanvasSize()
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(33, 33, 40)
     p5.background(backgroundColor)
     maxTileSize = p5.width / 5
 
