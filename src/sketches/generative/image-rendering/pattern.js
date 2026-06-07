@@ -20,31 +20,18 @@ const randomLeftEdge = (p5) => {
   return p5.createVector(
     -p5.width / 2,
     p5.random(-p5.height / 2, p5.height / 2),
-    true,
   )
 }
 
 const randomRightEdge = (p5) => {
-  return p5.createVector(
-    p5.width / 2,
-    p5.random(-p5.height / 2, p5.height / 2),
-    true,
-  )
+  return p5.createVector(p5.width / 2, p5.random(-p5.height / 2, p5.height / 2))
 }
 
 const randomTopEdge = (p5) => {
-  return p5.createVector(
-    p5.random(-p5.width / 2, p5.width / 2),
-    -p5.height / 2,
-    true,
-  )
+  return p5.createVector(p5.random(-p5.width / 2, p5.width / 2), -p5.height / 2)
 }
 const randomBottomEdge = (p5) => {
-  return p5.createVector(
-    p5.random(-p5.width / 2, p5.width / 2),
-    p5.height / 2,
-    true,
-  )
+  return p5.createVector(p5.random(-p5.width / 2, p5.width / 2), p5.height / 2)
 }
 
 // const insideOut = { startPosition: center, targetPosition: randomEdge }
