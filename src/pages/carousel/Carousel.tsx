@@ -23,12 +23,14 @@ export default ({ sketches }: Props) => {
 const Container = styled.div`
   display: flex;
   flex-grow: 1;
+  min-height: 0;
   scroll-behavior: smooth;
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: scroll;
   width: 100%;
   scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
 `
 
 const Footer = styled.div`

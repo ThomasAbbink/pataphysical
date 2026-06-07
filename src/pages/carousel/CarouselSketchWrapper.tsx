@@ -26,4 +26,9 @@ const Container = styled.div`
   max-height: 100vh;
   opacity: ${({ isVisible }: { isVisible: boolean }) => (isVisible ? 1 : 0)};
   transition: opacity 1.5s ease-out;
+
+  /* p5 v2 sets touch-action: none on canvases; allow vertical scroll on mobile */
+  canvas {
+    touch-action: pan-y !important;
+  }
 `
