@@ -12,6 +12,7 @@ export const pollockAreas = (p5) => {
 
   p5.setup = () => {
     p5.createCanvas(width, height)
+    backgroundColor = 0
     p5.background(backgroundColor)
   }
 
@@ -29,7 +30,8 @@ export const pollockAreas = (p5) => {
   }
 
   const addRandomArea = () => {
-    const v = p5.Vector.random2D()
+    const angle = p5.random(p5.TWO_PI)
+    const v = p5.createVector(p5.cos(angle), p5.sin(angle))
     v.setMag(p5.random(50, width / 2))
     addArea(v)
   }

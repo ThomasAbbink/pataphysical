@@ -3,7 +3,7 @@ import { generateOscillatingNumber } from '../../../utility/numbers'
 import { distanceSquared } from '../../../utility/vectors'
 
 export const repulsionAttraction = (p5) => {
-  let backgroundColor = p5.color(100, 130, 150)
+  let backgroundColor
   const gridPoints = []
   const movers = []
   let pixelCount = 0
@@ -14,6 +14,7 @@ export const repulsionAttraction = (p5) => {
     maxDistance = p5.map(pixelCount, 300 * 600, 1080 * 1920, 40, 120, true)
     p5.disableFriendlyErrors = true
     p5.createCanvas(width, height)
+    backgroundColor = p5.color(100, 130, 150)
     p5.background(backgroundColor)
     p5.frameRate(30)
     gridPoints.push(dot(p5, { position: p5.createVector(0, 0) }))
@@ -130,7 +131,7 @@ const dot = (p5, { position }) => {
         : initialPosition
 
     if (!isAtTarget(target)) {
-      let acceleration = p5.Vector.sub(target, position)
+      let acceleration = target.copy().sub(position)
       velocity.add(acceleration)
       if (closestMover.isPusher && !target.equals(initialPosition)) {
         velocity.limit(
@@ -168,7 +169,8 @@ const dot = (p5, { position }) => {
 const mover = (p5, { initialPosition, isPusher, maxDistance }) => {
   let position = initialPosition.copy()
   let velocity = p5.createVector(0, 0)
-  let target = p5.Vector.random2D()
+  const angle = p5.random(p5.TWO_PI)
+  let target = p5.createVector(p5.cos(angle), p5.sin(angle))
   const minVelocity = p5.map(maxDistance, 40, 120, 5, 10, true)
   const getVelocityLimit = generateOscillatingNumber({
     increment: 0.1,
@@ -198,7 +200,7 @@ const mover = (p5, { initialPosition, isPusher, maxDistance }) => {
       selectNewTarget()
     }
 
-    let acceleration = Vector.sub(target, position)
+    let acceleration = target.copy().sub(position)
     velocity.add(acceleration)
     velocity.limit(maxVelocity)
     position.add(velocity)

@@ -66,7 +66,7 @@ export const matrixLine = (
       symbol.draw()
     })
 
-    acceleration = p5.Vector.sub(targetPosition, position)
+    acceleration = targetPosition.copy().sub(position)
     velocity.add(acceleration)
     velocity.limit(speedLimit)
     position.add(velocity)

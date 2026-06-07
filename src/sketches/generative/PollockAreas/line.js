@@ -11,13 +11,17 @@ const line = (p5) => {
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
-  let target = p5.Vector.random2D()
+  const randomUnitVector = () => {
+    const angle = p5.random(p5.TWO_PI)
+    return p5.createVector(p5.cos(angle), p5.sin(angle))
+  }
+  let target = randomUnitVector()
   let isMovingToCustomTarget = false
 
   const moveRandomly = () => {
     isMovingToCustomTarget = false
     if (target.x === 0 && target.y === 0) {
-      target = p5.Vector.random2D()
+      target = randomUnitVector()
     }
     target.rotate(p5.random(p5.PI / 3, p5.PI / 2))
     target.setMag(10000)
@@ -60,7 +64,7 @@ const line = (p5) => {
       moveRandomly()
     }
 
-    acceleration = p5.Vector.sub(target, position)
+    acceleration = target.copy().sub(position)
     velocity.add(acceleration)
     velocity.limit(2)
     position.add(velocity)

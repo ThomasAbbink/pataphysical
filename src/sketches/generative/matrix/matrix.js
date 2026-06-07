@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid'
 export const matrix = (p5) => {
   let lines = new Map()
   const lineWidth = 15
-  let backgroundColor = p5.color(5, 18, 10)
+  let backgroundColor
   let xIndexes = []
   const queue = []
 
@@ -17,7 +17,7 @@ export const matrix = (p5) => {
   let input = ''
   p5.setup = () => {
     const { width, height } = getCanvasSize()
-
+    backgroundColor = p5.color(5, 18, 10)
     p5.createCanvas(width, height)
     p5.textAlign(p5.CENTER)
     p5.textFont('monospace')

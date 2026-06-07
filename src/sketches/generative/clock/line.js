@@ -11,7 +11,8 @@ const line = (p5) => {
   const position = p5.createVector(0, 0)
   let velocity = p5.createVector(0, 0)
   let acceleration = p5.createVector(0, 0)
-  let target = p5.Vector.random2D()
+  const angle = p5.random(p5.TWO_PI)
+  let target = p5.createVector(p5.cos(angle), p5.sin(angle))
 
   let speed = p5.map(thickness, 3, 8, 0.2, 2, true)
 
@@ -58,7 +59,7 @@ const line = (p5) => {
       moveRandomly()
     }
 
-    acceleration = Vector.sub(target, position)
+    acceleration = target.copy().sub(position)
     velocity.add(acceleration)
     velocity.limit(speed)
     position.add(velocity)

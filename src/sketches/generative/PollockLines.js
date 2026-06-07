@@ -38,7 +38,11 @@ const flurble = (p5) => {
   const thickness = p5.random(5, 12)
   const position = p5.createVector(0, 0)
   const velocity = p5.createVector(0, 0)
-  let acceleration = p5.Vector.random2D()
+  const randomUnitVector = () => {
+    const angle = p5.random(p5.TWO_PI)
+    return p5.createVector(p5.cos(angle), p5.sin(angle))
+  }
+  let acceleration = randomUnitVector()
   let angle = 0
   let angleVelocity = p5.random(-(p5.PI / 100), p5.PI / 100)
 
@@ -60,7 +64,7 @@ const flurble = (p5) => {
     p5.ellipse(rad, rad, thickness, thickness)
 
     if (isOutOfBounds()) {
-      acceleration = Vector.random2D()
+      acceleration = randomUnitVector()
       angleVelocity = p5.random(-(p5.PI / 50), p5.PI / 50)
     }
 
