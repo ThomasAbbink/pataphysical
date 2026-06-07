@@ -180,16 +180,41 @@ const mover = (p5, { initialPosition, isPusher, maxDistance }) => {
   })
 
   let maxVelocity = 4
-  const selectNewTarget = () => {
-    maxVelocity = getVelocityLimit()
-    target.rotate(p5.random(p5.PI / 3, p5.PI / 2))
-    target.setMag(10000)
-  }
-  selectNewTarget()
   const isOutOfBounds = () => {
     const { x, y } = position
     return x > p5.width || y > p5.height || x < 0 || y < 0
   }
+
+  const selectNewTarget = () => {
+    maxVelocity = getVelocityLimit()
+
+    if (isOutOfBounds()) {
+      const hitVerticalEdge = position.x > p5.width || position.x < 0
+      const hitHorizontalEdge = position.y > p5.height || position.y < 0
+      const direction = target.copy().sub(position)
+
+      if (hitVerticalEdge) {
+        direction.x *= -1
+        velocity.x *= -1
+      }
+      if (hitHorizontalEdge) {
+        direction.y *= -1
+        velocity.y *= -1
+      }
+
+      position.x = p5.constrain(position.x, 0, p5.width)
+      position.y = p5.constrain(position.y, 0, p5.height)
+
+      direction.setMag(10000)
+      target = position.copy().add(direction)
+    } else {
+      const direction = target.copy().sub(position)
+      direction.rotate(p5.random(p5.PI / 3, p5.PI / 2))
+      direction.setMag(10000)
+      target = position.copy().add(direction)
+    }
+  }
+  selectNewTarget()
 
   const isAtTarget = () => {
     return distanceSquared(position, target) < 1
