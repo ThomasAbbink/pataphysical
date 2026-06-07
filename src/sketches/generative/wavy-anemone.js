@@ -298,7 +298,7 @@ const flurb =
       p5.beginShape()
       p.forEach(({ vector }) => {
         // p5.ellipse(vector.x, vector.y, 4, 4) // for debugging
-        p5.curveVertex(vector.x, vector.y)
+        p5.splineVertex(vector.x, vector.y)
       })
       p5.endShape(p5.CLOSE)
       p5.pop()
