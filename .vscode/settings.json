@@ -11,13 +11,20 @@
     "statusBar.foreground": "#e7e7e7",
     "statusBarItem.hoverBackground": "#a18df9",
     "titleBar.activeBackground": "#795cf7",
-    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.activeForeground": "#595959",
     "titleBar.inactiveBackground": "#795cf799",
     "titleBar.inactiveForeground": "#e7e7e799",
     "commandCenter.border": "#e7e7e799",
     "sash.hoverBorder": "#a18df9",
-    "statusBarItem.remoteBackground": "#795cf7",
-    "statusBarItem.remoteForeground": "#e7e7e7"
+    "statusBarItem.remoteBackground": "#f99b85",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "activityBarTop.activeBackground": "#a18df9",
+    "activityBarTop.background": "#a18df9",
+    "activityBarTop.foreground": "#15202b",
+    "activityBarTop.inactiveForeground": "#15202b99",
+    "commandCenter.foreground": "#595959",
+    "statusBar.debuggingBackground": "#795cf7",
+    "statusBar.debuggingForeground": "#e7e7e7"
   },
   "peacock.color": "#795cf7",
   "cSpell.words": ["explody", "Truchet"]
