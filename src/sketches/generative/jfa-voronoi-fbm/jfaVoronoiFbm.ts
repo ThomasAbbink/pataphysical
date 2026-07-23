@@ -5,27 +5,47 @@ import jfa from './jfa.frag'
 import display from './display.frag'
 import vert from './shader.vert'
 
-const doodle = (p5: p5js) => {
+const jfaVoronoiFbm = (p5: p5js) => {
   let jfaShader: p5js.Shader
   let displayShader: p5js.Shader
-  const { width, height } = getCanvasSize()
+  let width: number = 0
+  let height: number = 0
 
-  const seeds: p5js.Vector[] = []
+  let seeds: p5js.Vector[] = []
   let size = 2048
   let frameBufferA: p5js.Framebuffer
   let frameBufferB: p5js.Framebuffer
+
   p5.setup = () => {
-    const { width, height } = getCanvasSize()
-    p5.createCanvas(width, height, p5.WEBGL)
-    p5.background(backgroundColor)
+    const { width: w, height: h } = getCanvasSize()
+    width = w
+    height = h
+    p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
+    setup()
+  }
+
+  const setup = () => {
+    p5.background(backgroundColor)
 
     if (width > height) {
       size = width
     } else {
       size = height
     }
+    setupShaders()
+    addSeeds(p5.width)
+  }
 
+  p5.windowResized = () => {
+    const { width: w, height: h } = getCanvasSize()
+    width = w
+    height = h
+    p5.resizeCanvas(w, h)
+    setup()
+  }
+
+  const setupShaders = () => {
     jfaShader = p5.createShader(vert, jfa)
     displayShader = p5.createShader(vert, display)
     frameBufferA = p5.createFramebuffer({
@@ -36,7 +56,10 @@ const doodle = (p5: p5js) => {
       format: p5.FLOAT,
       textureFiltering: p5.NEAREST,
     })
-    for (let i = 0; i < 10; i++) {
+  }
+  const addSeeds = (count: number) => {
+    seeds = []
+    for (let i = 0; i < count; i++) {
       seeds.push(
         p5.createVector(
           p5.random(0, width),
@@ -47,9 +70,10 @@ const doodle = (p5: p5js) => {
     }
   }
 
-  p5.windowResized = () => {
-    const { width, height } = getCanvasSize()
-    p5.resizeCanvas(width, height)
+  const removeSeeds = (count: number) => {
+    for (let i = 0; i < count; i++) {
+      seeds.pop()
+    }
   }
 
   const debug = () => {
@@ -64,24 +88,25 @@ const doodle = (p5: p5js) => {
   }
 
   const moveSeeds = () => {
+    const margin = 10
     for (const seed of seeds) {
       const speed = 2
       seed.x += Math.cos(seed.z) * speed
       seed.y += Math.sin(seed.z) * speed
 
-      if (seed.x < 0) {
-        seed.x = 0
+      if (seed.x < margin) {
+        seed.x = margin
         seed.z = Math.PI - seed.z
-      } else if (seed.x > width) {
-        seed.x = width
+      } else if (seed.x > width - margin) {
+        seed.x = width - margin
         seed.z = Math.PI - seed.z
       }
 
-      if (seed.y < 0) {
-        seed.y = 0
+      if (seed.y < margin) {
+        seed.y = margin
         seed.z = -seed.z
-      } else if (seed.y > height) {
-        seed.y = height
+      } else if (seed.y > height - margin) {
+        seed.y = height - margin
         seed.z = -seed.z
       }
     }
@@ -102,7 +127,7 @@ const doodle = (p5: p5js) => {
       const u = s.x / width
       const v = s.y / height
       p5.fill(u, v, 1)
-      p5.rect(s.x, s.y, 1, 1)
+      p5.rect(s.x, s.y, 2, 2)
     }
 
     p5.pop()
@@ -124,6 +149,7 @@ const doodle = (p5: p5js) => {
     }
 
     displayShader.setUniform('u_resolution', [width, height])
+    displayShader.setUniform('u_time', p5.frameCount)
     displayShader.setUniform('tex', buffers[0])
 
     p5.shader(displayShader)
@@ -133,10 +159,10 @@ const doodle = (p5: p5js) => {
   p5.draw = () => {
     moveSeeds()
     p5.background(backgroundColor)
-    debug()
-    // drawShaders()
+    // debug()
+    drawShaders()
   }
 }
 
-doodle.date = '2026-07-10'
-export { doodle }
+jfaVoronoiFbm.date = '2026-07-10'
+export { jfaVoronoiFbm }

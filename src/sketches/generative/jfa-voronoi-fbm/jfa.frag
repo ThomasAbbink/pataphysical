@@ -15,6 +15,7 @@ float distSq(vec2 uv, vec2 seedUv) {
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution;
 
+
     vec2 bestCoord = vec2(0.0);
     float bestDist = 1.0 / 0.0;
 
