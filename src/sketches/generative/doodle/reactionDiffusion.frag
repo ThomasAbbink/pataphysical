@@ -31,16 +31,18 @@ vec2 laplacian(vec2 st, vec4 data){
 
 void main() {
     vec2 st = gl_FragCoord.xy / u_resolution;
-
     float d = distance(st, vec2(0.5));
+    float speed = 0.01;
+    float abs_sine = smoothstep(-1., 1., sin(u_time * speed));
+    float abs_cos = smoothstep(-1., 1., cos(u_time * speed *abs_sine));
     float offset = (smoothstep(-0.5, .5, sin(u_time * 0.01 + d) * fbm(vec2(d))));
     // float offset = 0.;
     // float offset = 1.;
-    float offset2 = (smoothstep(-.7, .7, cos(u_time * 0.01 - d) * fbm(vec2(0.2 - d))));
+    float offset2 = (smoothstep(mix(-.4, -.5, abs_sine), mix( .5, 0.7, abs_cos), cos(u_time * 0.01 - d) * fbm(vec2(0.2 - d))));
 
 
     // float diffusionRateA = 0.60 ;
-    float diffusionRateA = mix(0.470, 0.60 + (0.07 * d ), offset);
+    float diffusionRateA = mix(0.4990, 0.60 + (0.07 * d ), offset);
     // float diffusionRateB = 0.15 ;
     float diffusionRateB = mix(0.22, 0.19 + (2.8 * d * offset2), offset);
 
@@ -48,9 +50,9 @@ void main() {
     float growth = smoothstep(0., 1., offset2);
 
 
-    float feed = mix(mix(0.025, 0.025, offset2) , mix(0.05, 0.065, offset), growth);
+    float feed = mix(mix(0.025, 0.035, abs_sine) , mix(0.05, 0.065, abs_cos), growth);
     // float feed = 0.005;
-    float kill = mix(mix(0.056, 0.059, sin(offset2)) , mix(0.061, 0.0777, offset2), growth);
+    float kill = mix(mix(0.056, 0.059, abs_cos) , mix(0.061, 0.076, abs_cos *d), growth);
 
     vec4 data = texture2D(tex, st);
     float A = data.r;

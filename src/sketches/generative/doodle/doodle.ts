@@ -40,7 +40,7 @@ const doodle = (p5: p5js) => {
       size = height
     }
     setupShaders()
-    addSeeds(0, false, true)
+    addSeeds(12, false, false)
   }
 
   p5.windowResized = () => {
