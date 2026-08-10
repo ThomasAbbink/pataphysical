@@ -5,7 +5,7 @@ import reactionDiffusion from './reactionDiffusion.frag'
 import display from './display.frag'
 import vert from './shader.vert'
 
-const doodle = (p5: p5js) => {
+const rdBlob = (p5: p5js) => {
   let reactionDiffusionShader: p5js.Shader
   let displayShader: p5js.Shader
   let width: number = 0
@@ -14,13 +14,14 @@ const doodle = (p5: p5js) => {
   const SIM_SCALE = 0.33
   let simW = 0
   let simH = 0
-  const STEPS = 16
+  const STEPS = 32
   let isDissolving = false
 
   let seeds: p5js.Vector[] = []
   let size = 2048
   let frameBufferA: p5js.Framebuffer
   let frameBufferB: p5js.Framebuffer
+  let seed: number
 
   p5.setup = () => {
     const { width: w, height: h } = getCanvasSize()
@@ -29,6 +30,7 @@ const doodle = (p5: p5js) => {
     p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
     setup()
+    seed = p5.random(0.1, 0.99)
   }
 
   const setup = () => {
@@ -40,7 +42,7 @@ const doodle = (p5: p5js) => {
       size = height
     }
     setupShaders()
-    addSeeds(12, false, false)
+    addSeeds(8, false, false)
   }
 
   p5.windowResized = () => {
@@ -132,6 +134,8 @@ const doodle = (p5: p5js) => {
     let buffers = [frameBufferA, frameBufferB]
     reactionDiffusionShader.setUniform('u_resolution', [simW, simH])
     reactionDiffusionShader.setUniform('u_time', p5.frameCount)
+    reactionDiffusionShader.setUniform('u_seed', seed)
+
     p5.shader(reactionDiffusionShader)
     for (let i = 0; i < STEPS; i++) {
       const [src, dest] = buffers
@@ -170,5 +174,5 @@ const doodle = (p5: p5js) => {
   }
 }
 
-doodle.date = '2026-07-24'
-export { doodle }
+rdBlob.date = '2026-08-10'
+export { rdBlob }

@@ -13,7 +13,7 @@ void main() {
     vec4 data = texture2D(tex, st);
     vec3 colors = data.rgb;
 
-   vec3 colA = vec3(0.005, 0.005, 0.001);
+   vec3 colA = vec3(0.1294, 0.1294, 0.1569);
    vec3 colB = vec3(0.72, 0.79, 0.97);
    float d = distance(st, vec2(0.5));
    float bcocentration = smoothstep(0., 0.4, data.g) ;
