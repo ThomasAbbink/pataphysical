@@ -11,7 +11,7 @@ const rdBlob = (p5: p5js) => {
   let width: number = 0
   let height: number = 0
 
-  const SIM_SCALE = 0.33
+  const SIM_SCALE = 0.5
   let simW = 0
   let simH = 0
   const STEPS = 32
@@ -21,19 +21,23 @@ const rdBlob = (p5: p5js) => {
   let size = 2048
   let frameBufferA: p5js.Framebuffer
   let frameBufferB: p5js.Framebuffer
+  let imageBuffer: p5js.Framebuffer
   let seed: number
+  let image: p5js.Image
+  let ready = false
 
-  p5.setup = () => {
+  p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
     width = w
     height = h
     p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
-    setup()
     seed = p5.random(0.1, 0.99)
+    await setup()
   }
 
-  const setup = () => {
+  const setup = async () => {
+    ready = false
     p5.background(backgroundColor)
 
     if (width > height) {
@@ -41,8 +45,13 @@ const rdBlob = (p5: p5js) => {
     } else {
       size = height
     }
+    if (!image) {
+      image = await p5.loadImage('/assets/walken.jpeg')
+    }
     setupShaders()
-    addSeeds(8, false, false)
+    blitImage()
+    addSeeds()
+    ready = true
   }
 
   p5.windowResized = () => {
@@ -66,33 +75,48 @@ const rdBlob = (p5: p5js) => {
     }
     frameBufferA = p5.createFramebuffer(fbOpts)
     frameBufferB = p5.createFramebuffer(fbOpts)
+    imageBuffer = p5.createFramebuffer({
+      width: simW,
+      height: simH,
+      textureFiltering: p5.LINEAR,
+    })
   }
 
-  const addSeeds = (count: number, atCorners = false, atCenter = false) => {
+  const blitImage = () => {
+    const imgAspect = image.width / image.height
+    const bufAspect = simW / simH
+
+    let drawW: number
+    let drawH: number
+    if (imgAspect > bufAspect) {
+      drawW = simW
+      drawH = simW / imgAspect
+    } else {
+      drawH = simH
+      drawW = simH * imgAspect
+    }
+
+    imageBuffer.begin()
+    p5.resetShader()
+    p5.background(0)
+    p5.push()
+    p5.imageMode(p5.CORNER)
+    p5.image(image, -drawW / 2, -drawH / 2, drawW, drawH)
+    p5.pop()
+    imageBuffer.end()
+  }
+
+  const addSeeds = () => {
     const padding = 20
     seeds = []
 
-    if (atCorners) {
-      seeds.push(p5.createVector(padding, padding))
-      seeds.push(p5.createVector(simW - padding, simH - padding))
-      seeds.push(p5.createVector(0, simH - padding))
-      seeds.push(p5.createVector(simW - padding, 0))
-    }
-
-    if (atCenter) {
-      seeds.push(p5.createVector(simW / 2, simH / 2))
-    }
     // seeds.push(p5.createVector(p5.random(10), p5.random(simH)))
     // seeds.push(p5.createVector(p5.random(simW), p5.random(10)))
 
-    for (let i = 0; i < count; i++) {
-      seeds.push(
-        p5.createVector(
-          p5.random(simW * 0.25, simW * 0.75),
-          p5.random(simH * 0.25, simH * 0.75),
-        ),
-      )
-    }
+    // seeds.push(p5.createVector(simW * 0.3, padding))
+    seeds.push(p5.createVector(simW * 0.5, simH * 0.5))
+    // seeds.push(p5.createVector(simW * 0.7, padding))
+
     frameBufferA.begin()
     p5.clear()
     p5.resetShader()
@@ -126,15 +150,12 @@ const rdBlob = (p5: p5js) => {
     p5.pop()
   }
 
-  const reset = () => {
-    addSeeds(0, true, true)
-  }
-
   const drawShaders = () => {
     let buffers = [frameBufferA, frameBufferB]
     reactionDiffusionShader.setUniform('u_resolution', [simW, simH])
     reactionDiffusionShader.setUniform('u_time', p5.frameCount)
     reactionDiffusionShader.setUniform('u_seed', seed)
+    reactionDiffusionShader.setUniform('u_image', imageBuffer)
 
     p5.shader(reactionDiffusionShader)
     for (let i = 0; i < STEPS; i++) {
@@ -166,6 +187,7 @@ const rdBlob = (p5: p5js) => {
   }
 
   p5.draw = () => {
+    if (!ready) return
     // debug()
     drawShaders()
 

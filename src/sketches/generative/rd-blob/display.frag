@@ -27,7 +27,7 @@ void main() {
    vec3 innerColor = vec3(.98, .91, .93);
    vec3 outerColor = vec3(0.87, 0.22, 0.25);
 
-   float m = smoothstep(0.0, 0.7, distance_to_blob);
+   float m = smoothstep(0.0, 1.0, distance_to_blob);
    
    colB = mix(innerColor, outerColor, m);
 
