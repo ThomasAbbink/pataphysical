@@ -118,7 +118,8 @@ void main() {
 
     vec2 vel = length(toTop) < 1e-4 ? vec2(1.0, 0.0): normalize(toTop);
     // float flow = 0.001+  0.008 * st.y ; 
-    float flow = mix(-0.002, 0.008 ,st.y); 
+    // float flow = mix(-0.002, 0.008 ,st.y); 
+    float flow = 0.004; 
     vec2 adv = advect(st, vel, flow);
     float A = mix(data.r, adv.r, 0.5);
     float B = mix(data.g, adv.g, 0.8);

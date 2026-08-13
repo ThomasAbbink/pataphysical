@@ -11,7 +11,7 @@ const rdBlob = (p5: p5js) => {
   let width: number = 0
   let height: number = 0
 
-  const SIM_SCALE = 0.5
+  const SIM_SCALE = 0.75
   let simW = 0
   let simH = 0
   const STEPS = 32
@@ -85,10 +85,16 @@ const rdBlob = (p5: p5js) => {
   const blitImage = () => {
     const imgAspect = image.width / image.height
     const bufAspect = simW / simH
+    // Landscape photo on a portrait phone: fill the buffer and crop the sides
+    // so the sim isn't stuck in a thin letterboxed strip.
+    const cropToFill = imgAspect > 1 && bufAspect < 1
 
     let drawW: number
     let drawH: number
-    if (imgAspect > bufAspect) {
+    if (cropToFill) {
+      drawH = simH
+      drawW = simH * imgAspect
+    } else if (imgAspect > bufAspect) {
       drawW = simW
       drawH = simW / imgAspect
     } else {
