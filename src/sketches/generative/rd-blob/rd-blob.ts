@@ -46,7 +46,7 @@ const rdBlob = (p5: p5js) => {
       size = height
     }
     if (!image) {
-      image = await p5.loadImage('/assets/walken.jpeg')
+      image = await p5.loadImage('/assets/e.png')
     }
     setupShaders()
     blitImage()
