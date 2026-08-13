@@ -11,7 +11,7 @@ const rdBlob = (p5: p5js) => {
   let width: number = 0
   let height: number = 0
 
-  const SIM_SCALE = 0.75
+  const SIM_SCALE = 0.666
   let simW = 0
   let simH = 0
   const STEPS = 32
@@ -46,7 +46,7 @@ const rdBlob = (p5: p5js) => {
       size = height
     }
     if (!image) {
-      image = await p5.loadImage('/assets/e.png')
+      image = await p5.loadImage('/assets/e2.png')
     }
     setupShaders()
     blitImage()
