@@ -21,6 +21,7 @@ type Stroke = {
   totalArc?: number
   color: p5js.Vector
   progress: number
+  speed: number
 }
 
 const doodle = (p5: p5js) => {
@@ -35,6 +36,7 @@ const doodle = (p5: p5js) => {
   let imageBuffer: p5js.Framebuffer
   let flowBuffer: p5js.Framebuffer
   let paintBuffer: p5js.Framebuffer
+  let paintBlurBuffer: p5js.Framebuffer
 
   let blurBuffer: p5js.Framebuffer
 
@@ -46,17 +48,11 @@ const doodle = (p5: p5js) => {
 
   const MAX_STOKES = 50000
   let currentStroke = 0
+  let lastRefresh = 0
   const wetStrokes: Stroke[] = []
 
-  const passes = [
-    { radius: 8, blur: 8, threshold: 20 },
-    { radius: 4, blur: 4, threshold: 10 },
-    { radius: 2, blur: 2, threshold: 5 },
-  ]
-
-  let passIndex = 0
-  let activePass = null
-  let seeds: p5js.Vector[] = []
+  let radius = 20
+  let lastBlurRadius = 20
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
@@ -74,7 +70,7 @@ const doodle = (p5: p5js) => {
     gl.disable(gl.DEPTH_TEST)
 
     if (!image) {
-      image = await p5.loadImage('/assets/jen_sol.jpg')
+      image = await p5.loadImage('/assets/tree_water.jpg')
     }
     if (!brush) {
       brush = await p5.loadImage('/assets/stroke.png')
@@ -83,7 +79,14 @@ const doodle = (p5: p5js) => {
     setupShaders()
     blitImage()
 
-    updateFlow(2)
+    updateFlow(1)
+
+    blurInto({ source: imageBuffer, destination: blurBuffer, radius: radius })
+    blurInto({
+      source: paintBuffer,
+      destination: paintBlurBuffer,
+      radius: radius,
+    })
 
     ready = true
   }
@@ -111,23 +114,42 @@ const doodle = (p5: p5js) => {
     imageBuffer = p5.createFramebuffer(fbOpts)
     flowBuffer = p5.createFramebuffer(fbOpts)
     paintBuffer = p5.createFramebuffer(fbOpts)
-    blurBuffer = p5.createFramebuffer(fbOpts)
+
+    const sampleBufferOptions = {
+      width: Math.ceil(width / 4),
+      height: Math.ceil(height / 4),
+      textureFiltering: p5.LINEAR,
+    }
+    blurBuffer = p5.createFramebuffer(sampleBufferOptions)
+    paintBlurBuffer = p5.createFramebuffer(sampleBufferOptions)
 
     paintBuffer.begin()
     p5.background(backgroundColor)
     paintBuffer.end()
   }
 
-  const updateBlur = (radius: number) => {
-    blurShader.setUniform('u_resolution', [width, height])
-    blurShader.setUniform('u_image', imageBuffer)
-    blurShader.setUniform('u_radius', radius)
+  const blurInto = ({
+    source,
+    destination,
+    radius,
+  }: {
+    source: p5js.Framebuffer
+    destination: p5js.Framebuffer
+    radius: number
+  }) => {
+    blurShader.setUniform('u_resolution', [
+      destination.width,
+      destination.height,
+    ])
+    blurShader.setUniform('u_image', source)
+    blurShader.setUniform('u_radius', radius / 4)
 
-    blurBuffer.begin()
+    destination.begin()
     p5.shader(blurShader)
+    p5.noStroke()
     p5.rect(0, 0, width, height)
-    blurBuffer.end()
-    blurBuffer.loadPixels()
+    destination.end()
+    destination.loadPixels()
   }
 
   const blitImage = () => {
@@ -186,9 +208,11 @@ const doodle = (p5: p5js) => {
   }
 
   const sampleImage = (x: number, y: number) => {
-    const col = p5.constrain(Math.floor(x), 0, width - 1)
-    const row = p5.constrain(Math.floor(y), 0, height - 1)
-    const i = (row * width + col) * 4
+    const ew = blurBuffer.width
+    const eh = blurBuffer.height
+    const col = p5.constrain(Math.floor((x / width) * ew), 0, ew - 1)
+    const row = p5.constrain(Math.floor((y / height) * eh), 0, eh - 1)
+    const i = (row * ew + col) * 4
     const imagePixels = blurBuffer.pixels
     return p5.createVector(
       imagePixels[i],
@@ -198,11 +222,13 @@ const doodle = (p5: p5js) => {
   }
 
   const buildStroke = (start: p5js.Vector, radius: number) => {
-    const stepLength = radius
-    const maxPoints = p5.random(12, 36)
-    const fc = p5.random(0.2, 0.7)
-    const halfWidth = radius * p5.random(2, 3)
+    const stepLength = radius * 0.7
+    const maxPoints = p5.random(12, 32)
+    const fc = p5.map(radius, 0, 26, 0.7, 0.2)
+    const halfWidth = radius * p5.random(0.2, 1.2)
     const points: StrokePoint[] = []
+
+    const speed = 0.001 * maxPoints
 
     let x = start.x
     let y = start.y
@@ -250,13 +276,13 @@ const doodle = (p5: p5js) => {
       }
     }
 
-    if (points.length < 5) return null
+    if (points.length < 2) return null
 
     const last = points.length - 1
     points.forEach((p, i) => {
       p.s = i / last
     })
-    return { points, color: startColor, progress: 0 }
+    return { points, color: startColor, progress: 0, speed }
   }
 
   const drawStrokeDebug = (
@@ -306,6 +332,7 @@ const doodle = (p5: p5js) => {
     displayShader.setUniform('u_resolution', [width, height])
     displayShader.setUniform('u_time', p5.frameCount)
     displayShader.setUniform('u_paint', paintBuffer)
+    displayShader.setUniform('u_flow', flowBuffer)
 
     p5.shader(displayShader)
     p5.noStroke()
@@ -336,87 +363,90 @@ const doodle = (p5: p5js) => {
     p5.pop()
   }
 
-  const startPass = () => {
-    activePass = passes[passIndex++]
-    updateBlur(activePass.blur)
-    paintBuffer.loadPixels()
+  const errorAt = (x: number, y: number) => {
+    const ew = blurBuffer.width,
+      eh = blurBuffer.height
+    const col = p5.constrain(Math.floor((x / width) * ew), 0, ew - 1)
+    const row = p5.constrain(Math.floor((y / height) * eh), 0, eh - 1)
+    const i = (row * ew + col) * 4
+    const ref = blurBuffer.pixels,
+      paint = paintBlurBuffer.pixels
+    return (
+      Math.abs(ref[i] - paint[i]) +
+      Math.abs(ref[i + 1] - paint[i + 1]) +
+      Math.abs(ref[i + 2] - paint[i + 2])
+    )
+  }
 
-    const blurPixels = blurBuffer.pixels
-    const paint = paintBuffer.pixels
-    const cell = activePass.radius
+  const pickSeed = (n = 5) => {
+    let bx = 0
+    let by = 0
+    let best = -1
+    let bestE = -1
 
-    seeds = []
-    for (let cy = 0; cy < height; cy += cell) {
-      for (let cx = 0; cx < width; cx += cell) {
-        let sum = 0,
-          n = 0,
-          best = -1,
-          bx = cx,
-          by = cy
-        for (let y = cy; y < Math.min(cy + cell, height); y++) {
-          for (let x = cx; x < Math.min(cx + cell, width); x++) {
-            const i = (y * width + x) * 4
-            const e =
-              Math.abs(blurPixels[i] - paint[i]) +
-              Math.abs(blurPixels[i + 1] - paint[i + 1]) +
-              Math.abs(blurPixels[i + 2] - paint[i + 2])
-            sum += e
-            n++
-            if (e > best) {
-              best = e
-              bx = x
-              by = y
-            }
-          }
-        }
-        if (sum / n > activePass.threshold) seeds.push(p5.createVector(bx, by))
-        console.log(activePass, seeds.length)
+    const t = Math.min(1, currentStroke / MAX_STOKES)
+    const sd = p5.lerp(width * 0.5, width * 0.12, t)
+
+    for (let i = 0; i < n; i++) {
+      const x = p5.constrain(p5.randomGaussian(width / 2, sd), 0, width - 1)
+      const y = p5.random(height)
+      const e = errorAt(x, y)
+
+      if (e > best) {
+        best = e
+        bx = x
+        by = y
+        bestE = e
       }
     }
-
-    // shuffle so it doesn't paint in raster order
-    for (let i = seeds.length - 1; i > 0; i--) {
-      const j = Math.floor(p5.random(i + 1))
-      ;[seeds[i], seeds[j]] = [seeds[j], seeds[i]]
-    }
+    return { seed: p5.createVector(bx, by), error: bestE }
   }
 
   p5.draw = () => {
     if (!ready) return
     p5.background(backgroundColor)
-    if (
-      seeds.length === 0 &&
-      wetStrokes.length === 0 &&
-      passIndex < passes.length
-    ) {
-      startPass()
+
+    let count = 0
+    let attempts = 0
+    const concurrent = 50
+    let maxWetStrokes = 1
+    if (currentStroke > 3) {
+      maxWetStrokes = 5 + (currentStroke / MAX_STOKES) * 400
     }
 
-    let admitted = 0,
-      attempts = 0
-    console.log({ attempts, admitted })
-    while (admitted < 20 && seeds.length > 0 && attempts < 200) {
+    const radiusMin = 1
+    const radiusCeiling =
+      radiusMin + 26 * Math.exp(-3 * (currentStroke / MAX_STOKES / 2))
+    while (
+      currentStroke <= MAX_STOKES &&
+      count <= concurrent &&
+      attempts < 500 &&
+      wetStrokes.length < maxWetStrokes
+    ) {
       attempts++
-      const s = buildStroke(seeds.pop(), activePass.radius)
+      const { seed, error } = pickSeed()
+      const local = p5.constrain(error / 250, 0, 1)
+      const r = p5.lerp(radiusMin, radiusCeiling, local)
+      const s = buildStroke(seed, r)
+      radius = r
       if (s) {
         wetStrokes.push(s)
-        admitted++
+        count++
+        currentStroke++
       }
     }
-    // let count = 0
-    // const concurrent = 20
-    // while (currentStroke <= MAX_STOKES && count <= concurrent) {
-    //   const point = p5.createVector(p5.random(p5.width), p5.random(p5.height))
-    //   const s = buildStroke(point)
-    //   if (s) {
-    //     wetStrokes.push(s)
-    //     count++
-    //     currentStroke++
-    //   }
-    // }
+    if (currentStroke - lastRefresh > 30) {
+      lastRefresh = currentStroke
+      blurInto({ source: paintBuffer, destination: paintBlurBuffer, radius })
+      if (Math.abs(radius - lastBlurRadius) > lastBlurRadius * 0.1) {
+        blurInto({ source: imageBuffer, destination: blurBuffer, radius })
+        console.log('loading imagebuffer')
+        lastBlurRadius = radius
+      }
+    }
 
     for (let i = wetStrokes.length - 1; i >= 0; i--) {
-      wetStrokes[i].progress += 0.05
+      wetStrokes[i].progress += wetStrokes[i].speed * 3
       if (wetStrokes[i].progress >= 1) {
         paintBuffer.begin()
         drawRibbon(wetStrokes[i])
@@ -429,7 +459,6 @@ const doodle = (p5: p5js) => {
     for (const s of wetStrokes) {
       drawRibbon(s)
     }
-    // debug()
   }
 }
 
