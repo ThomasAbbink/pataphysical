@@ -16,14 +16,6 @@ type StrokePoint = {
   halfWidth: number
 }
 
-type Stroke = {
-  points: StrokePoint[]
-  totalArc?: number
-  color: p5js.Vector
-  progress: number
-  speed: number
-}
-
 const doodle = (p5: p5js) => {
   let flowShader: p5js.Shader
   let displayShader: p5js.Shader
@@ -54,7 +46,34 @@ const doodle = (p5: p5js) => {
   let radius = 20
   let lastBlurRadius = 20
 
-  let strokeMap = {}
+  type StrokeMapAssset = {
+    name: string
+    sheet: number
+    col: number
+    row: number
+    box: number[]
+    lengthPx: number
+    widthPx: number
+    aspect: number
+  }
+  type StokeMap = {
+    tileWidth: number
+    tileHeight: number
+    cols: number
+    rows: number
+    count: number
+    scale: number
+    strokes: StrokeMapAssset[]
+  }
+  type Stroke = {
+    points: StrokePoint[]
+    totalArc?: number
+    color: p5js.Vector
+    progress: number
+    speed: number
+    strokeMapAsset: StrokeMapAssset
+  }
+  let strokeMap: StokeMap
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
@@ -82,7 +101,9 @@ const doodle = (p5: p5js) => {
     blitImage()
 
     updateFlow(1)
-    strokeMap = await p5.loadJSON('/assets/brush-strokes/brush-stroke-map.json')
+    strokeMap = (await p5.loadJSON(
+      '/assets/brush-strokes/brush-stroke-map.json',
+    )) as unknown as StokeMap
 
     blurInto({ source: imageBuffer, destination: blurBuffer, radius: radius })
     blurInto({
@@ -286,9 +307,8 @@ const doodle = (p5: p5js) => {
       p.s = i / last
     })
 
-    console.log(strokeMap)
-    const stroke = strokeMap.strokes[Math.floor(p5.random(0, 95))]
-    return { points, color: startColor, progress: 0, speed, stroke }
+    const strokeMapAsset = strokeMap.strokes[Math.floor(p5.random(0, 95))]
+    return { points, color: startColor, progress: 0, speed, strokeMapAsset }
   }
 
   const drawStrokeDebug = (
@@ -315,10 +335,10 @@ const doodle = (p5: p5js) => {
     ])
     strokeShader.setUniform('u_brush_stroke_grid', [16, 6])
     strokeShader.setUniform('u_brush_stroke_tile', [
-      stroke.stroke.col,
-      stroke.stroke.row,
+      stroke.strokeMapAsset.col,
+      stroke.strokeMapAsset.row,
     ])
-    strokeShader.setUniform('u_brush_stroke_box', stroke.stroke.box)
+    strokeShader.setUniform('u_brush_stroke_box', stroke.strokeMapAsset.box)
     strokeShader.setUniform('u_brushCrop', 0.7)
     strokeShader.setUniform('u_progress', stroke.progress ?? 0.0)
     strokeShader.setUniform('u_inkLow', 0.61)
