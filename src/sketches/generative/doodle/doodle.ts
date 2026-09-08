@@ -46,13 +46,15 @@ const doodle = (p5: p5js) => {
 
   let flowPixels: number[]
 
-  const MAX_STOKES = 50000
+  const MAX_STOKES = 150000
   let currentStroke = 0
   let lastRefresh = 0
   const wetStrokes: Stroke[] = []
 
   let radius = 20
   let lastBlurRadius = 20
+
+  let strokeMap = {}
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
@@ -70,16 +72,17 @@ const doodle = (p5: p5js) => {
     gl.disable(gl.DEPTH_TEST)
 
     if (!image) {
-      image = await p5.loadImage('/assets/tree_water.jpg')
+      image = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
     }
     if (!brush) {
-      brush = await p5.loadImage('/assets/stroke.png')
+      brush = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
     }
 
     setupShaders()
     blitImage()
 
     updateFlow(1)
+    strokeMap = await p5.loadJSON('/assets/brush-strokes/brush-stroke-map.json')
 
     blurInto({ source: imageBuffer, destination: blurBuffer, radius: radius })
     blurInto({
@@ -182,7 +185,7 @@ const doodle = (p5: p5js) => {
     flowShader.setUniform('u_resolution', [width, height])
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
-    flowShader.setUniform('u_blur', blur)
+    flowShader.setUniform('u_blur', 8)
     flowShader.setUniform('u_min_strength', 0.002)
 
     flowBuffer.begin()
@@ -282,7 +285,10 @@ const doodle = (p5: p5js) => {
     points.forEach((p, i) => {
       p.s = i / last
     })
-    return { points, color: startColor, progress: 0, speed }
+
+    console.log(strokeMap)
+    const stroke = strokeMap.strokes[Math.floor(p5.random(0, 95))]
+    return { points, color: startColor, progress: 0, speed, stroke }
   }
 
   const drawStrokeDebug = (
@@ -301,14 +307,19 @@ const doodle = (p5: p5js) => {
   }
 
   const drawRibbon = (stroke: Stroke) => {
-    strokeShader.setUniform('u_brush', brush)
+    strokeShader.setUniform('u_brush_stroke_map', brush)
     strokeShader.setUniform('u_color', [
       stroke.color.x,
       stroke.color.y,
       stroke.color.z,
     ])
+    strokeShader.setUniform('u_brush_stroke_grid', [16, 6])
+    strokeShader.setUniform('u_brush_stroke_tile', [
+      stroke.stroke.col,
+      stroke.stroke.row,
+    ])
+    strokeShader.setUniform('u_brush_stroke_box', stroke.stroke.box)
     strokeShader.setUniform('u_brushCrop', 0.7)
-    strokeShader.setUniform('u_brushAngle', 13.0)
     strokeShader.setUniform('u_progress', stroke.progress ?? 0.0)
     strokeShader.setUniform('u_inkLow', 0.61)
     strokeShader.setUniform('u_inkHigh', 0.9)
@@ -446,7 +457,7 @@ const doodle = (p5: p5js) => {
     }
 
     for (let i = wetStrokes.length - 1; i >= 0; i--) {
-      wetStrokes[i].progress += wetStrokes[i].speed * 3
+      wetStrokes[i].progress += wetStrokes[i].speed * 500
       if (wetStrokes[i].progress >= 1) {
         paintBuffer.begin()
         drawRibbon(wetStrokes[i])
