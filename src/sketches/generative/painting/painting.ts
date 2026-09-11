@@ -16,7 +16,7 @@ type StrokePoint = {
   halfWidth: number
 }
 
-const doodle = (p5: p5js) => {
+const painting = (p5: p5js) => {
   let flowShader: p5js.Shader
   let displayShader: p5js.Shader
   let strokeShader: p5js.Shader
@@ -100,7 +100,7 @@ const doodle = (p5: p5js) => {
     setupShaders()
     blitImage()
 
-    updateFlow(1)
+    updateFlow(8)
     strokeMap = (await p5.loadJSON(
       '/assets/brush-strokes/brush-stroke-map.json',
     )) as unknown as StokeMap
@@ -494,5 +494,5 @@ const doodle = (p5: p5js) => {
   }
 }
 
-doodle.date = '2026-08-17'
-export { doodle }
+painting.date = '2026-08-17'
+export { painting }
