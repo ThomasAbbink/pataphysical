@@ -180,7 +180,6 @@ const painting = (p5: p5js) => {
     p5.image(image, -drawW / 2, -drawH / 2, drawW, drawH)
     p5.pop()
     imageBuffer.end()
-    imageBuffer.loadPixels()
   }
 
   const updateFlow = (blur: number) => {
@@ -444,9 +443,9 @@ const painting = (p5: p5js) => {
     }
 
     const radiusMin =
-      2 + 9 * Math.exp(-3 * (nextState.currentStroke / MAX_STOKES))
+      2 + 9 * Math.exp(-4 * (nextState.currentStroke / MAX_STOKES))
     const radiusCeiling =
-      radiusMin + 26 * Math.exp(-32 * (nextState.currentStroke / MAX_STOKES))
+      radiusMin + 64 * Math.exp(-64 * (nextState.currentStroke / MAX_STOKES))
     while (
       nextState.currentStroke <= MAX_STOKES &&
       count <= concurrent &&
