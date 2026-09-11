@@ -419,7 +419,7 @@ const painting = (p5: p5js) => {
   const reset = async () => {
     let nextAsset = state.currentAsset + 1
 
-    if (assets.length < nextAsset - 1) {
+    if (assets.length - 1 < nextAsset) {
       nextAsset = 0
     }
     setState({ ...INITIAL_STATE, currentAsset: nextAsset })
