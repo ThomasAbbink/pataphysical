@@ -158,26 +158,26 @@ const painting = (p5: p5js) => {
   }
 
   const blitImage = () => {
-    const imgAspect = image.width / image.height
-    const bufAspect = width / height
-
-    let drawW: number
-    let drawH: number
-    if (imgAspect > bufAspect) {
-      drawW = width
-      drawH = width / imgAspect
-    } else {
-      drawH = height
-      drawW = height * imgAspect
-    }
-
     imageBuffer.begin()
     p5.resetShader()
     p5.background(0)
     p5.push()
 
     p5.imageMode(p5.CORNER)
-    p5.image(image, -drawW / 2, -drawH / 2, drawW, drawH)
+    // Cover-crop to the canvas (16:9 desktop, phone aspect on mobile)
+    // so the buffer fills the screen with no letterbox/pillarbox bands.
+    p5.image(
+      image,
+      -width / 2,
+      -height / 2,
+      width,
+      height,
+      0,
+      0,
+      image.width,
+      image.height,
+      p5.COVER,
+    )
     p5.pop()
     imageBuffer.end()
   }
