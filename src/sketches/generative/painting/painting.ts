@@ -7,16 +7,28 @@ import vert from './shader.vert'
 import strokeVert from './stroke.vert'
 import brushFrag from './brush.frag'
 import blurFrag from './blur.frag'
+import {
+  INITIAL_STATE,
+  State,
+  StokeMap,
+  Stroke,
+  StrokePoint,
+} from './painting-types'
 
-// const backgroundColor = ' #FFF'
-type StrokePoint = {
-  anchor: p5js.Vector
-  normal: p5js.Vector
-  s: number
-  halfWidth: number
-}
+const MAX_STOKES = 30000
 
-const doodle = (p5: p5js) => {
+const assets = [
+  'assets/infi/bug.jpg',
+  'assets/infi/beets-bears.jpg',
+  'assets/infi/clientwall.jpg',
+  'assets/infi/nerdwacht.jpg',
+  'assets/infi/fridge.jpg',
+  'assets/infi/space-invader.jpg',
+  'assets/infi/swag.jpg',
+  'assets/infi/tea.jpg',
+]
+
+const painting = (p5: p5js) => {
   let flowShader: p5js.Shader
   let displayShader: p5js.Shader
   let strokeShader: p5js.Shader
@@ -34,46 +46,11 @@ const doodle = (p5: p5js) => {
 
   let brush: p5js.Image
   let image: p5js.Image
-  let ready = false
-
+  let state: State = INITIAL_STATE
   let flowPixels: number[]
-
-  const MAX_STOKES = 150000
-  let currentStroke = 0
-  let lastRefresh = 0
   const wetStrokes: Stroke[] = []
-
-  let radius = 20
-  let lastBlurRadius = 20
-
-  type StrokeMapAssset = {
-    name: string
-    sheet: number
-    col: number
-    row: number
-    box: number[]
-    lengthPx: number
-    widthPx: number
-    aspect: number
-  }
-  type StokeMap = {
-    tileWidth: number
-    tileHeight: number
-    cols: number
-    rows: number
-    count: number
-    scale: number
-    strokes: StrokeMapAssset[]
-  }
-  type Stroke = {
-    points: StrokePoint[]
-    totalArc?: number
-    color: p5js.Vector
-    progress: number
-    speed: number
-    strokeMapAsset: StrokeMapAssset
-  }
   let strokeMap: StokeMap
+  let ready = false
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
@@ -81,35 +58,37 @@ const doodle = (p5: p5js) => {
     height = h
     p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
-    await setup()
+    setupShaders()
+    await setup(assets[0])
   }
 
-  const setup = async () => {
+  const setup = async (source: string) => {
     ready = false
-    p5.background(backgroundColor)
     const gl = p5.drawingContext as unknown as WebGLRenderingContext
     gl.disable(gl.DEPTH_TEST)
 
-    if (!image) {
-      image = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
-    }
+    image = await p5.loadImage(source)
+
     if (!brush) {
       brush = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
     }
 
-    setupShaders()
     blitImage()
 
-    updateFlow(1)
+    updateFlow(8)
     strokeMap = (await p5.loadJSON(
       '/assets/brush-strokes/brush-stroke-map.json',
     )) as unknown as StokeMap
 
-    blurInto({ source: imageBuffer, destination: blurBuffer, radius: radius })
+    blurInto({
+      source: imageBuffer,
+      destination: blurBuffer,
+      radius: state.radius,
+    })
     blurInto({
       source: paintBuffer,
       destination: paintBlurBuffer,
-      radius: radius,
+      radius: state.radius,
     })
 
     ready = true
@@ -206,7 +185,7 @@ const doodle = (p5: p5js) => {
     flowShader.setUniform('u_resolution', [width, height])
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
-    flowShader.setUniform('u_blur', 8)
+    flowShader.setUniform('u_blur', blur)
     flowShader.setUniform('u_min_strength', 0.002)
 
     flowBuffer.begin()
@@ -246,8 +225,8 @@ const doodle = (p5: p5js) => {
   }
 
   const buildStroke = (start: p5js.Vector, radius: number) => {
-    const stepLength = radius * 0.7
-    const maxPoints = p5.random(12, 32)
+    const stepLength = radius * 2
+    const maxPoints = p5.map(radius, 1, 30, 6, 50)
     const fc = p5.map(radius, 0, 26, 0.7, 0.2)
     const halfWidth = radius * p5.random(0.2, 1.2)
     const points: StrokePoint[] = []
@@ -339,7 +318,7 @@ const doodle = (p5: p5js) => {
       stroke.strokeMapAsset.row,
     ])
     strokeShader.setUniform('u_brush_stroke_box', stroke.strokeMapAsset.box)
-    strokeShader.setUniform('u_brushCrop', 0.7)
+    strokeShader.setUniform('u_brushCrop', 1.0)
     strokeShader.setUniform('u_progress', stroke.progress ?? 0.0)
     strokeShader.setUniform('u_inkLow', 0.61)
     strokeShader.setUniform('u_inkHigh', 0.9)
@@ -415,7 +394,7 @@ const doodle = (p5: p5js) => {
     let best = -1
     let bestE = -1
 
-    const t = Math.min(1, currentStroke / MAX_STOKES)
+    const t = Math.min(1, state.currentStroke / MAX_STOKES)
     const sd = p5.lerp(width * 0.5, width * 0.12, t)
 
     for (let i = 0; i < n; i++) {
@@ -433,51 +412,82 @@ const doodle = (p5: p5js) => {
     return { seed: p5.createVector(bx, by), error: bestE }
   }
 
+  const setState = (next: Partial<State>) => {
+    state = { ...state, ...next }
+  }
+
+  const reset = async () => {
+    let nextAsset = state.currentAsset + 1
+
+    if (assets.length < nextAsset - 1) {
+      nextAsset = 0
+    }
+    setState({ ...INITIAL_STATE, currentAsset: nextAsset })
+    setup(assets[nextAsset])
+  }
+
   p5.draw = () => {
     if (!ready) return
+
     p5.background(backgroundColor)
+
+    const nextState: State = { ...state }
 
     let count = 0
     let attempts = 0
     const concurrent = 50
     let maxWetStrokes = 1
-    if (currentStroke > 3) {
-      maxWetStrokes = 5 + (currentStroke / MAX_STOKES) * 400
+    if (nextState.currentStroke > 3) {
+      maxWetStrokes = 5 + (nextState.currentStroke / MAX_STOKES) * 400
     }
 
-    const radiusMin = 1
+    const radiusMin =
+      2 + 9 * Math.exp(-3 * (nextState.currentStroke / MAX_STOKES))
     const radiusCeiling =
-      radiusMin + 26 * Math.exp(-3 * (currentStroke / MAX_STOKES / 2))
+      radiusMin + 26 * Math.exp(-32 * (nextState.currentStroke / MAX_STOKES))
     while (
-      currentStroke <= MAX_STOKES &&
+      nextState.currentStroke <= MAX_STOKES &&
       count <= concurrent &&
       attempts < 500 &&
       wetStrokes.length < maxWetStrokes
     ) {
       attempts++
-      const { seed, error } = pickSeed()
-      const local = p5.constrain(error / 250, 0, 1)
-      const r = p5.lerp(radiusMin, radiusCeiling, local)
-      const s = buildStroke(seed, r)
-      radius = r
+      const { seed } = pickSeed()
+
+      const s = buildStroke(seed, radiusCeiling)
+      nextState.radius = radiusCeiling
+
       if (s) {
         wetStrokes.push(s)
         count++
-        currentStroke++
+        nextState.currentStroke++
       }
     }
-    if (currentStroke - lastRefresh > 30) {
-      lastRefresh = currentStroke
-      blurInto({ source: paintBuffer, destination: paintBlurBuffer, radius })
-      if (Math.abs(radius - lastBlurRadius) > lastBlurRadius * 0.1) {
-        blurInto({ source: imageBuffer, destination: blurBuffer, radius })
-        console.log('loading imagebuffer')
-        lastBlurRadius = radius
+    if (nextState.currentStroke - nextState.lastRefresh > 30) {
+      nextState.lastRefresh = nextState.currentStroke
+      blurInto({
+        source: paintBuffer,
+        destination: paintBlurBuffer,
+        radius: nextState.radius,
+      })
+
+      if (
+        Math.abs(nextState.radius - nextState.lastBlurRadius) >
+        nextState.lastBlurRadius * 0.1
+      ) {
+        updateFlow(nextState.radius / 2)
+        blurInto({
+          source: imageBuffer,
+          destination: blurBuffer,
+          radius: nextState.radius,
+        })
+        nextState.lastBlurRadius = nextState.radius
+        nextState.speedModifier++
       }
     }
 
     for (let i = wetStrokes.length - 1; i >= 0; i--) {
-      wetStrokes[i].progress += wetStrokes[i].speed * 500
+      wetStrokes[i].progress += wetStrokes[i].speed * nextState.speedModifier
       if (wetStrokes[i].progress >= 1) {
         paintBuffer.begin()
         drawRibbon(wetStrokes[i])
@@ -486,12 +496,17 @@ const doodle = (p5: p5js) => {
       }
     }
 
+    setState(nextState)
     drawDisplay()
     for (const s of wetStrokes) {
       drawRibbon(s)
     }
+
+    if (nextState.currentStroke >= MAX_STOKES) {
+      reset()
+    }
   }
 }
 
-doodle.date = '2026-08-17'
-export { doodle }
+painting.date = '2026-08-17'
+export { painting }
