@@ -34,3 +34,19 @@ export type StrokePoint = {
   s: number
   halfWidth: number
 }
+
+export type State = {
+  currentStroke: number
+  radius: number
+  lastBlurRadius: number
+  speedModifier: number
+  lastRefresh: number
+}
+
+export const INITIAL_STATE: State = {
+  currentStroke: 0,
+  radius: 30,
+  lastBlurRadius: 20,
+  speedModifier: 1,
+  lastRefresh: 0,
+}
