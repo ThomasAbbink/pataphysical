@@ -18,13 +18,14 @@ import {
 const MAX_STOKES = 30000
 
 const assets = [
+  'assets/infi/bug.jpg',
+  'assets/infi/beets-bears.jpg',
+  'assets/infi/clientwall.jpg',
+  'assets/infi/nerdwacht.jpg',
+  'assets/infi/fridge.jpg',
   'assets/infi/space-invader.jpg',
-  'assets/infi/arcade.jpg',
-  'assets/infi/8800-flip-display.jpg',
-  'assets/infi/reuters.jpg',
   'assets/infi/swag.jpg',
   'assets/infi/tea.jpg',
-  'assets/brush-strokes/brush-strokes.png',
 ]
 
 const painting = (p5: p5js) => {
@@ -418,7 +419,7 @@ const painting = (p5: p5js) => {
   const reset = async () => {
     let nextAsset = state.currentAsset + 1
 
-    if (!nextAsset) {
+    if (assets.length < nextAsset - 1) {
       nextAsset = 0
     }
     setState({ ...INITIAL_STATE, currentAsset: nextAsset })
