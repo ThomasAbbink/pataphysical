@@ -18,6 +18,7 @@ import {
 const MAX_STOKES = 30000
 
 const assets = [
+  'assets//infi/infi-chess.jpg',
   'assets/infi/bug.jpg',
   'assets/infi/beets-bears.jpg',
   'assets/infi/clientwall.jpg',
