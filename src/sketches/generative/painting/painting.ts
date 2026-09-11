@@ -17,6 +17,16 @@ import {
 
 const MAX_STOKES = 30000
 
+const assets = [
+  'assets/infi/space-invader.jpg',
+  'assets/infi/arcade.jpg',
+  'assets/infi/8800-flip-display.jpg',
+  'assets/infi/reuters.jpg',
+  'assets/infi/swag.jpg',
+  'assets/infi/tea.jpg',
+  'assets/brush-strokes/brush-strokes.png',
+]
+
 const painting = (p5: p5js) => {
   let flowShader: p5js.Shader
   let displayShader: p5js.Shader
@@ -48,10 +58,10 @@ const painting = (p5: p5js) => {
     p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
     setupShaders()
-    await setup()
+    await setup(assets[0])
   }
 
-  const setup = async (source = 'assets/brush-strokes/brush-strokes.png') => {
+  const setup = async (source: string) => {
     ready = false
     const gl = p5.drawingContext as unknown as WebGLRenderingContext
     gl.disable(gl.DEPTH_TEST)
@@ -406,8 +416,13 @@ const painting = (p5: p5js) => {
   }
 
   const reset = async () => {
-    setState(INITIAL_STATE)
-    setup('/assets/tree_water.jpg')
+    let nextAsset = state.currentAsset + 1
+
+    if (!nextAsset) {
+      nextAsset = 0
+    }
+    setState({ ...INITIAL_STATE, currentAsset: nextAsset })
+    setup(assets[nextAsset])
   }
 
   p5.draw = () => {

@@ -41,6 +41,7 @@ export type State = {
   lastBlurRadius: number
   speedModifier: number
   lastRefresh: number
+  currentAsset: number
 }
 
 export const INITIAL_STATE: State = {
@@ -49,4 +50,5 @@ export const INITIAL_STATE: State = {
   lastBlurRadius: 20,
   speedModifier: 1,
   lastRefresh: 0,
+  currentAsset: 0,
 }
