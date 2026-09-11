@@ -38,7 +38,7 @@ const doodle = (p5: p5js) => {
 
   let flowPixels: number[]
 
-  const MAX_STOKES = 150000
+  const MAX_STOKES = 30000
   let currentStroke = 0
   let lastRefresh = 0
   const wetStrokes: Stroke[] = []
@@ -206,7 +206,7 @@ const doodle = (p5: p5js) => {
     flowShader.setUniform('u_resolution', [width, height])
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
-    flowShader.setUniform('u_blur', 8)
+    flowShader.setUniform('u_blur', blur)
     flowShader.setUniform('u_min_strength', 0.002)
 
     flowBuffer.begin()
@@ -339,7 +339,7 @@ const doodle = (p5: p5js) => {
       stroke.strokeMapAsset.row,
     ])
     strokeShader.setUniform('u_brush_stroke_box', stroke.strokeMapAsset.box)
-    strokeShader.setUniform('u_brushCrop', 0.7)
+    strokeShader.setUniform('u_brushCrop', 1.0)
     strokeShader.setUniform('u_progress', stroke.progress ?? 0.0)
     strokeShader.setUniform('u_inkLow', 0.61)
     strokeShader.setUniform('u_inkHigh', 0.9)
@@ -470,6 +470,7 @@ const doodle = (p5: p5js) => {
       lastRefresh = currentStroke
       blurInto({ source: paintBuffer, destination: paintBlurBuffer, radius })
       if (Math.abs(radius - lastBlurRadius) > lastBlurRadius * 0.1) {
+        updateFlow(radius / 2)
         blurInto({ source: imageBuffer, destination: blurBuffer, radius })
         console.log('loading imagebuffer')
         lastBlurRadius = radius
