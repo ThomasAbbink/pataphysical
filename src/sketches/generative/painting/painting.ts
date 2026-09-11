@@ -18,7 +18,7 @@ import {
 const MAX_STOKES = 30000
 
 const assets = [
-  'assets//infi/infi-chess.jpg',
+  'assets//infi/infi-chess-2.jpg',
   'assets/infi/bug.jpg',
   'assets/infi/beets-bears.jpg',
   'assets/infi/clientwall.jpg',
@@ -439,7 +439,7 @@ const painting = (p5: p5js) => {
     const concurrent = 50
     let maxWetStrokes = 1
     if (nextState.currentStroke > 3) {
-      maxWetStrokes = 5 + (nextState.currentStroke / MAX_STOKES) * 400
+      maxWetStrokes = 5 + (nextState.currentStroke / MAX_STOKES) * 300
     }
 
     const radiusMin =
