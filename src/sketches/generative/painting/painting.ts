@@ -7,14 +7,7 @@ import vert from './shader.vert'
 import strokeVert from './stroke.vert'
 import brushFrag from './brush.frag'
 import blurFrag from './blur.frag'
-
-// const backgroundColor = ' #FFF'
-type StrokePoint = {
-  anchor: p5js.Vector
-  normal: p5js.Vector
-  s: number
-  halfWidth: number
-}
+import { StokeMap, Stroke, StrokePoint } from './painting-types'
 
 const painting = (p5: p5js) => {
   let flowShader: p5js.Shader
@@ -46,34 +39,8 @@ const painting = (p5: p5js) => {
   let radius = 20
   let lastBlurRadius = 20
 
-  type StrokeMapAssset = {
-    name: string
-    sheet: number
-    col: number
-    row: number
-    box: number[]
-    lengthPx: number
-    widthPx: number
-    aspect: number
-  }
-  type StokeMap = {
-    tileWidth: number
-    tileHeight: number
-    cols: number
-    rows: number
-    count: number
-    scale: number
-    strokes: StrokeMapAssset[]
-  }
-  type Stroke = {
-    points: StrokePoint[]
-    totalArc?: number
-    color: p5js.Vector
-    progress: number
-    speed: number
-    strokeMapAsset: StrokeMapAssset
-  }
   let strokeMap: StokeMap
+  let speedModifier = 1
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
@@ -81,23 +48,21 @@ const painting = (p5: p5js) => {
     height = h
     p5.createCanvas(w, h, p5.WEBGL)
     p5.pixelDensity(1)
+    setupShaders()
     await setup()
   }
 
-  const setup = async () => {
+  const setup = async (source = 'assets/brush-strokes/brush-strokes.png') => {
     ready = false
-    p5.background(backgroundColor)
     const gl = p5.drawingContext as unknown as WebGLRenderingContext
     gl.disable(gl.DEPTH_TEST)
 
-    if (!image) {
-      image = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
-    }
+    image = await p5.loadImage(source)
+
     if (!brush) {
       brush = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
     }
 
-    setupShaders()
     blitImage()
 
     updateFlow(8)
@@ -246,8 +211,8 @@ const painting = (p5: p5js) => {
   }
 
   const buildStroke = (start: p5js.Vector, radius: number) => {
-    const stepLength = radius * 0.7
-    const maxPoints = p5.random(12, 32)
+    const stepLength = radius * 2
+    const maxPoints = p5.map(radius, 1, 30, 6, 50)
     const fc = p5.map(radius, 0, 26, 0.7, 0.2)
     const halfWidth = radius * p5.random(0.2, 1.2)
     const points: StrokePoint[] = []
@@ -433,6 +398,15 @@ const painting = (p5: p5js) => {
     return { seed: p5.createVector(bx, by), error: bestE }
   }
 
+  const reset = async () => {
+    currentStroke = 0
+    radius = 30
+    lastBlurRadius = 20
+    speedModifier = 1
+    lastRefresh = 0
+    setup('/assets/tree_water.jpg')
+  }
+
   p5.draw = () => {
     if (!ready) return
     p5.background(backgroundColor)
@@ -445,9 +419,9 @@ const painting = (p5: p5js) => {
       maxWetStrokes = 5 + (currentStroke / MAX_STOKES) * 400
     }
 
-    const radiusMin = 1
+    const radiusMin = 2 + 9 * Math.exp(-3 * (currentStroke / MAX_STOKES))
     const radiusCeiling =
-      radiusMin + 26 * Math.exp(-3 * (currentStroke / MAX_STOKES / 2))
+      radiusMin + 26 * Math.exp(-32 * (currentStroke / MAX_STOKES))
     while (
       currentStroke <= MAX_STOKES &&
       count <= concurrent &&
@@ -455,11 +429,11 @@ const painting = (p5: p5js) => {
       wetStrokes.length < maxWetStrokes
     ) {
       attempts++
-      const { seed, error } = pickSeed()
-      const local = p5.constrain(error / 250, 0, 1)
-      const r = p5.lerp(radiusMin, radiusCeiling, local)
-      const s = buildStroke(seed, r)
-      radius = r
+      const { seed } = pickSeed()
+
+      const s = buildStroke(seed, radiusCeiling)
+      radius = radiusCeiling
+
       if (s) {
         wetStrokes.push(s)
         count++
@@ -469,16 +443,18 @@ const painting = (p5: p5js) => {
     if (currentStroke - lastRefresh > 30) {
       lastRefresh = currentStroke
       blurInto({ source: paintBuffer, destination: paintBlurBuffer, radius })
+
       if (Math.abs(radius - lastBlurRadius) > lastBlurRadius * 0.1) {
         updateFlow(radius / 2)
         blurInto({ source: imageBuffer, destination: blurBuffer, radius })
-        console.log('loading imagebuffer')
+
         lastBlurRadius = radius
+        speedModifier++
       }
     }
 
     for (let i = wetStrokes.length - 1; i >= 0; i--) {
-      wetStrokes[i].progress += wetStrokes[i].speed * 500
+      wetStrokes[i].progress += wetStrokes[i].speed * speedModifier
       if (wetStrokes[i].progress >= 1) {
         paintBuffer.begin()
         drawRibbon(wetStrokes[i])
@@ -490,6 +466,10 @@ const painting = (p5: p5js) => {
     drawDisplay()
     for (const s of wetStrokes) {
       drawRibbon(s)
+    }
+
+    if (currentStroke >= MAX_STOKES) {
+      reset()
     }
   }
 }
