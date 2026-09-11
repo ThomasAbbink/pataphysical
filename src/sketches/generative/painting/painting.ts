@@ -18,6 +18,7 @@ import {
 const MAX_STOKES = 30000
 
 const assets = [
+  'assets//infi/infi-chess-2.jpg',
   'assets/infi/bug.jpg',
   'assets/infi/beets-bears.jpg',
   'assets/infi/clientwall.jpg',
@@ -179,7 +180,6 @@ const painting = (p5: p5js) => {
     p5.image(image, -drawW / 2, -drawH / 2, drawW, drawH)
     p5.pop()
     imageBuffer.end()
-    imageBuffer.loadPixels()
   }
 
   const updateFlow = (blur: number) => {
@@ -439,13 +439,13 @@ const painting = (p5: p5js) => {
     const concurrent = 50
     let maxWetStrokes = 1
     if (nextState.currentStroke > 3) {
-      maxWetStrokes = 5 + (nextState.currentStroke / MAX_STOKES) * 400
+      maxWetStrokes = 5 + (nextState.currentStroke / MAX_STOKES) * 300
     }
 
     const radiusMin =
-      2 + 9 * Math.exp(-3 * (nextState.currentStroke / MAX_STOKES))
+      2 + 9 * Math.exp(-4 * (nextState.currentStroke / MAX_STOKES))
     const radiusCeiling =
-      radiusMin + 26 * Math.exp(-32 * (nextState.currentStroke / MAX_STOKES))
+      radiusMin + 64 * Math.exp(-64 * (nextState.currentStroke / MAX_STOKES))
     while (
       nextState.currentStroke <= MAX_STOKES &&
       count <= concurrent &&
