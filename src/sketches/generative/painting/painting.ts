@@ -18,15 +18,15 @@ import {
 const MAX_STOKES = 30000
 
 const assets = [
-  'assets//infi/infi-chess-2.jpg',
-  'assets/infi/bug.jpg',
-  'assets/infi/beets-bears.jpg',
-  'assets/infi/clientwall.jpg',
-  'assets/infi/nerdwacht.jpg',
-  'assets/infi/fridge.jpg',
-  'assets/infi/space-invader.jpg',
-  'assets/infi/swag.jpg',
-  'assets/infi/tea.jpg',
+  '/assets/infi/infi-chess-2.jpg',
+  '/assets/infi/bug.jpg',
+  '/assets/infi/beets-bears.jpg',
+  '/assets/infi/clientwall.jpg',
+  '/assets/infi/nerdwacht.jpg',
+  '/assets/infi/fridge.jpg',
+  '/assets/infi/space-invader.jpg',
+  '/assets/infi/swag.jpg',
+  '/assets/infi/tea.jpg',
 ]
 
 const painting = (p5: p5js) => {
@@ -71,7 +71,7 @@ const painting = (p5: p5js) => {
     image = await p5.loadImage(source)
 
     if (!brush) {
-      brush = await p5.loadImage('assets/brush-strokes/brush-strokes.png')
+      brush = await p5.loadImage('/assets/brush-strokes/brush-strokes.png')
     }
 
     blitImage()
