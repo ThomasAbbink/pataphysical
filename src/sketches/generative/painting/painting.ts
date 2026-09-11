@@ -99,7 +99,8 @@ const painting = (p5: p5js) => {
     width = w
     height = h
     p5.resizeCanvas(w, h)
-    setup()
+    //TODO
+    // setup()
   }
 
   const setupShaders = () => {
