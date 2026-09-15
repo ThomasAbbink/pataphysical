@@ -27,6 +27,11 @@ const assets = [
   'assets/infi/space-invader.jpg',
   'assets/infi/swag.jpg',
   'assets/infi/tea.jpg',
+  'assets/infi/dom-trex.jpg',
+  'assets/infi/infi-kantoor.jpg',
+  'assets/infi/lego-pc.jpg',
+  'assets/infi/vesta-mario.jpg',
+  'assets/infi/wookie.jpg',
 ]
 
 const painting = (p5: p5js) => {
