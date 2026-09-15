@@ -55,9 +55,11 @@ const painting = (p5: p5js) => {
 
   p5.setup = async () => {
     const { width: w, height: h } = getCanvasSize()
-    width = w
-    height = h
-    p5.createCanvas(w, h, p5.WEBGL)
+    // Some OS+GPU combinations return fractional values, causing bugs down the line.
+    // Flooring w/h to integer values solves the issue.
+    width = Math.floor(w)
+    height = Math.floor(h)
+    p5.createCanvas(width, height, p5.WEBGL)
     p5.pixelDensity(1)
     setupShaders()
     await setup(assets[0])
@@ -97,9 +99,9 @@ const painting = (p5: p5js) => {
 
   p5.windowResized = () => {
     const { width: w, height: h } = getCanvasSize()
-    width = w
-    height = h
-    p5.resizeCanvas(w, h)
+    width = Math.floor(w)
+    height = Math.floor(h)
+    p5.resizeCanvas(width, height)
     //TODO
     // setup()
   }
