@@ -1,7 +1,7 @@
 {
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#a18df9",
-    "activityBar.activeBorder": "#fde6e1",
+    "activityBar.activeBorder": "#15202b",
     "activityBar.background": "#a18df9",
     "activityBar.foreground": "#15202b",
     "activityBar.inactiveForeground": "#15202b99",
@@ -11,7 +11,7 @@
     "statusBar.foreground": "#e7e7e7",
     "statusBarItem.hoverBackground": "#a18df9",
     "titleBar.activeBackground": "#795cf7",
-    "titleBar.activeForeground": "#595959",
+    "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#795cf799",
     "titleBar.inactiveForeground": "#e7e7e799",
     "commandCenter.border": "#e7e7e799",
@@ -22,9 +22,10 @@
     "activityBarTop.background": "#a18df9",
     "activityBarTop.foreground": "#15202b",
     "activityBarTop.inactiveForeground": "#15202b99",
-    "commandCenter.foreground": "#595959",
+    "commandCenter.foreground": "#e7e7e7",
     "statusBar.debuggingBackground": "#795cf7",
-    "statusBar.debuggingForeground": "#e7e7e7"
+    "statusBar.debuggingForeground": "#e7e7e7",
+    "activityBarTop.activeBorder": "#15202b"
   },
   "peacock.color": "#795cf7",
   "cSpell.words": ["explody", "Truchet"]
