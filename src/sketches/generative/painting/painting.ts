@@ -15,23 +15,33 @@ import {
   StrokePoint,
 } from './painting-types'
 
-const MAX_STOKES = 30000
-const MAX_RADIUS = 75
+const MAX_STOKES = 75000
+let MAX_RADIUS = 40
+const MIN_RADIUS = 2
 
+// const assets = [
+//   'assets/tree_water.jpg',
+//   '/assets/infi/keyboard.jpg',
+//   '/assets/infi/keyboard.jpg',
+//   '/assets/infi/cubes.jpg',
+//   '/assets/infi/infi-chess-2.jpg',
+//   '/assets/infi/bug.jpg',
+//   '/assets/infi/beets-bears.jpg',
+//   '/assets/infi/clientwall.jpg',
+//   '/assets/infi/nerdwacht.jpg',
+//   '/assets/infi/fridge.jpg',
+//   '/assets/infi/space-invader.jpg',
+//   '/assets/infi/swag.jpg',
+//   '/assets/infi/tea.jpg',
+// ]
 const assets = [
   'assets/tree_water.jpg',
-  '/assets/infi/keyboard.jpg',
-  '/assets/infi/keyboard.jpg',
-  '/assets/infi/cubes.jpg',
-  '/assets/infi/infi-chess-2.jpg',
+  'assets/brush-strokes/brush-strokes.png',
   '/assets/infi/bug.jpg',
   '/assets/infi/beets-bears.jpg',
   '/assets/infi/clientwall.jpg',
-  '/assets/infi/nerdwacht.jpg',
   '/assets/infi/fridge.jpg',
   '/assets/infi/space-invader.jpg',
-  '/assets/infi/swag.jpg',
-  '/assets/infi/tea.jpg',
 ]
 
 const painting = (p5: p5js) => {
@@ -66,6 +76,8 @@ const painting = (p5: p5js) => {
     p5.pixelDensity(1)
     setupShaders()
     await setup(assets[0])
+    MAX_RADIUS = (p5.width + p5.height) / 80
+    console.log(MAX_RADIUS)
   }
 
   const setup = async (source: string) => {
@@ -447,11 +459,11 @@ const painting = (p5: p5js) => {
     }
 
     const radiusMin =
-      1 +
+      MIN_RADIUS +
       MAX_RADIUS * 0.1 * Math.exp(-4 * (nextState.currentStroke / MAX_STOKES))
     const radiusCeiling =
       radiusMin +
-      MAX_RADIUS * 0.9 * Math.exp(-64 * (nextState.currentStroke / MAX_STOKES))
+      MAX_RADIUS * 0.9 * Math.exp(-32 * (nextState.currentStroke / MAX_STOKES))
 
     let origin = null
     while (
