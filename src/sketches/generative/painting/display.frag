@@ -13,5 +13,13 @@ uniform float u_progress;
 void main() {
   vec2 st = gl_FragCoord.xy / u_resolution;
   vec4 color = texture2D(u_paint, vec2(st.x, 1.0 -st.y));
+
+
+  // debug flow field
+  vec4 flowData = texture2D(u_flow, vec2(st.x, 1.0 -st.y));
+  // look at flow
+  gl_FragColor = vec4(flowData.rgb, 1.0);
+
+  // real one 
   gl_FragColor = vec4(color.rgb, 1.0);
 }

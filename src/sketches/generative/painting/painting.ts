@@ -17,7 +17,7 @@ import {
 
 const MAX_STOKES = 75000
 let MAX_RADIUS = 40
-const MIN_RADIUS = 2
+const MIN_RADIUS = 3
 
 // const assets = [
 //   'assets/tree_water.jpg',
@@ -36,7 +36,9 @@ const MIN_RADIUS = 2
 // ]
 const assets = [
   'assets/tree_water.jpg',
+  'assets/jungle_mountain.webp',
   'assets/brush-strokes/brush-strokes.png',
+  'assets/mountain_river.webp',
   '/assets/infi/bug.jpg',
   '/assets/infi/beets-bears.jpg',
   '/assets/infi/clientwall.jpg',
@@ -93,7 +95,7 @@ const painting = (p5: p5js) => {
 
     blitImage()
 
-    updateFlow(8)
+    updateFlow(state.radius)
     strokeMap = (await p5.loadJSON(
       '/assets/brush-strokes/brush-stroke-map.json',
     )) as unknown as StokeMap
@@ -204,7 +206,7 @@ const painting = (p5: p5js) => {
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
     flowShader.setUniform('u_blur', blur)
-    flowShader.setUniform('u_min_strength', 0.002)
+    flowShader.setUniform('u_min_strength', 0.006)
 
     flowBuffer.begin()
     p5.shader(flowShader)
@@ -243,13 +245,13 @@ const painting = (p5: p5js) => {
   }
 
   const buildStroke = (start: p5js.Vector, radius: number) => {
-    const stepLength = radius
-    const maxPoints = p5.map(radius, 2, MAX_RADIUS, 20, 100)
-    const fc = p5.map(radius, 0, 26, 0.3, 0.1)
+    const stepLength = 2 + p5.map(radius, 2, MAX_RADIUS, 0, 50)
+    const maxPoints = p5.map(radius, 2, MAX_RADIUS, 6, 34)
+    const fc = p5.map(radius, MIN_RADIUS, MAX_RADIUS, 0.25, 0.1, true)
     const halfWidth = radius * p5.random(0.2, 1.2)
     const points: StrokePoint[] = []
 
-    const speed = 0.001 * maxPoints
+    const speed = p5.random(0.1, 0.5)
 
     let x = start.x
     let y = start.y
