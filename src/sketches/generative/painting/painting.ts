@@ -35,15 +35,15 @@ const MIN_RADIUS = 3
 //   '/assets/infi/tea.jpg',
 // ]
 const assets = [
+  'assets/brush-strokes/brush-strokes.png',
+  '/assets/infi/space-invader.jpg',
   'assets/tree_water.jpg',
   'assets/jungle_mountain.webp',
-  'assets/brush-strokes/brush-strokes.png',
   'assets/mountain_river.webp',
   '/assets/infi/bug.jpg',
   '/assets/infi/beets-bears.jpg',
   '/assets/infi/clientwall.jpg',
   '/assets/infi/fridge.jpg',
-  '/assets/infi/space-invader.jpg',
 ]
 
 const painting = (p5: p5js) => {
@@ -206,7 +206,7 @@ const painting = (p5: p5js) => {
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
     flowShader.setUniform('u_blur', blur)
-    flowShader.setUniform('u_min_strength', 0.006)
+    flowShader.setUniform('u_min_strength', 0.01)
 
     flowBuffer.begin()
     p5.shader(flowShader)
