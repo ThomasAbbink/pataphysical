@@ -15,18 +15,35 @@ import {
   StrokePoint,
 } from './painting-types'
 
-const MAX_STOKES = 30000
+const MAX_STOKES = 75000
+let MAX_RADIUS = 40
+const MIN_RADIUS = 3
 
+// const assets = [
+//   'assets/tree_water.jpg',
+//   '/assets/infi/keyboard.jpg',
+//   '/assets/infi/keyboard.jpg',
+//   '/assets/infi/cubes.jpg',
+//   '/assets/infi/infi-chess-2.jpg',
+//   '/assets/infi/bug.jpg',
+//   '/assets/infi/beets-bears.jpg',
+//   '/assets/infi/clientwall.jpg',
+//   '/assets/infi/nerdwacht.jpg',
+//   '/assets/infi/fridge.jpg',
+//   '/assets/infi/space-invader.jpg',
+//   '/assets/infi/swag.jpg',
+//   '/assets/infi/tea.jpg',
+// ]
 const assets = [
-  '/assets/infi/infi-chess-2.jpg',
+  'assets/tree_water.jpg',
+  'assets/brush-strokes/brush-strokes.png',
   '/assets/infi/bug.jpg',
+  'assets/jungle_mountain.webp',
+  'assets/mountain_river.webp',
+  '/assets/infi/space-invader.jpg',
   '/assets/infi/beets-bears.jpg',
   '/assets/infi/clientwall.jpg',
-  '/assets/infi/nerdwacht.jpg',
   '/assets/infi/fridge.jpg',
-  '/assets/infi/space-invader.jpg',
-  '/assets/infi/swag.jpg',
-  '/assets/infi/tea.jpg',
 ]
 
 const painting = (p5: p5js) => {
@@ -61,6 +78,8 @@ const painting = (p5: p5js) => {
     p5.pixelDensity(1)
     setupShaders()
     await setup(assets[0])
+    MAX_RADIUS = (p5.width + p5.height) / 80
+    console.log(MAX_RADIUS)
   }
 
   const setup = async (source: string) => {
@@ -76,7 +95,7 @@ const painting = (p5: p5js) => {
 
     blitImage()
 
-    updateFlow(8)
+    updateFlow(state.radius)
     strokeMap = (await p5.loadJSON(
       '/assets/brush-strokes/brush-stroke-map.json',
     )) as unknown as StokeMap
@@ -187,7 +206,7 @@ const painting = (p5: p5js) => {
     flowShader.setUniform('u_time', p5.frameCount)
     flowShader.setUniform('u_image', imageBuffer)
     flowShader.setUniform('u_blur', blur)
-    flowShader.setUniform('u_min_strength', 0.002)
+    flowShader.setUniform('u_min_strength', 0.01)
 
     flowBuffer.begin()
     p5.shader(flowShader)
@@ -226,13 +245,13 @@ const painting = (p5: p5js) => {
   }
 
   const buildStroke = (start: p5js.Vector, radius: number) => {
-    const stepLength = radius * 2
-    const maxPoints = p5.map(radius, 1, 30, 6, 50)
-    const fc = p5.map(radius, 0, 26, 0.7, 0.2)
+    const stepLength = 2 + p5.map(radius, 2, MAX_RADIUS, 0, 50)
+    const maxPoints = p5.map(radius, 2, MAX_RADIUS, 6, 34)
+    const fc = p5.map(radius, MIN_RADIUS, MAX_RADIUS, 0.25, 0.1, true)
     const halfWidth = radius * p5.random(0.2, 1.2)
     const points: StrokePoint[] = []
 
-    const speed = 0.001 * maxPoints
+    const speed = p5.random(0.1, 0.5)
 
     let x = start.x
     let y = start.y
@@ -321,8 +340,8 @@ const painting = (p5: p5js) => {
     strokeShader.setUniform('u_brush_stroke_box', stroke.strokeMapAsset.box)
     strokeShader.setUniform('u_brushCrop', 1.0)
     strokeShader.setUniform('u_progress', stroke.progress ?? 0.0)
-    strokeShader.setUniform('u_inkLow', 0.61)
-    strokeShader.setUniform('u_inkHigh', 0.9)
+    strokeShader.setUniform('u_inkLow', 0.21)
+    strokeShader.setUniform('u_inkHigh', 1.0)
 
     p5.shader(strokeShader)
     p5.noStroke()
@@ -351,28 +370,28 @@ const painting = (p5: p5js) => {
     p5.rect(0, 0, width, height)
   }
 
-  const debug = () => {
-    p5.resetShader()
-    p5.push()
-    p5.stroke(255)
-    p5.strokeWeight(1)
-    const step = 30
-    const lenght = 10
+  // const debug = () => {
+  //   p5.resetShader()
+  //   p5.push()
+  //   p5.stroke(255)
+  //   p5.strokeWeight(1)
+  //   const step = 30
+  //   const lenght = 10
 
-    for (let x = 0; x < p5.width; x += step) {
-      for (let y = 0; y < height; y += step) {
-        const { dir, strength } = sampleFlow(x, y)
-        if (strength < 0.02) {
-          continue
-        }
-        const cx = x - width / 2
-        const cy = y - height / 2
+  //   for (let x = 0; x < p5.width; x += step) {
+  //     for (let y = 0; y < height; y += step) {
+  //       const { dir, strength } = sampleFlow(x, y)
+  //       if (strength < 0.02) {
+  //         continue
+  //       }
+  //       const cx = x - width / 2
+  //       const cy = y - height / 2
 
-        p5.line(cx, cy, cx + dir.x * lenght, cy + dir.y * lenght)
-      }
-    }
-    p5.pop()
-  }
+  //       p5.line(cx, cy, cx + dir.x * lenght, cy + dir.y * lenght)
+  //     }
+  //   }
+  //   p5.pop()
+  // }
 
   const errorAt = (x: number, y: number) => {
     const ew = blurBuffer.width,
@@ -412,7 +431,6 @@ const painting = (p5: p5js) => {
     }
     return { seed: p5.createVector(bx, by), error: bestE }
   }
-
   const setState = (next: Partial<State>) => {
     state = { ...state, ...next }
   }
@@ -443,9 +461,13 @@ const painting = (p5: p5js) => {
     }
 
     const radiusMin =
-      2 + 9 * Math.exp(-4 * (nextState.currentStroke / MAX_STOKES))
+      MIN_RADIUS +
+      MAX_RADIUS * 0.1 * Math.exp(-4 * (nextState.currentStroke / MAX_STOKES))
     const radiusCeiling =
-      radiusMin + 64 * Math.exp(-64 * (nextState.currentStroke / MAX_STOKES))
+      radiusMin +
+      MAX_RADIUS * 0.9 * Math.exp(-32 * (nextState.currentStroke / MAX_STOKES))
+
+    let origin = null
     while (
       nextState.currentStroke <= MAX_STOKES &&
       count <= concurrent &&
@@ -454,6 +476,9 @@ const painting = (p5: p5js) => {
     ) {
       attempts++
       const { seed } = pickSeed()
+      if (!origin) {
+        origin = seed
+      }
 
       const s = buildStroke(seed, radiusCeiling)
       nextState.radius = radiusCeiling
