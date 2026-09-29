@@ -35,12 +35,12 @@ const MIN_RADIUS = 3
 //   '/assets/infi/tea.jpg',
 // ]
 const assets = [
-  'assets/brush-strokes/brush-strokes.png',
-  '/assets/infi/space-invader.jpg',
   'assets/tree_water.jpg',
+  'assets/brush-strokes/brush-strokes.png',
+  '/assets/infi/bug.jpg',
   'assets/jungle_mountain.webp',
   'assets/mountain_river.webp',
-  '/assets/infi/bug.jpg',
+  '/assets/infi/space-invader.jpg',
   '/assets/infi/beets-bears.jpg',
   '/assets/infi/clientwall.jpg',
   '/assets/infi/fridge.jpg',
