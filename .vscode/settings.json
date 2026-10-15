@@ -25,7 +25,8 @@
     "commandCenter.foreground": "#e7e7e7",
     "statusBar.debuggingBackground": "#795cf7",
     "statusBar.debuggingForeground": "#e7e7e7",
-    "activityBarTop.activeBorder": "#15202b"
+    "activityBarTop.activeBorder": "#15202b",
+    "statusBar.inactiveBackground": "#795cf7"
   },
   "peacock.color": "#795cf7",
   "cSpell.words": ["explody", "Truchet"]

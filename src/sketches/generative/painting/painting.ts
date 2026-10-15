@@ -79,7 +79,6 @@ const painting = (p5: p5js) => {
     setupShaders()
     await setup(assets[0])
     MAX_RADIUS = (p5.width + p5.height) / 80
-    console.log(MAX_RADIUS)
   }
 
   const setup = async (source: string) => {
