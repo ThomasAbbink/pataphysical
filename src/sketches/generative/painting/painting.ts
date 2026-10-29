@@ -35,6 +35,7 @@ const MIN_RADIUS = 3
 //   '/assets/infi/tea.jpg',
 // ]
 const assets = [
+  'assets/pata-title-text.png',
   'assets/tree_water.jpg',
   'assets/brush-strokes/brush-strokes.png',
   '/assets/infi/bug.jpg',
@@ -195,7 +196,7 @@ const painting = (p5: p5js) => {
       0,
       image.width,
       image.height,
-      p5.COVER,
+      p5.CONTAIN,
     )
     p5.pop()
     imageBuffer.end()
