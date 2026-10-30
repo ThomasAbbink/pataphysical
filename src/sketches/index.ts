@@ -23,9 +23,14 @@ export { fbmFire } from './generative/fbm-fire/fbm-fire'
 export { fbmGrid } from './generative/fbm-grid/fbm-grid'
 export { fbmBlob } from './generative/fbm-blob/fbm-blob'
 export { fmbGrass } from './generative/fbm-grass/fbm-grass'
-export { aoc2025 } from './generative/aoc-2025/aoc-2025'
+// export { aoc2025 } from './generative/aoc-2025/aoc-2025'
 export { fractalTree } from './generative/fractal-tree/fractal-tree'
 export { jfaVoronoiFbm } from './generative/jfa-voronoi-fbm/jfaVoronoiFbm'
 export { rdPulse } from './generative/rd-pulse/rd-pulse'
 export { rdBlob } from './generative/rd-blob/rd-blob'
 export { painting } from './generative/painting/painting'
+export {
+  paintingSinelines,
+  paintingRdBlob,
+  paintingImages,
+} from './generative/painting-live/paintings'

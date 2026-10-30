@@ -27,7 +27,7 @@ const rdBlob = (p5: p5js) => {
   let ready = false
 
   p5.setup = async () => {
-    const { width: w, height: h } = getCanvasSize()
+    const { width: w, height: h } = getCanvasSize(p5)
     width = w
     height = h
     p5.createCanvas(w, h, p5.WEBGL)
@@ -55,7 +55,7 @@ const rdBlob = (p5: p5js) => {
   }
 
   p5.windowResized = () => {
-    const { width: w, height: h } = getCanvasSize()
+    const { width: w, height: h } = getCanvasSize(p5)
     width = w
     height = h
     p5.resizeCanvas(w, h)
