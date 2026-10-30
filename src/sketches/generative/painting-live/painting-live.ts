@@ -23,12 +23,13 @@ const MIN_RADIUS = 3
 export type PaintingOptions = {
   source: PaintSourceFactory
   refreshBump: number
+  showSource?: boolean
 }
 
 export const makePainting = (
   name: string,
   date: string,
-  { source: createSource, refreshBump }: PaintingOptions,
+  { source: createSource, refreshBump, showSource = false }: PaintingOptions,
 ): Sketch => {
   const sketch = (p5: p5js) => {
     let flowShader: p5js.Shader
@@ -58,13 +59,33 @@ export const makePainting = (
 
     const source = createSource()
     let sourceVersion = 0
+    let sourceDisplay: HTMLDivElement | undefined
+    let splitRow: HTMLDivElement | undefined
+    let removed = false
 
     p5.setup = async () => {
       const { width: w, height: h } = getCanvasSize()
-      width = w
+      width = showSource ? Math.floor(w / 2) : w
       height = h
-      p5.createCanvas(w, h, p5.WEBGL)
+      p5.createCanvas(width, height, p5.WEBGL)
       p5.pixelDensity(1)
+
+      if (showSource) {
+        // Own flex row, so the split doesn't depend on the wrapper's layout
+        // (the carousel wrapper is a plain block)
+        const canvas = p5.drawingContext.canvas as HTMLCanvasElement
+        splitRow = document.createElement('div')
+        splitRow.style.display = 'flex'
+        sourceDisplay = document.createElement('div')
+        Object.assign(sourceDisplay.style, {
+          width: `${w - width}px`,
+          height: `${height}px`,
+          flexShrink: '0',
+          overflow: 'hidden',
+        })
+        canvas.parentElement?.insertBefore(splitRow, canvas)
+        splitRow.append(sourceDisplay, canvas)
+      }
       maxRadius = (p5.width + p5.height) / 80
 
       const gl = p5.drawingContext as unknown as WebGLRenderingContext
@@ -76,20 +97,28 @@ export const makePainting = (
         '/assets/brush-strokes/brush-stroke-map.json',
       )) as unknown as StokeMap
 
-      await source.start({ width, height })
+      // Removed while loading (e.g. scrolled past in the carousel)
+      if (removed) return
+      await source.start({ width, height }, sourceDisplay)
     }
 
     const remove = p5.remove.bind(p5)
     p5.remove = () => {
+      removed = true
       source.remove()
       remove()
+      splitRow?.remove()
     }
 
     p5.windowResized = () => {
       const { width: w, height: h } = getCanvasSize()
-      width = w
+      width = showSource ? Math.floor(w / 2) : w
       height = h
-      p5.resizeCanvas(w, h)
+      p5.resizeCanvas(width, height)
+      if (sourceDisplay) {
+        sourceDisplay.style.width = `${w - width}px`
+        sourceDisplay.style.height = `${height}px`
+      }
       //TODO resize buffers and the source
     }
 

@@ -14,6 +14,7 @@ export const paintingSinelines = makePainting(
       warmupFrames: 10,
     }),
     refreshBump: 0,
+    showSource: true,
   },
 )
 
@@ -24,6 +25,7 @@ export const paintingRdBlob = makePainting('paintingRdBlob', '2026-10-29', {
     warmupFrames: 10,
   }),
   refreshBump: 0.01,
+  showSource: true,
 })
 
 export const paintingImages = makePainting('paintingImages', '2026-10-29', {
@@ -39,4 +41,5 @@ export const paintingImages = makePainting('paintingImages', '2026-10-29', {
     { interval: 30000 },
   ),
   refreshBump: 1,
+  showSource: true,
 })

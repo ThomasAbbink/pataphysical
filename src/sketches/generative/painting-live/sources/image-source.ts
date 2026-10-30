@@ -22,6 +22,7 @@ export const imageSource =
     let version = 0
     let timer: ReturnType<typeof setInterval> | undefined
     let removed = false
+    let preview: HTMLImageElement | null = null
 
     const show = async (i: number) => {
       const path = paths[i]
@@ -32,13 +33,23 @@ export const imageSource =
       }
       if (removed) return
       current = img
+      if (preview) preview.src = img.src
       version++
     }
 
     return {
-      start: async () => {
+      start: async (_size, display) => {
+        if (display) {
+          preview = document.createElement('img')
+          Object.assign(preview.style, {
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+          })
+          display.appendChild(preview)
+        }
         await show(index)
-        if (paths.length < 2) return
+        if (removed || paths.length < 2) return
         timer = setInterval(() => {
           index = (index + 1) % paths.length
           show(index)
@@ -49,6 +60,7 @@ export const imageSource =
       remove: () => {
         removed = true
         clearInterval(timer)
+        preview?.remove()
       },
     }
   }

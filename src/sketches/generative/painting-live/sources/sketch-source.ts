@@ -10,6 +10,8 @@ type SketchSourceOptions = {
   warmupFrames?: number
 }
 
+const getCanvas = (p: p5js) => p.drawingContext.canvas as HTMLCanvasElement
+
 export const sketchSource =
   (
     sketch: Sketch,
@@ -29,28 +31,46 @@ export const sketchSource =
       if (now - lastCapture < interval) return
       lastCapture = now
 
-      const canvas = p.drawingContext.canvas as HTMLCanvasElement
-      outputContext.drawImage(canvas, 0, 0, output.width, output.height)
+      const canvas = getCanvas(p)
+      if (output.width !== canvas.width || output.height !== canvas.height) {
+        output.width = canvas.width
+        output.height = canvas.height
+      }
+      outputContext.drawImage(canvas, 0, 0)
       version++
+    }
+    const fitToDisplay = (p: p5js) => {
+      const style = getCanvas(p).style
+      style.setProperty('width', '100%', 'important')
+      style.setProperty('height', '100%', 'important')
+      style.setProperty('object-fit', 'contain')
     }
 
     return {
-      start: async ({ width, height }) => {
+      start: async ({ width, height }, display) => {
         const w = Math.max(1, Math.round(width * scale))
         const h = Math.max(1, Math.round(height * scale))
-        output.width = w
-        output.height = h
 
         container = document.createElement('div')
-        Object.assign(container.style, {
-          position: 'fixed',
-          left: '-100000px',
-          top: '0',
-          width: `${w}px`,
-          height: `${h}px`,
-          pointerEvents: 'none',
-        })
-        document.body.appendChild(container)
+        if (display) {
+          Object.assign(container.style, {
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+          })
+          display.appendChild(container)
+        } else {
+          // Must stay attached and sized; display: none would break sizing
+          Object.assign(container.style, {
+            position: 'fixed',
+            left: '-100000px',
+            top: '0',
+            width: `${w}px`,
+            height: `${h}px`,
+            pointerEvents: 'none',
+          })
+          document.body.appendChild(container)
+        }
 
         instance = new p5js((p: p5js) => {
           setCanvasSizeOverride(p, { width: w, height: h })
@@ -59,6 +79,7 @@ export const sketchSource =
           if (!draw) return
           p.draw = async () => {
             await draw()
+            if (display) fitToDisplay(p)
             capture(p)
           }
         }, container)
