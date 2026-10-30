@@ -33,4 +33,5 @@ export {
   paintingSinelines,
   paintingRdBlob,
   paintingImages,
+  paintingWebcam,
 } from './generative/painting-live/paintings'

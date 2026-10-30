@@ -1,6 +1,7 @@
 import { makePainting } from './painting-live'
 import { imageSource } from './sources/image-source'
 import { sketchSource } from './sources/sketch-source'
+import { webcamSource } from './sources/webcam-source'
 import { rdBlob } from '../rd-blob/rd-blob'
 import { sinelines } from '../sinelines'
 
@@ -26,6 +27,12 @@ export const paintingRdBlob = makePainting('paintingRdBlob', '2026-10-29', {
   }),
   refreshBump: 0.01,
   showSource: true,
+})
+
+export const paintingWebcam = makePainting('paintingWebcam', '2026-10-30', {
+  source: webcamSource({ interval: 1000 }),
+  refreshBump: 0.01,
+  showSource: false,
 })
 
 export const paintingImages = makePainting('paintingImages', '2026-10-29', {
