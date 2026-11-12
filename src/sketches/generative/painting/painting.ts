@@ -35,9 +35,9 @@ const MIN_RADIUS = 3
 //   '/assets/infi/tea.jpg',
 // ]
 const assets = [
-  'assets/pata-title-text.png',
   'assets/tree_water.jpg',
   'assets/brush-strokes/brush-strokes.png',
+  'assets/pata-title-text.png',
   '/assets/infi/bug.jpg',
   'assets/jungle_mountain.webp',
   'assets/mountain_river.webp',

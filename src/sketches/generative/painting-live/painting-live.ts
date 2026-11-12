@@ -17,8 +17,8 @@ import {
 import { Sketch } from '../../../types/Sketch'
 import { PaintSourceFactory, SourceFrame } from './sources/source-types'
 
-let MAX_STOKES = 75000
-const MIN_RADIUS = 3
+let MAX_STOKES = 30000
+const MIN_RADIUS = 4
 
 export type PaintingOptions = {
   source: PaintSourceFactory
@@ -39,7 +39,7 @@ export const makePainting = (
 
     let width = 0
     let height = 0
-    let maxRadius = 40
+    let maxRadius = 20
 
     let imageBuffer: p5js.Framebuffer
     let flowBuffer: p5js.Framebuffer
@@ -430,11 +430,8 @@ export const makePainting = (
       let best = -1
       let bestE = -1
 
-      const t = Math.min(1, state.currentStroke / MAX_STOKES)
-      const sd = p5.lerp(width * 0.5, width * 0.12, t)
-
       for (let i = 0; i < n; i++) {
-        const x = p5.constrain(p5.randomGaussian(width / 2, sd), 0, width - 1)
+        const x = p5.random(width)
         const y = p5.random(height)
         const e = errorAt(x, y)
 

@@ -30,8 +30,6 @@ export { rdPulse } from './generative/rd-pulse/rd-pulse'
 export { rdBlob } from './generative/rd-blob/rd-blob'
 export { painting } from './generative/painting/painting'
 export {
-  paintingSinelines,
-  paintingRdBlob,
   paintingImages,
   paintingWebcam,
 } from './generative/painting-live/paintings'
