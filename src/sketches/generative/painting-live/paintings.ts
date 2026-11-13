@@ -21,7 +21,7 @@ export const paintingBlink = makePainting('paintingBlink', '2026-11-12', {
     ],
     { interval: 30_000 },
   ),
-  refreshBump: 0.5,
+  refreshBump: 0.4,
   showSource: false,
 })
 

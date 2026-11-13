@@ -21,5 +21,9 @@ const byobSketches: Sketch[] = [
 
 export default function ByobPage() {
   if (byobSketches.length === 0) return null
-  return <Kiosk sketches={byobSketches} timeout={45000} />
+  return <Kiosk
+      sketches={byobSketches}
+      timeout={45000}
+      breakoutSketch={paintingWebcam}
+    />
 }
