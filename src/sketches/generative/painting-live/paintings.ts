@@ -11,15 +11,34 @@ export const paintingWebcam = makePainting('paintingWebcam', '2026-10-30', {
 export const paintingBlink = makePainting('paintingBlink', '2026-11-12', {
   source: imageSource(
     [
-      { path: 'assets/eye/serious.jpg', duration: 12_000 },
+      { path: 'assets/eye/serious-iris-blue-4x.png', duration: 12_000 },
       { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
-      { path: 'assets/eye/serious-red.jpg', duration: 1_000 },
-      { path: 'assets/eye/serious-green.jpg', duration: 1_000 },
+      { path: 'assets/eye/happy-iris-blue-4x.png', duration: 6_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 2_000 },
+      { path: 'assets/eye/serious-chip-4x.png', duration: 6_000 },
       { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
+
+      { path: 'assets/eye/serious-iris-blue-4x.png', duration: 5_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 2_000 },
+      { path: 'assets/eye/happy-iris-blue-4x.png', duration: 5_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 2_000 },
+      { path: 'assets/eye/serious-chip-4x.png', duration: 5_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 2_000 },
     ],
     { interval: 30_000 },
   ),
-  refreshBump: 0.2,
+  refreshBump: 0.4,
+  showSource: false,
+})
+export const paintingMolen = makePainting('paintingMolen', '2026-11-12', {
+  source: imageSource(
+    [
+      { path: 'assets/molen-b&w.jpeg', duration: 12_000 },
+      { path: 'assets/molen-color.jpeg', duration: 12_000 },
+    ],
+    { interval: 30_000 },
+  ),
+  refreshBump: 0.4,
   showSource: false,
 })
 
