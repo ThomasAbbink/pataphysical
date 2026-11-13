@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import NotFoundPage from './nav/NotFoundPage'
 import KioskPage from './pages/kiosk/KioskPage'
+import ByobPage from './pages/byob/ByobPage'
 import CarouselPage from './pages/carousel/CarouselPage'
 import SketchPage from './pages/sketch/SketchPage'
 import styled, { createGlobalStyle } from 'styled-components'
@@ -16,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<CarouselPage />}></Route>
             <Route path="/kiosk" element={<KioskPage />}></Route>
+            <Route path="/byob" element={<ByobPage />}></Route>
             <Route path="/sketch/:name" element={<SketchPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFoundPage />} />

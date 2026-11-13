@@ -16,10 +16,12 @@ export const paintingBlink = makePainting('paintingBlink', '2026-11-12', {
       { path: 'assets/eye/serious-red.jpg', duration: 1_000 },
       { path: 'assets/eye/serious-green.jpg', duration: 1_000 },
       { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
+      { path: 'assets/eye/happy.jpg', duration: 3_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
     ],
     { interval: 30_000 },
   ),
-  refreshBump: 0.2,
+  refreshBump: 0.5,
   showSource: false,
 })
 

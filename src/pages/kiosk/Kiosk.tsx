@@ -5,10 +5,10 @@ import { Sketch } from '../../types/Sketch'
 
 type Props = {
   sketches: Sketch[]
+  timeout?: number
 }
 
-export default function Kiosk({ sketches }: Props) {
-  const timeout = 60000
+export default function Kiosk({ sketches, timeout = 60000 }: Props) {
   const [currentSketch, setCurrentSketch] = useState(0)
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function Kiosk({ sketches }: Props) {
     return () => {
       clearTimeout(timer)
     }
-  }, [sketches, currentSketch])
+  }, [sketches, currentSketch, timeout])
 
   return (
     <Container>
