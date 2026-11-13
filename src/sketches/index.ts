@@ -28,8 +28,8 @@ export { fractalTree } from './generative/fractal-tree/fractal-tree'
 export { jfaVoronoiFbm } from './generative/jfa-voronoi-fbm/jfaVoronoiFbm'
 export { rdPulse } from './generative/rd-pulse/rd-pulse'
 export { rdBlob } from './generative/rd-blob/rd-blob'
-export { painting } from './generative/painting/painting'
+// export { painting } from './generative/painting/painting'
 export {
-  paintingImages,
+  paintingBlink,
   paintingWebcam,
 } from './generative/painting-live/paintings'

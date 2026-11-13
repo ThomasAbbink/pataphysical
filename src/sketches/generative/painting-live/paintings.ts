@@ -8,6 +8,21 @@ export const paintingWebcam = makePainting('paintingWebcam', '2026-10-30', {
   showSource: false,
 })
 
+export const paintingBlink = makePainting('paintingBlink', '2026-11-12', {
+  source: imageSource(
+    [
+      { path: 'assets/eye/serious.jpg', duration: 12_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
+      { path: 'assets/eye/serious-red.jpg', duration: 1_000 },
+      { path: 'assets/eye/serious-green.jpg', duration: 1_000 },
+      { path: 'assets/eye/closed-tight.jpg', duration: 3_000 },
+    ],
+    { interval: 30_000 },
+  ),
+  refreshBump: 0.2,
+  showSource: false,
+})
+
 export const paintingImages = makePainting('paintingImages', '2026-10-29', {
   source: imageSource(
     [
