@@ -19,33 +19,7 @@ const MAX_STOKES = 75000
 let MAX_RADIUS = 40
 const MIN_RADIUS = 3
 
-// const assets = [
-//   'assets/tree_water.jpg',
-//   '/assets/infi/keyboard.jpg',
-//   '/assets/infi/keyboard.jpg',
-//   '/assets/infi/cubes.jpg',
-//   '/assets/infi/infi-chess-2.jpg',
-//   '/assets/infi/bug.jpg',
-//   '/assets/infi/beets-bears.jpg',
-//   '/assets/infi/clientwall.jpg',
-//   '/assets/infi/nerdwacht.jpg',
-//   '/assets/infi/fridge.jpg',
-//   '/assets/infi/space-invader.jpg',
-//   '/assets/infi/swag.jpg',
-//   '/assets/infi/tea.jpg',
-// ]
-const assets = [
-  'assets/tree_water.jpg',
-  'assets/brush-strokes/brush-strokes.png',
-  'assets/pata-title-text.png',
-  '/assets/infi/bug.jpg',
-  'assets/jungle_mountain.webp',
-  'assets/mountain_river.webp',
-  '/assets/infi/space-invader.jpg',
-  '/assets/infi/beets-bears.jpg',
-  '/assets/infi/clientwall.jpg',
-  '/assets/infi/fridge.jpg',
-]
+const assets = ['assets/trees-in-water.jpg', 'assets/nepal-flags.jpg']
 
 const painting = (p5: p5js) => {
   let flowShader: p5js.Shader
